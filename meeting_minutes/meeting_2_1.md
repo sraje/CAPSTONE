@@ -6,7 +6,7 @@
 
 Purpose: Introductions, discuss ownership, vision statement, goals, and clarify other various points from the initial presentation.
 
-Participants: Saili, Joel, Duncan, Oliver, Chris, Howard
+Participants: Saili, Joel, Duncan, Oliver, Chris, David
 
 ---
 
