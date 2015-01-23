@@ -22,7 +22,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.3'
-    compile files('/Users/olivertownsend/Documents/Classes/4. Senior Year/2. Winter/189A/Code_Repo/CAPSTONE/bikesmart/.idea/libraries/Parse-1.8.1.jar')
+    compile files('src/main/libs/Parse-1.8.1.jar')
 }
 
 dependencies {
