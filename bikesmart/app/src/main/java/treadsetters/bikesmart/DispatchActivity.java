@@ -25,7 +25,6 @@ public class DispatchActivity extends Activity {
     super.onCreate(savedInstanceState);
 
       // Enable Local Datastore.
-      Parse.enableLocalDatastore(this);
       Log.d("MYTAG", "enabled");
       Parse.initialize(this, key1, key2);
 
