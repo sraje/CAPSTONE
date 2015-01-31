@@ -2,7 +2,9 @@
 <resources>
 
     <string name="app_name">bikesmart</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">BikeSmart:\n\nConnecting your bike to the Internet of things since 5 minutes ago\n\n(That\'s when we got the network manager up and running).</string>
     <string name="action_settings">Settings</string>
     <string name="no_location_detected">No Location Detected!</string>
+    <string name="lat_hint">Latitude</string>
+    <string name="long_hint">Longitude</string>
 </resources>

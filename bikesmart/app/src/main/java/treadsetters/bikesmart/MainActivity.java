@@ -1,5 +1,6 @@
 package treadsetters.bikesmart;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -23,6 +24,7 @@ public class MainActivity extends ActionBarActivity implements
     public static String key1 = "Iy2F0D1cUhwVVeVBt9Akg6ovargei7nIZqUItdr0";
     public static String key2 = "8rUgARpUSv8v1N7a7sN1DeLlnact6mITLLC4Bty5";
 
+    private boolean isConnected;
     private static final String TAG = "BikeSmart";
 
     protected GoogleApiClient mGoogleApiClient;
@@ -40,6 +42,10 @@ public class MainActivity extends ActionBarActivity implements
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, key1, key2);
+
+        Context context = getApplicationContext();
+        NetworkStuff networkStuff = new NetworkStuff(context);
+        isConnected = networkStuff.getConnectionStatus();
 
         mLatitudeText = (TextView) findViewById((R.id.latitude_text));
         mLongitudeText = (TextView) findViewById((R.id.longitude_text));
@@ -60,8 +66,8 @@ public class MainActivity extends ActionBarActivity implements
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
+        int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
