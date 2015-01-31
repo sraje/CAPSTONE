@@ -24,7 +24,7 @@ import com.google.android.gms.location.LocationServices;
 
 import com.parse.Parse;
 
-public class MainActivity extends ActionBarActivity{
+public class MainActivity extends Activity{
 
     private static final String TAG = "BikeSmart";
 
@@ -53,8 +53,7 @@ public class MainActivity extends ActionBarActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Parse.enableLocalDatastore(this);
-        setContentView(R.layout.activity_welcome);
+        setContentView(R.layout.activity_main);
 
         mLatitudeText = (TextView) findViewById((R.id.latitude_text));
         mLongitudeText = (TextView) findViewById((R.id.longitude_text));
