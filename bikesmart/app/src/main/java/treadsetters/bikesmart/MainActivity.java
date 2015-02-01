@@ -8,7 +8,6 @@ import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,13 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationServices;
-
-import com.parse.Parse;
+import java.util.ArrayList;
 
 public class MainActivity extends Activity{
 
@@ -59,14 +52,30 @@ public class MainActivity extends Activity{
         mLongitudeText = (TextView) findViewById((R.id.longitude_text));
 
         Intent intent = new Intent(this, LocationService.class);
-        boolean boundReturn = bindService(intent, myConnection, Context.BIND_AUTO_CREATE);
+        ComponentName myService = startService(intent);
+        bindService(new Intent(intent), myConnection, Context.BIND_AUTO_CREATE);
 
-        final Button button = (Button) findViewById(R.id.location_button);
+        final Button button = (Button) findViewById(R.id.start_location_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                displayLocation();
+                startLocationUpdates();
             }
         });
+
+        final Button button2 = (Button) findViewById(R.id.location_button);
+        button2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                displayLocation();
+                ArrayList<Location> llist = getRecentLocations();
+                for(Location l : llist){
+                    continue;
+                }
+            }
+        });
+    }
+
+    private void startLocationUpdates(){
+        myService.startLocationUpdates();
     }
 
     private void displayLocation(){
@@ -106,5 +115,10 @@ public class MainActivity extends Activity{
     private Location getCurrentLocation() {
         Location currentLocation = myService.getCurrentLocation();
         return currentLocation;
+    }
+
+    private ArrayList<Location> getRecentLocations(){
+        ArrayList<Location> l = myService.getRecentLocations();
+        return l;
     }
 }
