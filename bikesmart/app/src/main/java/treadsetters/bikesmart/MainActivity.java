@@ -15,7 +15,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+
 import java.util.ArrayList;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationServices;
+
+import com.parse.Parse;
+import com.parse.ParseUser;
 
 public class MainActivity extends Activity{
 
@@ -55,10 +64,12 @@ public class MainActivity extends Activity{
         ComponentName myService = startService(intent);
         bindService(new Intent(intent), myConnection, Context.BIND_AUTO_CREATE);
 
-        final Button button = (Button) findViewById(R.id.start_location_button);
-        button.setOnClickListener(new View.OnClickListener() {
+
+        final Button start_location_button = (Button) findViewById(R.id.start_location_button);
+        start_location_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startLocationUpdates();
+
             }
         });
 
@@ -72,6 +83,18 @@ public class MainActivity extends Activity{
                 }
             }
         });
+
+        final Button logout_button = (Button) findViewById(R.id.logout_button);
+        logout_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d("MYTAG", "Logging user out.");
+                ParseUser.getCurrentUser().logOut();
+                startActivity(new Intent(v.getContext(), DispatchActivity.class));
+
+            }
+        });
+
+
     }
 
     private void startLocationUpdates(){

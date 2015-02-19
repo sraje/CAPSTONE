@@ -33,4 +33,6 @@
     <string name="activity_post_title">Create a Post</string>
     <string name="character_count_placeholder">0/140</string>
     <string name="no_location_detected">No Location Detected!</string>
+    <string name="logout_button">Logout</string>
+    <string name="get_location_button">Get Location</string>
 </resources>

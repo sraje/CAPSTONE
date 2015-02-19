@@ -56,9 +56,10 @@ public class LoginActivity extends Activity {
     }
 
     private void login() {
-        String username = usernameEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
+        final String username = usernameEditText.getText().toString().trim();
+        final String password = passwordEditText.getText().toString().trim();
 
+//<<<<<<< Updated upstream
         // Validate the log in data
         boolean validationError = false;
         StringBuilder validationErrorMessage = new StringBuilder(getString(R.string.error_intro));
@@ -81,28 +82,52 @@ public class LoginActivity extends Activity {
                     .show();
             return;
         }
+//=======
+    // Set up a progress dialog
+    final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
+    dialog.setMessage(getString(R.string.progress_login));
+    dialog.show();
+    // Call the Parse login method
+    ParseUser.logInInBackground(username, password, new LogInCallback() {
+        @Override
+        public void done(ParseUser user, ParseException e) {
+            dialog.dismiss();
+            if (e != null) {
+                // Show the error message
+                Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            } else {
+                // Start an intent for the dispatch activity
+                Intent intent = new Intent(LoginActivity.this, DispatchActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
 
-        // Set up a progress dialog
-        final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
-        dialog.setMessage(getString(R.string.progress_login));
-        dialog.show();
-        // Call the Parse login method
-        ParseUser.logInInBackground(username, password, new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException e) {
-                dialog.dismiss();
-                if (e != null) {
-                    // Show the error message
-                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                } else {
-                    // Start an intent for the dispatch activity
-                    Intent intent = new Intent(LoginActivity.this, DispatchActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-
-                    Log.d("MYTAG", "Starting main app.");
-                }
+                Log.d("MYTAG", "Starting main app.");
+//>>>>>>> Stashed changes
             }
-        });
+
+            // Set up a progress dialog
+            final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
+            dialog.setMessage(getString(R.string.progress_login));
+            dialog.show();
+            // Call the Parse login method
+            ParseUser.logInInBackground(username, password, new LogInCallback() {
+                @Override
+                public void done(ParseUser user, ParseException e) {
+                    dialog.dismiss();
+                    if (e != null) {
+                        // Show the error message
+                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    } else {
+                        // Start an intent for the dispatch activity
+                        Intent intent = new Intent(LoginActivity.this, DispatchActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+
+                        Log.d("MYTAG", "Starting main app.");
+                    }
+                }
+            });
+        }
+    });
     }
 }
