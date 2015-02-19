@@ -59,7 +59,6 @@ public class LoginActivity extends Activity {
         final String username = usernameEditText.getText().toString().trim();
         final String password = passwordEditText.getText().toString().trim();
 
-//<<<<<<< Updated upstream
         // Validate the log in data
         boolean validationError = false;
         StringBuilder validationErrorMessage = new StringBuilder(getString(R.string.error_intro));
@@ -82,7 +81,6 @@ public class LoginActivity extends Activity {
                     .show();
             return;
         }
-//=======
     // Set up a progress dialog
     final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
     dialog.setMessage(getString(R.string.progress_login));
@@ -102,7 +100,6 @@ public class LoginActivity extends Activity {
                 startActivity(intent);
 
                 Log.d("MYTAG", "Starting main app.");
-//>>>>>>> Stashed changes
             }
 
             // Set up a progress dialog
