@@ -19,11 +19,11 @@ end
 
 ## Verification Steps
 Then(/^I should be taken back to the Bikesmart login screen$/) do
-	steps%{I am on the login screen}
+	steps %{I am on the login screen}
 end
 
 Then(/^I should be taken to the Bikesmart home screen$/) do
-	steps%{I am on the home screen}
+	steps %{I am on the home screen}
 end
 
 Then(/^I should be presented with the bike's current location$/) do
