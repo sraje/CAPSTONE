@@ -19,17 +19,17 @@ end
 
 ## Verification Steps
 Then(/^I should be taken back to the Bikesmart login screen$/) do
-	steps %{I am on the login screen}
+	element_exists("Button id:'signup_button'")
 end
 
 Then(/^I should be taken to the Bikesmart home screen$/) do
-	steps %{I am on the home screen}
+	element_exists("Button id:'logout_button'")
 end
 
 Then(/^I should be presented with the bike's current location$/) do
 end
 
-## Actions Steps
+## Action Steps
 When(/^I enter valid credentials and press login$/) do
 end
 
