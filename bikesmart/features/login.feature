@@ -10,3 +10,7 @@ Scenario: As a user, I should be able to disassociate my identity with a bike (l
 	When I press logout
 	Then I should be taken back to the Bikesmart login screen
 
+Scenario: As a user, I should not be able to login to Bikesmart with invalid credentials
+	Given I am on the login screen
+	When I enter invalid credentials and press login
+	Then I am presented with an error message 
