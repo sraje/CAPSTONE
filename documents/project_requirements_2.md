@@ -44,8 +44,8 @@ There is no existing platform that allows a bicycle to communicate with other de
 ###Requirements and user stories
 ![Alt text](./image1.png =500x500)
 ![Alt text](./image2.png =500x500)
-![Alt text](./image3.png =400x500)
-![Alt text](./image4.png =400x400)
+![Alt text](./image3.png =500x600)
+![Alt text](./image4.png =500x450)
 
 
 ###System architecture overview
