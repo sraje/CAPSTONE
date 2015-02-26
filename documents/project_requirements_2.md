@@ -59,7 +59,7 @@ This system will be comprised of:
 
 - A frontend web interface which gathers content from the remote server and presents it in a clear and organized manner to users.
 
-![Alt text](./image7.png =470x400)
+![Alt text](./image7.png =600x500)
 
 
 ###Mockups/Wireframes
