@@ -40,7 +40,25 @@ There is no existing platform that allows a bicycle to communicate with other de
 **Parse** - a cloud based application engine that allows developers to receive and distribute information and messages to devices on the internet.
 
 **Bike Circle** - a group that contains users and bikes. If you join a bike circle, or approve /someone to join a circle, you/that person automatically gets permission to request to use your bike and gets access to your bikes information (location, past rides, etc.)
- 
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+
+
 ###Requirements and user stories
 ![Alt text](./image1.png =500x500)
 ![Alt text](./image2.png =500x500)
@@ -60,6 +78,43 @@ This system will be comprised of:
 - A frontend web interface which gathers content from the remote server and presents it in a clear and organized manner to users.
 
 ![Alt text](./image7.png =600x500)
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/> 
+
+###UML Diagram
+This diagram is a visual representation of the bikesmart system. It includes activities, methods, components, and intra-system relationships.
+
+
+![Alt text](./image8.png =500x450)
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
 
 
 ###Mockups/Wireframes
