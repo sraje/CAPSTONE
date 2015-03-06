@@ -1,6 +1,8 @@
 package treadsetters.bikesmart;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,20 +17,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationServices;
-
-import com.parse.Parse;
-import com.parse.ParseUser;
 
 public class MainActivity extends Activity{
 
     private static final String TAG = "BikeSmart";
+    private BluetoothAdapter mBluetoothAdapter;
+    private static final int REQUEST_ENABLE_BT = 1;
 
     protected Location mLastLocation;
     protected TextView mLatitudeText;
@@ -64,6 +61,17 @@ public class MainActivity extends Activity{
         ComponentName myService = startService(intent);
         bindService(new Intent(intent), myConnection, Context.BIND_AUTO_CREATE);
 
+        // Initializes Bluetooth adapter.
+        final BluetoothManager bluetoothManager =
+                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = bluetoothManager.getAdapter();
+
+        // Ensures Bluetooth is available on the device and it is enabled. If not,
+        // displays a dialog requesting user permission to enable Bluetooth.
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
 
         final Button start_location_button = (Button) findViewById(R.id.start_location_button);
         start_location_button.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +99,13 @@ public class MainActivity extends Activity{
                 ParseUser.getCurrentUser().logOut();
                 startActivity(new Intent(v.getContext(), DispatchActivity.class));
 
+            }
+        });
+
+        final Button bluetooth_button = (Button) findViewById(R.id.bluetooth_button);
+        bluetooth_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(v.getContext(), DeviceScanActivity.class));
             }
         });
 
