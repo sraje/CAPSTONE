@@ -4,21 +4,4 @@
     tools:context="treadsetters.bikesmart.MainActivity2">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
-    <item
-        android:id="@+id/action_search"
-        android:orderInCategory="200"
-        android:title="Search"
-        android:icon="@drawable/ic_search"
-        app:showAsAction="ifRoom"
-        ></item>
-    <item
-        android:id="@+id/action_user"
-        android:orderInCategory="300"
-        android:title="User"
-        android:icon="@drawable/ic_user"
-        app:showAsAction="ifRoom"></item>
-
-
-
-
 </menu>
