@@ -56,5 +56,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="title_activity_main_activity2">MainActivity2</string>
+    <string name="title_activity_main_activity3">MainActivity3</string>
 
 </resources>
