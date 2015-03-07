@@ -52,6 +52,10 @@
             android:name=".DashboardActivity"
             android:label="@string/title_activity_dashboard" >
         </activity>
+        <activity
+            android:name=".MainActivity2"
+            android:label="@string/title_activity_main_activity2" >
+        </activity>
     </application>
 
 </manifest>
