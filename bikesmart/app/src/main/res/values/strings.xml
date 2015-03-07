@@ -15,8 +15,9 @@
     <string name="error_mismatched_passwords">enter the same password twice</string>
     <string name="error_join">", and "</string>
     <string name="error_end">.</string>
-    <string name="progress_login">Logging you in…</string>
-    <string name="progress_signup">Signing you up…</string>
+    <string name="progress_login">Logging you in&#8230;</string>
+    <string name="progress_signup">Signing you up&#8230;</string>
+
     <string name="signup">Sign up</string>
     <string name="powered_by">Built by</string>
     <string name="parse">Treadsetters</string>
@@ -27,14 +28,11 @@
     <string name="post">Post</string>
     <string name="prompt_post">Post</string>
     <string name="post_out_of_range">Can\'t view post! Get closer.</string>
-    <string name="progress_post">Posting…</string>
+    <string name="progress_post">Posting&#8230;</string>
     <string name="settings_distance_format">%d feet</string>
     <string name="activity_post_title">Create a Post</string>
     <string name="character_count_placeholder">0/140</string>
     <string name="no_location_detected">No Location Detected!</string>
     <string name="logout_button">Logout</string>
     <string name="get_location_button">Get Location</string>
-    <string name="title_activity_dash_board">DashBoardActivity</string>
-    <string name="hello_world">Hello world!</string>
-
 </resources>
