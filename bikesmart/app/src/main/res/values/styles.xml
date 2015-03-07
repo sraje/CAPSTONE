@@ -12,15 +12,14 @@
             backward-compatibility can go here.
         -->
     </style>
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
-    <item name="colorPrimary">@color/ColorPrimary</item>
-    <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
-    <!-- Customize your theme here. -->
-</style>
 
     <!-- Application theme. -->
-
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
+        <!-- Customize your theme here. -->
+    </style>
 
     <style name="LoginFormContainer">
         <item name="android:layout_width">match_parent</item>
