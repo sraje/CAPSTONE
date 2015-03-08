@@ -32,3 +32,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:6.5.87'
     compile fileTree(dir: 'libs', include: 'Parse-*.jar')
 }
+dependencies {
+    compile 'com.android.support:support-v4:21.+'
+    compile 'com.google.android.gms:play-services:4.2.42'
+}
