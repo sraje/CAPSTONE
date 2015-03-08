@@ -1,7 +1,9 @@
 package treadsetters.bikesmart;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +34,8 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    Button mAddBike;
 
     private OnFragmentInteractionListener mListener;
 
@@ -94,8 +98,44 @@ public class HomeFragment extends Fragment {
         Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
         buttonAddBike.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+//                new AlertDialog.Builder(getActivity())
+//                                .setTitle("Delete entry")
+//                                .setMessage("Are you sure you want to delete this entry?")
+//                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        // continue with delete
+//                                    }
+//                                })
+//                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        // do nothing
+//                                    }
+//                                })
+//                                .setIcon(android.R.drawable.ic_dialog_alert)
+//                                .show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                builder.setView(inflater.inflate(R.layout.add_bike, null))
+                        .setTitle(R.string.add_bike)
+
+                        // Add action buttons
+                        .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                // sign in the user ...
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.create();
+                builder.show();
+
+            }
                 // Perform action on click
-                Toast.makeText(getActivity(), "Adding bike...", Toast.LENGTH_SHORT).show();            }
         });
         Button buttonFindBike = (Button) rootView.findViewById(R.id.button_find_bikes);
         buttonFindBike.setOnClickListener(new View.OnClickListener() {
