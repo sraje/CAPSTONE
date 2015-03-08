@@ -1,11 +1,18 @@
 package treadsetters.bikesmart;
-import android.app.Fragment;
+
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.parse.ParseUser;
 
 
 /**
@@ -53,18 +60,69 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+
+        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        if(rootView == null)
+            Log.d("MYTAG","rootView null !!!!!!!!!!");
+
+        Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // Perform action on click
+                Toast.makeText(getActivity(), "Logging out...", Toast.LENGTH_SHORT).show();
+                ParseUser.getCurrentUser().logOut();
+                Intent intent = new Intent(getActivity(), DispatchActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
+        Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
+        buttonAddBike.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // Perform action on click
+                Toast.makeText(getActivity(), "Adding bike...", Toast.LENGTH_SHORT).show();            }
+        });
+        Button buttonFindBike = (Button) rootView.findViewById(R.id.button_find_bikes);
+        buttonFindBike.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // Perform action on click
+                Toast.makeText(getActivity(), "Finding bikes...", Toast.LENGTH_SHORT).show();            }
+        });
+
+
+        return rootView;
     }
+
+//    public void buttonClickAddBike(View v) {
+//        // does something very interesting
+//        Log.d("MYTAG","adding bike");
+//        Toast.makeText(getActivity(), "Adding bike...", Toast.LENGTH_SHORT);
+//    }
+//
+//    public void buttonClickFindBikes(View v) {
+//        // does something very interesting
+//        Toast.makeText(getActivity(), "Finding bike...", Toast.LENGTH_SHORT);
+//    }
+//
+//    public void buttonClickLogout(View v) {
+//        // does something very interesting
+//        Toast.makeText(getActivity(), "Logging out...", Toast.LENGTH_SHORT);
+//    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

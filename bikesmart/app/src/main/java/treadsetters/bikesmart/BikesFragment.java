@@ -1,12 +1,23 @@
 package treadsetters.bikesmart;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.ListFragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -17,11 +28,15 @@ import android.view.ViewGroup;
  * Use the {@link BikesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BikesFragment extends Fragment {
+public class BikesFragment extends ListFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static String MYTAG = "MYTAG";
+    private ArrayList<String> mybikes;
+    public static ArrayList<ParseObject> global_postList;
+    public static ArrayAdapter<String> adapter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -64,8 +79,69 @@ public class BikesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bikes, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
+
+        String[] values = new String[] { "Joel's bike", "Saili's cruuuuiser", "My bike" };
+//        String[] mybikes = getMyBikes();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, values);
+        setListAdapter(adapter);
+//        getMyBikes(adapter);
+
+        return rootView;
     }
+
+    public void getMyBikes(ArrayAdapter adapter) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
+        mybikes.clear();
+
+        ArrayList<Double> my_groups_copy = new ArrayList<Double>();
+
+        ParseUser current_user = ParseUser.getCurrentUser();
+
+        my_groups_copy = (ArrayList<Double>) current_user.get("my_groups");
+
+        mybikes.clear();
+        global_postList.clear();
+        Log.d(MYTAG, "groups.clear");
+        //global_postList.clear();
+        Log.d(MYTAG, "global_postList.clear");
+        Log.d(MYTAG, "my_groups_copy size: " + my_groups_copy.size());
+
+        for (double group_num : my_groups_copy) {
+
+            Log.d(MYTAG, "group num is : " + group_num);
+            query.whereEqualTo("group", group_num);
+
+            // run query in foreground
+            try {
+                List<ParseObject> postList = query.find();
+                Log.d(MYTAG, "sent query");
+
+                for (ParseObject post : postList) {
+                    mybikes.add(post.getString("textContent"));
+                    Log.d(MYTAG, "groups.add(post)");
+                    //Log.d(MYTAG, "groups.add");
+                    global_postList.add(post);
+                    Log.d(MYTAG, "global_postList.add()");
+                    //Log.d(MYTAG, "global_postList.add");
+//                    ((ArrayAdapter<String>) getListAdapter())
+                            adapter.notifyDataSetChanged();
+                    setListAdapter(adapter);
+                }
+
+
+            } catch (ParseException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+                Log.d("Post retrieval", "Error: " + e1.getMessage());
+            }
+        }
+
+    }
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -90,6 +166,8 @@ public class BikesFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
