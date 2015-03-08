@@ -1,6 +1,7 @@
 package treadsetters.bikesmart;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -11,10 +12,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
+import com.parse.ParseUser;
 
 
 public class MainActivity2 extends ActionBarActivity
@@ -31,11 +35,13 @@ public class MainActivity2 extends ActionBarActivity
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
 
-    String NAME = "Saili Raje";
-    String EMAIL = "capstoned@gmail.com";
-    int PROFILE = R.drawable.aka;
+    String NAME; //= "Saili Raje";
+    String EMAIL;// = "capstoned@gmail.com";
+    int PROFILE = R.drawable.avi;
 
     private Toolbar toolbar;                              // Declaring the Toolbar Object
+
+
 
     RecyclerView mRecyclerView;                           // Declaring RecyclerView
     RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
@@ -63,6 +69,8 @@ public class MainActivity2 extends ActionBarActivity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
+        NAME = ParseUser.getCurrentUser().getUsername();
+        EMAIL = ParseUser.getCurrentUser().getEmail();
 
 
 
@@ -216,6 +224,14 @@ public class MainActivity2 extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Log.d("MYTAG", "Hit settings...");
+            return true;
+        }
+        if(id ==R.id.action_logout){
+            ParseUser.getCurrentUser().logOut();
+            Intent intent = new Intent(MainActivity2.this, DispatchActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             return true;
         }
 
