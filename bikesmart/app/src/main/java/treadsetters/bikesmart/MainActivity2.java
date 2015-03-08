@@ -1,5 +1,6 @@
 package treadsetters.bikesmart;
 
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -7,9 +8,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.parse.ParseUser;
 
 
 public class MainActivity2 extends ActionBarActivity {
@@ -23,8 +27,8 @@ public class MainActivity2 extends ActionBarActivity {
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
 
-    String NAME = "Saili Rage";
-    String EMAIL = "capstoned@gmail.com";
+    String NAME;// = "Saili Rage";
+    String EMAIL;// = "capstoned@gmail.com";
     int PROFILE = R.drawable.avi;
 
     private Toolbar toolbar;                              // Declaring the Toolbar Object
@@ -51,7 +55,8 @@ public class MainActivity2 extends ActionBarActivity {
         setSupportActionBar(toolbar);
 
 
-
+        NAME = ParseUser.getCurrentUser().getUsername();
+        EMAIL = ParseUser.getCurrentUser().getEmail();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
@@ -95,7 +100,7 @@ public class MainActivity2 extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main_activity2, menu);
         return true;
     }
 
@@ -108,6 +113,14 @@ public class MainActivity2 extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Log.d("MYTAG","Hit settings...");
+            return true;
+        }
+        if (id == R.id.action_logout) {
+            ParseUser.getCurrentUser().logOut();
+            Intent intent = new Intent(MainActivity2.this, DispatchActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             return true;
         }
 

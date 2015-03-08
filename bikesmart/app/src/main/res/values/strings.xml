@@ -7,10 +7,12 @@
     <string name="title_activity_login">Log in</string>
     <string name="title_activity_signup">Sign up</string>
     <string name="prompt_username">Username</string>
+    <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_password_again">Password Again</string>
     <string name="error_intro">"Please "</string>
     <string name="error_blank_username">enter a username</string>
+    <string name="error_blank_email">enter an email</string>
     <string name="error_blank_password">enter a password</string>
     <string name="error_mismatched_passwords">enter the same password twice</string>
     <string name="error_join">", and "</string>
@@ -33,6 +35,7 @@
     <string name="character_count_placeholder">0/140</string>
     <string name="no_location_detected">No Location Detected!</string>
     <string name="logout_button">Logout</string>
+    <string name="action_logout">Logout</string>
     <string name="get_location_button">Get Location</string>
     <string name="title_activity_dashboard">My Dashboard</string>
     <string name="title_section1">Home</string>
