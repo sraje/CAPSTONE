@@ -1,7 +1,9 @@
 package treadsetters.bikesmart;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -76,7 +78,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         if(rootView == null)
             Log.d("MYTAG","rootView null !!!!!!!!!!");
 
@@ -94,16 +96,47 @@ public class HomeFragment extends Fragment {
         Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
         buttonAddBike.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                builder.setView(inflater.inflate(R.layout.add_bike, null))
+                        .setTitle(R.string.add_bike)
+
+                        // Add action buttons
+                        .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                Toast.makeText(getActivity(), "Bike Successfully Added!", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                builder.create();
+                builder.show();
+
+//                Button add_pic = (Button) rootView.findViewById(R.id.add_pic);
+//                add_pic.setOnClickListener(new View.OnClickListener() {
+//                    public void onClick(View view) {
+//                        // Perform action on click
+//                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
+//                    }
+//                });
+
+            }
                 // Perform action on click
-                Toast.makeText(getActivity(), "Adding bike...", Toast.LENGTH_SHORT).show();            }
         });
         Button buttonFindBike = (Button) rootView.findViewById(R.id.button_find_bikes);
         buttonFindBike.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
-                Toast.makeText(getActivity(), "Finding bikes...", Toast.LENGTH_SHORT).show();            }
+                Toast.makeText(getActivity(), "Finding bikes...", Toast.LENGTH_SHORT).show();
+            }
         });
-
 
         return rootView;
     }
