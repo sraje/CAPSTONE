@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:scaleType="center"
         android:contentDescription="@string/add_bike" />
     <EditText
@@ -18,8 +18,7 @@
         android:layout_marginBottom="4dp"
         android:hint="@string/bike_name" />
     <EditText
-        android:id="@+id/password"
-        android:inputType="textPassword"
+        android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -28,4 +27,13 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif"
         android:hint="@string/bike_description"/>
+
+    <Button
+        android:id="@+id/add_pic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add picture to Bike"
+
+        />
+
 </LinearLayout>
