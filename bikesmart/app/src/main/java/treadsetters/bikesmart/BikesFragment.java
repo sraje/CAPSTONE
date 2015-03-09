@@ -133,6 +133,8 @@ public class BikesFragment extends ListFragment {
                     global_postList.add(post);
                     adapter.notifyDataSetChanged();
                     setListAdapter(adapter);
+                    ((ArrayAdapter<String>) getListAdapter())
+                            .notifyDataSetChanged();
                 }
 
 
