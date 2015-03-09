@@ -35,8 +35,6 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    Button mAddBike;
-
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -80,7 +78,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         if(rootView == null)
             Log.d("MYTAG","rootView null !!!!!!!!!!");
 
@@ -98,22 +96,6 @@ public class HomeFragment extends Fragment {
         Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
         buttonAddBike.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-//                new AlertDialog.Builder(getActivity())
-//                                .setTitle("Delete entry")
-//                                .setMessage("Are you sure you want to delete this entry?")
-//                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        // continue with delete
-//                                    }
-//                                })
-//                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        // do nothing
-//                                    }
-//                                })
-//                                .setIcon(android.R.drawable.ic_dialog_alert)
-//                                .show();
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 builder.setView(inflater.inflate(R.layout.add_bike, null))
@@ -123,7 +105,7 @@ public class HomeFragment extends Fragment {
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                // sign in the user ...
+                                Toast.makeText(getActivity(), "Bike Successfully Added!", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -131,8 +113,19 @@ public class HomeFragment extends Fragment {
                                 dialog.dismiss();
                             }
                         });
+
                 builder.create();
                 builder.show();
+
+//                Button add_pic = (Button) rootView.findViewById(R.id.add_pic);
+//                add_pic.setOnClickListener(new View.OnClickListener() {
+//                    public void onClick(View view) {
+//                        // Perform action on click
+//                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
+//                    }
+//                });
 
             }
                 // Perform action on click
@@ -141,9 +134,9 @@ public class HomeFragment extends Fragment {
         buttonFindBike.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
-                Toast.makeText(getActivity(), "Finding bikes...", Toast.LENGTH_SHORT).show();            }
+                Toast.makeText(getActivity(), "Finding bikes...", Toast.LENGTH_SHORT).show();
+            }
         });
-
 
         return rootView;
     }
