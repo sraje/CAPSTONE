@@ -103,14 +103,14 @@ public class LoginActivity extends Activity {
             }
 
             // Set up a progress dialog
-            final ProgressDialog dialog1 = new ProgressDialog(LoginActivity.this);
-            dialog1.setMessage(getString(R.string.progress_login));
-//            dialog1.show();
+            final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
+            dialog.setMessage(getString(R.string.progress_login));
+            dialog.show();
             // Call the Parse login method
             ParseUser.logInInBackground(username, password, new LogInCallback() {
                 @Override
                 public void done(ParseUser user, ParseException e) {
-                    dialog1.dismiss();
+                    dialog.dismiss();
                     if (e != null) {
                         // Show the error message
                         Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
