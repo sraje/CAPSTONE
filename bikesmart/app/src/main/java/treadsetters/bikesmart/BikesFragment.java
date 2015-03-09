@@ -69,10 +69,21 @@ public class BikesFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        Log.d("MYTAG","onCreate");
+        mybikes = new ArrayList<String>();
+        global_postList = new ArrayList<ParseObject>();
+        adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, mybikes);
+        setListAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        getMyBikes(adapter);
+
     }
 
     @Override
@@ -80,38 +91,37 @@ public class BikesFragment extends ListFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
+        Log.d("MYTAG","onCreateView");
 
-        String[] values = new String[] { "Joel's bike", "Saili's cruuuuiser", "My bike" };
+        String[] values = new String[]{"Joel's bike", "Saili's cruuuuiser", "My bike"};
 //        String[] mybikes = getMyBikes();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1, values);
-        setListAdapter(adapter);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+//                android.R.layout.simple_list_item_1, values);
+//        setListAdapter(adapter);
 //        getMyBikes(adapter);
+
+
 
         return rootView;
     }
 
     public void getMyBikes(ArrayAdapter adapter) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Group");
+        Log.d("MYTAG","getMyBikes");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         mybikes.clear();
-
-        ArrayList<Double> my_groups_copy = new ArrayList<Double>();
+        ArrayList<Double> bikes_used_copy = new ArrayList<Double>();
 
         ParseUser current_user = ParseUser.getCurrentUser();
 
-        my_groups_copy = (ArrayList<Double>) current_user.get("my_groups");
+        bikes_used_copy = (ArrayList<Double>) current_user.get("bikes_used");
 
         mybikes.clear();
         global_postList.clear();
-        Log.d(MYTAG, "groups.clear");
-        //global_postList.clear();
-        Log.d(MYTAG, "global_postList.clear");
-        Log.d(MYTAG, "my_groups_copy size: " + my_groups_copy.size());
 
-        for (double group_num : my_groups_copy) {
+        for (double bike_id : bikes_used_copy) {
 
-            Log.d(MYTAG, "group num is : " + group_num);
-            query.whereEqualTo("group", group_num);
+            Log.d(MYTAG, "bikeID is : " + bike_id);
+            query.whereEqualTo("bikeID", bike_id);
 
             // run query in foreground
             try {
@@ -119,14 +129,9 @@ public class BikesFragment extends ListFragment {
                 Log.d(MYTAG, "sent query");
 
                 for (ParseObject post : postList) {
-                    mybikes.add(post.getString("textContent"));
-                    Log.d(MYTAG, "groups.add(post)");
-                    //Log.d(MYTAG, "groups.add");
+                    mybikes.add(post.getString("bikename"));
                     global_postList.add(post);
-                    Log.d(MYTAG, "global_postList.add()");
-                    //Log.d(MYTAG, "global_postList.add");
-//                    ((ArrayAdapter<String>) getListAdapter())
-                            adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                     setListAdapter(adapter);
                 }
 
@@ -139,8 +144,6 @@ public class BikesFragment extends ListFragment {
         }
 
     }
-
-
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -166,7 +169,6 @@ public class BikesFragment extends ListFragment {
         super.onDetach();
         mListener = null;
     }
-
 
 
     /**

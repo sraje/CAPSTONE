@@ -7,14 +7,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import java.util.ArrayList;
 
 
 /**
@@ -64,7 +69,6 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
-
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -79,8 +83,6 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
 
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        if(rootView == null)
-            Log.d("MYTAG","rootView null !!!!!!!!!!");
 
         Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
@@ -97,25 +99,34 @@ public class HomeFragment extends Fragment {
         buttonAddBike.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                builder.setView(inflater.inflate(R.layout.add_bike, null))
-                        .setTitle(R.string.add_bike)
+                final EditText input = (EditText) rootView.findViewById(R.id.bike_name);
 
-                        // Add action buttons
-                        .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                Toast.makeText(getActivity(), "Bike Successfully Added!", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final EditText bikenameEditText = new EditText(getActivity());
+                final View v = inflater.inflate(R.layout.add_bike, null);
+                builder.setView(v);
+                builder.setTitle(R.string.add_bike);
+
+                // Add action buttons
+                builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+//                                String bikename = bikenameEditText.getText().toString().trim();
+                        EditText e = (EditText) v.findViewById(R.id.bike_name);
+                        String bikename = e.getText().toString();
+                        Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
+                        addBikeToParse(bikename);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
 
                 builder.create();
                 builder.show();
+
 
 //                Button add_pic = (Button) rootView.findViewById(R.id.add_pic);
 //                add_pic.setOnClickListener(new View.OnClickListener() {
@@ -127,8 +138,9 @@ public class HomeFragment extends Fragment {
 //                    }
 //                });
 
+
             }
-                // Perform action on click
+            // Perform action on click
         });
         Button buttonFindBike = (Button) rootView.findViewById(R.id.button_find_bikes);
         buttonFindBike.setOnClickListener(new View.OnClickListener() {
@@ -141,21 +153,39 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
-//    public void buttonClickAddBike(View v) {
-//        // does something very interesting
-//        Log.d("MYTAG","adding bike");
-//        Toast.makeText(getActivity(), "Adding bike...", Toast.LENGTH_SHORT);
-//    }
-//
-//    public void buttonClickFindBikes(View v) {
-//        // does something very interesting
-//        Toast.makeText(getActivity(), "Finding bike...", Toast.LENGTH_SHORT);
-//    }
-//
-//    public void buttonClickLogout(View v) {
-//        // does something very interesting
-//        Toast.makeText(getActivity(), "Logging out...", Toast.LENGTH_SHORT);
-//    }
+    public void addBikeToParse(String bikename) {
+        ParseUser current_user = ParseUser.getCurrentUser();
+        ParseObject new_bike = new ParseObject("bike");
+        new_bike.put("bikename", bikename);
+        new_bike.put("bikeID", 32.23);
+        ArrayList<Double> temp_bikes_used = new ArrayList<Double>();
+        temp_bikes_used = (ArrayList<Double>) current_user.get("bikes_used");
+        temp_bikes_used.add(32.23); // random bike ID value
+        current_user.put("my_groups", temp_bikes_used);
+
+
+        // Save the post and return
+        new_bike.saveInBackground(new SaveCallback() {
+
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+//                    setResult(RESULT_OK);
+//                    finish();
+                    Toast.makeText(getActivity(), "Bike Successfully Added!", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(getActivity(),
+                            "Error saving: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+        });
+
+
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
