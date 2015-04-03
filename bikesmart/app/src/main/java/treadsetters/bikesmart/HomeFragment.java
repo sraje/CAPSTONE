@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    public int count = 0;
 
     private OnFragmentInteractionListener mListener;
 
@@ -157,12 +159,19 @@ public class HomeFragment extends Fragment {
         ParseUser current_user = ParseUser.getCurrentUser();
         ParseObject new_bike = new ParseObject("bike");
         new_bike.put("bikename", bikename);
-        new_bike.put("bikeID", 32.23);
+
+
+//        double bikeID = count;
+        double bikeID = Math.random() * 1000000;
+
+
+        Log.d("MYTAG", "bikeID: " + bikeID);
+        new_bike.put("bikeID", bikeID);
         ArrayList<Double> temp_bikes_used = new ArrayList<Double>();
         temp_bikes_used = (ArrayList<Double>) current_user.get("bikes_used");
-        temp_bikes_used.add(32.23); // random bike ID value
-        current_user.put("my_groups", temp_bikes_used);
-
+        temp_bikes_used.add(bikeID); // random bike ID value
+        current_user.put("bikes_used", temp_bikes_used);
+        count = count + 1;
 
         // Save the post and return
         new_bike.saveInBackground(new SaveCallback() {

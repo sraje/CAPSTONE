@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -105,47 +106,56 @@ public class BikesFragment extends ListFragment {
         return rootView;
     }
 
-    public void getMyBikes(ArrayAdapter adapter) {
+    public void getMyBikes(final ArrayAdapter adapter) {
         Log.d("MYTAG","getMyBikes");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         mybikes.clear();
         ArrayList<Double> bikes_used_copy = new ArrayList<Double>();
 
         ParseUser current_user = ParseUser.getCurrentUser();
 
+        bikes_used_copy.clear();
         bikes_used_copy = (ArrayList<Double>) current_user.get("bikes_used");
+        Log.d("MYTAG", "got bikes_used. size: " + bikes_used_copy.size());
+
+        for (double bike_id : bikes_used_copy) {
+            Log.d("MYTAG", "ID is: " + bike_id);
+        }
+
 
         mybikes.clear();
         global_postList.clear();
 
         for (double bike_id : bikes_used_copy) {
 
-            Log.d(MYTAG, "bikeID is : " + bike_id);
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            Log.d(MYTAG, "bikeID is!! : " + bike_id);
             query.whereEqualTo("bikeID", bike_id);
 
             // run query in foreground
-            try {
-                List<ParseObject> postList = query.find();
-                Log.d(MYTAG, "sent query");
 
-                for (ParseObject post : postList) {
-                    mybikes.add(post.getString("bikename"));
-                    global_postList.add(post);
-                    adapter.notifyDataSetChanged();
-                    setListAdapter(adapter);
-                    ((ArrayAdapter<String>) getListAdapter())
-                            .notifyDataSetChanged();
+            Log.d(MYTAG, "sending query");
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null) {
+                        mybikes.add(postList.get(0).getString("bikename"));
+                        global_postList.add(postList.get(0));
+                        adapter.notifyDataSetChanged();
+                        setListAdapter(adapter);
+                        ((ArrayAdapter<String>) getListAdapter())
+                                .notifyDataSetChanged();
+                    } else {
+                        Log.d("MYTAG","Post retrieval failed...");
+                    }
                 }
+            });
 
 
-            } catch (ParseException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-                Log.d("Post retrieval", "Error: " + e1.getMessage());
-            }
         }
-
     }
+
+
 
 
     // TODO: Rename method, update argument and hook method into UI event
