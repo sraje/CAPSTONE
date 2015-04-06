@@ -2,6 +2,8 @@ package treadsetters.bikesmart;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
+import android.widget.ListView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -37,7 +40,7 @@ public class BikesFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    public static String MYTAG = "MYTAG";
+    public static String MYTAG = "Bikes";
     private ArrayList<String> mybikes;
     public static ArrayList<ParseObject> global_postList;
     public static ArrayAdapter<String> adapter;
@@ -73,10 +76,6 @@ public class BikesFragment extends Fragment {
         return fragment;
     }
 
-    public BikesFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +84,7 @@ public class BikesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -93,7 +93,7 @@ public class BikesFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
-        Log.d("MYTAG","onCreateView");
+
 
         bikeHeaders = new ArrayList<String>();
         bikeLists = new HashMap<String, List<String>>();
@@ -118,6 +118,27 @@ public class BikesFragment extends Fragment {
             }
         });
 
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Log.d(MYTAG, "onListItemClick");
+                //Object bike = getListView().getItemAtPosition(position);
+
+                FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+                Fragment fragment = new BikeDetailsFragment();
+                Bundle args = new Bundle();
+                //args.put(bike); // Add the bike object here
+                fragment.setArguments(args);
+
+                // Switch to the bike details fragment.
+                transaction.replace(R.id.container, fragment);
+                // Make sure the user can press 'back'
+                transaction.addToBackStack(null);
+                transaction.commit();
+                return true;
+            }
+        });
 
 
         return rootView;
@@ -180,12 +201,7 @@ public class BikesFragment extends Fragment {
 
 
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Activity activity) {
