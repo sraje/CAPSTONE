@@ -59,32 +59,20 @@ public class BikeDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bike_details, container, false);
-    }
+        View V = inflater.inflate(R.layout.fragment_bike_details, container, false);
+        mLatitudeText = (TextView) V.findViewById((R.id.latitude_text));
+        mLongitudeText = (TextView) V.findViewById((R.id.longitude_text));
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
-        super.onCreate(savedInstanceState);
-
-        mLatitudeText = (TextView) getView().findViewById((R.id.latitude_text));
-        mLongitudeText = (TextView) getView().findViewById((R.id.longitude_text));
-        Log.d(TAG,"onCreate");
-        Activity currentActivity = getActivity();
-        Intent intent = new Intent(currentActivity, LocationService.class);
-        ComponentName myService = currentActivity.startService(intent);
-        currentActivity.bindService(new Intent(intent), myConnection, Context.BIND_AUTO_CREATE);
-
-
-        final Button start_location_button = (Button) getView().findViewById(R.id.start_location_button);
+        final Button start_location_button = (Button) V.findViewById(R.id.start_location_button);
         start_location_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startLocationUpdates();
             }
         });
 
-        final Button button2 = (Button) getView().findViewById(R.id.location_button);
+        final Button button2 = (Button) V.findViewById(R.id.location_button);
         button2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 displayLocation();
@@ -95,7 +83,18 @@ public class BikeDetailsFragment extends Fragment {
             }
         });
 
+        return V;
+    }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
+        super.onCreate(savedInstanceState);
+
+        Activity currentActivity = getActivity();
+        Intent intent = new Intent(currentActivity, LocationService.class);
+        ComponentName myService = currentActivity.startService(intent);
+        currentActivity.bindService(new Intent(intent), myConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void startLocationUpdates(){

@@ -145,7 +145,6 @@ public class BikesFragment extends Fragment {
     }
 
     public void getMyBikes() {
-
         ParseUser current_user = ParseUser.getCurrentUser();
 
         ArrayList<String> bikes_owned_copy = new ArrayList<String>();
@@ -173,9 +172,18 @@ public class BikesFragment extends Fragment {
 
         /*for (String bike_id : bikes_used_copy) {
 
+<<<<<<< HEAD
             ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
             Log.d(MYTAG, "bikeID is!! : " + bike_id);
             query.whereEqualTo("bike_id", bike_id);
+=======
+            } catch (ParseException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+                Log.d(MYTAG, "Post Retreival Error: " + e1.getMessage());
+            }
+        }
+>>>>>>> bike details screen to display location data
 
             // run query in foreground
 
