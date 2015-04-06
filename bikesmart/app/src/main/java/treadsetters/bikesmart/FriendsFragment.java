@@ -18,7 +18,6 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -98,7 +97,7 @@ public class FriendsFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
                         EditText e = (EditText) v.findViewById(R.id.friend_name);
                         String friendName = e.getText().toString();
-                        Toast.makeText(getActivity(), "FriendName: " + friendName, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(), "FriendName: " + friendName, Toast.LENGTH_SHORT).show();
                         addFriendToParse(friendName);
                     }
                 });
@@ -155,15 +154,22 @@ public class FriendsFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-    public void addFriendToParse(String friendName) {
+    public void addFriendToParse(final String friendName) {
         //get current friends
         List myFriends = ParseUser.getCurrentUser().getList("friends");
         if (myFriends == null) {
             myFriends = new ArrayList();
         }
 
+        if(myFriends.contains(friendName)) {
+            Toast.makeText(getActivity(), "User is already your friend!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         myFriends.add(friendName);
-        ParseUser.getCurrentUser().put("friends", Arrays.asList(myFriends));
+        ParseUser.getCurrentUser().remove("friends");
+        ParseUser.getCurrentUser().addAll("friends", myFriends);
 
         // Save the post and return
         ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
@@ -171,10 +177,7 @@ public class FriendsFragment extends Fragment {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-//                    setResult(RESULT_OK);
-//                    finish();
-                    Toast.makeText(getActivity(), "Friend Successfully Added!", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getActivity(), "Friend \"" + friendName + "\" Successfully Added!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(),
                             "Error saving: " + e.getMessage(), Toast.LENGTH_SHORT).show();
