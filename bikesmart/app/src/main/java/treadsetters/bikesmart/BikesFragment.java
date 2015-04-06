@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -94,12 +96,15 @@ public class BikesFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
         Log.d("MYTAG","onCreateView");
 
-        String[] values = new String[]{"Joel's bike", "Saili's cruuuuiser", "My bike"};
-//        String[] mybikes = getMyBikes();
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-//                android.R.layout.simple_list_item_1, values);
-//        setListAdapter(adapter);
-//        getMyBikes(adapter);
+
+        Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // Perform action on click
+                Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
+                getMyBikes(adapter);
+            }
+        });
 
 
 
