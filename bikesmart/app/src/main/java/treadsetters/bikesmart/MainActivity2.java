@@ -27,7 +27,7 @@ public class MainActivity2 extends ActionBarActivity
         //you can leave it empty
     }
     //First We Declare Titles And Icons For Our Navigation Drawer List View
-    //This Icons And Titles Are holded in an Array as you can see
+    //The Icons and Titles are held in an Array
 
     String TITLES[] = {"Home","Bikes","Friends","Messages","Notifications"};
     int ICONS[] = {R.drawable.ic_home,R.drawable.ic_bikes,R.drawable.ic_friends,R.drawable.ic_messages,R.drawable.ic_notifications};
@@ -114,6 +114,7 @@ public class MainActivity2 extends ActionBarActivity
                             //fragment = new MyFragment1();
                             break;
                         case 1://is home
+                            fragment = new BikeDetailsFragment();
                             fragment = new HomeFragment();
                             fragmentManager.beginTransaction()
                                     .replace(R.id.container, fragment)

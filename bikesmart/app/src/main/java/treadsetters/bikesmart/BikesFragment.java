@@ -2,6 +2,8 @@ package treadsetters.bikesmart;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -33,7 +36,7 @@ public class BikesFragment extends ListFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    public static String MYTAG = "MYTAG";
+    public static String MYTAG = "Bikes";
     private ArrayList<String> mybikes;
     public static ArrayList<ParseObject> global_postList;
     public static ArrayAdapter<String> adapter;
@@ -75,7 +78,7 @@ public class BikesFragment extends ListFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        Log.d("MYTAG","onCreate");
+        Log.d(MYTAG, "onCreate");
         mybikes = new ArrayList<String>();
         global_postList = new ArrayList<ParseObject>();
         adapter = new ArrayAdapter<String>(getActivity(),
@@ -89,24 +92,23 @@ public class BikesFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(MYTAG,"onCreateView");
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
-        Log.d("MYTAG","onCreateView");
 
-        String[] values = new String[]{"Joel's bike", "Saili's cruuuuiser", "My bike"};
+
+//        String[] values = new String[]{"Joel's bike", "Saili's cruuuuiser", "My bike"};
 //        String[] mybikes = getMyBikes();
 //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
 //                android.R.layout.simple_list_item_1, values);
 //        setListAdapter(adapter);
 //        getMyBikes(adapter);
 
-
-
         return rootView;
     }
 
     public void getMyBikes(ArrayAdapter adapter) {
-        Log.d("MYTAG","getMyBikes");
+        Log.d(MYTAG,"getMyBikes");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         mybikes.clear();
         ArrayList<Double> bikes_used_copy = new ArrayList<Double>();
@@ -153,6 +155,26 @@ public class BikesFragment extends ListFragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Log.d(MYTAG, "onListItemClick");
+        //Object bike = getListView().getItemAtPosition(position);
+
+        FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        Fragment fragment = new BikeDetailsFragment();
+        Bundle args = new Bundle();
+        //args.put(bike); // Add the bike object here
+        fragment.setArguments(args);
+
+        // Switch to the bike details fragment.
+        transaction.replace(R.id.container, fragment);
+        // Make sure the user can press 'back'
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override

@@ -153,16 +153,21 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
-    public void addBikeToParse(String bikename) {
-        ParseUser current_user = ParseUser.getCurrentUser();
-        ParseObject new_bike = new ParseObject("bike");
-        new_bike.put("bikename", bikename);
-        new_bike.put("bikeID", 32.23);
-        ArrayList<Double> temp_bikes_used = new ArrayList<Double>();
-        temp_bikes_used = (ArrayList<Double>) current_user.get("bikes_used");
-        temp_bikes_used.add(32.23); // random bike ID value
-        current_user.put("my_groups", temp_bikes_used);
+    public void addBikeToParse(String bike_name) {
+        double bike_id = 32.23; // dummy bike ID value
 
+        ParseUser current_user = ParseUser.getCurrentUser();
+        // Get the user's old list of bikes
+        ArrayList<Double> user_bikes = (ArrayList<Double>) current_user.get("bikes_used");
+        // Add the new bike to the list
+        user_bikes.add(bike_id);
+        current_user.put("my_groups", user_bikes);
+        current_user.saveInBackground();
+
+        // Create a new bike object
+        ParseObject new_bike = new ParseObject("bike");
+        new_bike.put("bikename", bike_name);
+        new_bike.put("bikeID", bike_id);
 
         // Save the post and return
         new_bike.saveInBackground(new SaveCallback() {

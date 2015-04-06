@@ -14,6 +14,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.parse.ParseUser;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -133,6 +134,10 @@ public class LocationService extends Service implements
 
     public Location getCurrentLocation() {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        ParseUser user = ParseUser.getCurrentUser();
+        user.add("location_history", mLastLocation);
+
         return mLastLocation;
     }
 
