@@ -14,4 +14,14 @@
         android:id="@+id/textView3"
         android:layout_gravity="center" />
 
+    <Button
+        android:layout_width="120dp"
+        android:layout_height="77dp"
+        android:backgroundTint="@color/hint_foreground_material_light"
+        android:textColor="@android:color/white"
+        android:text="Add Friend"
+        android:textStyle="bold"
+        android:id="@+id/button_add_friend"
+        android:layout_gravity="center_horizontal|bottom" />
+
 </FrameLayout>

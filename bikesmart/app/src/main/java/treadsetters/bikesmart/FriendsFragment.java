@@ -1,12 +1,25 @@
 package treadsetters.bikesmart;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -26,6 +39,8 @@ public class FriendsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Button button_add_friend;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,13 +73,46 @@ public class FriendsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friends, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
+        Button button_add_friend = (Button) rootView.findViewById(R.id.button_add_friend);
+        button_add_friend.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final EditText input = (EditText) rootView.findViewById(R.id.friend_name);
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final View v = inflater.inflate(R.layout.add_friends, null);
+                builder.setView(v);
+                builder.setTitle(R.string.add_friend);
+
+                // Add action buttons
+                builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        EditText e = (EditText) v.findViewById(R.id.friend_name);
+                        String friendName = e.getText().toString();
+                        Toast.makeText(getActivity(), "FriendName: " + friendName, Toast.LENGTH_SHORT).show();
+                        addFriendToParse(friendName);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.create();
+                builder.show();
+            }
+        });
+            return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -79,6 +127,7 @@ public class FriendsFragment extends Fragment {
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
+
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -106,4 +155,35 @@ public class FriendsFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    public void addFriendToParse(String friendName) {
+        //get current friends
+        List myFriends = ParseUser.getCurrentUser().getList("friends");
+        if (myFriends == null) {
+            myFriends = new ArrayList();
+        }
+
+        myFriends.add(friendName);
+        ParseUser.getCurrentUser().put("friends", Arrays.asList(myFriends));
+
+        // Save the post and return
+        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+//                    setResult(RESULT_OK);
+//                    finish();
+                    Toast.makeText(getActivity(), "Friend Successfully Added!", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(getActivity(),
+                            "Error saving: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+        });
+
+
+    }
 }
