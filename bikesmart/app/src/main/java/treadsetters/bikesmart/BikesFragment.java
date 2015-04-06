@@ -108,7 +108,7 @@ public class BikesFragment extends ListFragment {
     }
 
     public void getMyBikes(ArrayAdapter adapter) {
-        Log.d(MYTAG,"getMyBikes");
+        Log.d(MYTAG, "getMyBikes");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         mybikes.clear();
         ArrayList<Double> bikes_used_copy = new ArrayList<Double>();
@@ -143,7 +143,7 @@ public class BikesFragment extends ListFragment {
             } catch (ParseException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
-                Log.d("Post retrieval", "Error: " + e1.getMessage());
+                Log.d(MYTAG, "Post Retreival Error: " + e1.getMessage());
             }
         }
 

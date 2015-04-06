@@ -106,7 +106,6 @@ public class MainActivity2 extends ActionBarActivity
                     //Toast.makeText(MainActivity2.this,"The Item Clicked is: "+recyclerView.getChildPosition(child),Toast.LENGTH_SHORT).show();
                     int position = recyclerView.getChildPosition(child);
                     Fragment fragment;
-                    //fragment = null;
                     FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
                     switch(position) {
                         default:
@@ -114,7 +113,6 @@ public class MainActivity2 extends ActionBarActivity
                             //fragment = new MyFragment1();
                             break;
                         case 1://is home
-                            fragment = new BikeDetailsFragment();
                             fragment = new HomeFragment();
                             fragmentManager.beginTransaction()
                                     .replace(R.id.container, fragment)
