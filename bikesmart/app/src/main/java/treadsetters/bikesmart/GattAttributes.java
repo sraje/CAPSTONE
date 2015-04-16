@@ -23,15 +23,20 @@ import java.util.HashMap;
  */
 public class GattAttributes {
     private static HashMap<String, String> attributes = new HashMap();
-    public static String HEART_RATE_MEASUREMENT = "00002a37-0000-1000-8000-00805f9b34fb";
     public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
+
+    public static String CSC_SERVICE = "00001816-0000-1000-8000-00805f9b34fb";
+    public static String CSC_MEASUREMENT = "00002a5b-0000-1000-8000-00805f9b34fb";
+    public static String CSC_FEATURE = "00002a5c-0000-1000-8000-00805f9b34fb";
 
     static {
         // Sample Services.
         attributes.put("0000180d-0000-1000-8000-00805f9b34fb", "Heart Rate Service");
         attributes.put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information Service");
+        attributes.put(CSC_SERVICE, "Speed and Cadence Service");
         // Sample Characteristics.
-        attributes.put(HEART_RATE_MEASUREMENT, "Heart Rate Measurement");
+        attributes.put(CSC_MEASUREMENT, "CSC Measurement");
+        attributes.put(CSC_FEATURE, "CSC Feature");
         attributes.put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name String");
     }
 

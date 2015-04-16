@@ -63,8 +63,8 @@ public class BluetoothLeService extends Service {
     public final static String EXTRA_DATA =
             "com.example.bluetooth.le.EXTRA_DATA";
 
-    public final static UUID UUID_HEART_RATE_MEASUREMENT =
-            UUID.fromString(GattAttributes.HEART_RATE_MEASUREMENT);
+    public final static UUID UUID_SPEED_AND_CADENCE_MEASUREMENT =
+            UUID.fromString("00002a5b-0000-1000-8000-00805f9b34fb");
 
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
@@ -126,19 +126,37 @@ public class BluetoothLeService extends Service {
         // This is special handling for the Heart Rate Measurement profile.  Data parsing is
         // carried out as per profile specifications:
         // http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
-        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid())) {
+        if (UUID_SPEED_AND_CADENCE_MEASUREMENT.equals(characteristic.getUuid())) {
             int flag = characteristic.getProperties();
-            int format = -1;
-            if ((flag & 0x01) != 0) {
-                format = BluetoothGattCharacteristic.FORMAT_UINT16;
-                Log.d(TAG, "Heart rate format UINT16.");
-            } else {
-                format = BluetoothGattCharacteristic.FORMAT_UINT8;
-                Log.d(TAG, "Heart rate format UINT8.");
-            }
-            final int heartRate = characteristic.getIntValue(format, 1);
-            Log.d(TAG, String.format("Received heart rate: %d", heartRate));
-            intent.putExtra(EXTRA_DATA, String.valueOf(heartRate));
+            int format_rev = -1;
+            int format_time = -1;
+
+            //intent.putExtra(EXTRA_DATA, "Flag is:" + String.valueOf(flag));
+
+            //if ((flag & 0x10) != 0){
+            Log.d(TAG, "Wheel Present");
+            format_rev = BluetoothGattCharacteristic.FORMAT_UINT32;
+            format_time = BluetoothGattCharacteristic.FORMAT_UINT16;
+            final int wheelRevolutions = characteristic.getIntValue(format_rev, 1);
+            final int wheelTime = characteristic.getIntValue(format_time, 5);
+            Log.d(TAG, String.format("Received wheel revolutions: %d at: %d", wheelRevolutions, wheelTime));
+            //intent.putExtra(EXTRA_DATA, String.valueOf(wheelRevolutions));
+            //intent.putExtra(EXTRA_DATA, String.valueOf(wheelTime));
+            //}
+            //if ((flag & 0x20) != 0){
+            Log.d(TAG, "Crank Present");
+            format_rev = BluetoothGattCharacteristic.FORMAT_UINT16;
+            format_time = BluetoothGattCharacteristic.FORMAT_UINT16;
+            final int crankRevolutions = characteristic.getIntValue(format_rev, 7);
+            final int crankTime = characteristic.getIntValue(format_time, 9);
+            Log.d(TAG, String.format("Received crank revolutions: %d at: %d", crankRevolutions, crankTime));
+            //intent.putExtra(EXTRA_DATA, String.valueOf(crankRevolutions));
+            //intent.putExtra(EXTRA_DATA, String.valueOf(crankTime));
+            //}
+
+            String outputtxt = "Wheel Count: " + String.valueOf(wheelRevolutions) + ", Crank Count: " + String.valueOf(crankRevolutions);
+            intent.putExtra(EXTRA_DATA, outputtxt);
+
         } else {
             // For all other profiles, writes the data formatted in HEX.
             final byte[] data = characteristic.getValue();
@@ -297,7 +315,7 @@ public class BluetoothLeService extends Service {
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
 
         // This is specific to Heart Rate Measurement.
-        if (UUID_HEART_RATE_MEASUREMENT.equals(characteristic.getUuid())) {
+        if (UUID_SPEED_AND_CADENCE_MEASUREMENT.equals(characteristic.getUuid())) {
             BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
                     UUID.fromString(GattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
