@@ -144,7 +144,7 @@ public class BikesFragment extends ListFragment {
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
                     if (e == null) {
-                        mybikes.add(postList.get(0).getString("bikename"));
+                        mybikes.add(postList.get(0).getString("bike_name"));
                         global_postList.add(postList.get(0));
                         adapter.notifyDataSetChanged();
                         setListAdapter(adapter);

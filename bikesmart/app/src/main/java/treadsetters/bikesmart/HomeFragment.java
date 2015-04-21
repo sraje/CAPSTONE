@@ -158,7 +158,7 @@ public class HomeFragment extends Fragment {
     public void addBikeToParse(String bikename) {
         ParseUser current_user = ParseUser.getCurrentUser();
         ParseObject new_bike = new ParseObject("bike");
-        new_bike.put("bikename", bikename);
+        new_bike.put("bike_name", bikename);
 
 
 //        double bikeID = count;
