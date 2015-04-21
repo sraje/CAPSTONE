@@ -54,6 +54,7 @@
     <string name="frag_bike">BIKES</string>
     <string name="add_bike">Adding New Bike</string>
     <string name="bike_description">Description</string>
+    <string name="bikeID">XXXX-XXXX</string>
     <string name="bike_name">Bike Identifier</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>

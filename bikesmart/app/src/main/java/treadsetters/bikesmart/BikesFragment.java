@@ -115,15 +115,15 @@ public class BikesFragment extends ListFragment {
         Log.d("MYTAG","getMyBikes");
 //        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         mybikes.clear();
-        ArrayList<Double> bikes_used_copy = new ArrayList<Double>();
+        ArrayList<String> bikes_owned_copy = new ArrayList<String>();
 
         ParseUser current_user = ParseUser.getCurrentUser();
 
-        bikes_used_copy.clear();
-        bikes_used_copy = (ArrayList<Double>) current_user.get("bikes_used");
-        Log.d("MYTAG", "got bikes_used. size: " + bikes_used_copy.size());
+        bikes_owned_copy.clear();
+        bikes_owned_copy = (ArrayList<String>) current_user.get("bikes_owned");
+        Log.d("MYTAG", "got bikes_owned. size: " + bikes_owned_copy.size());
 
-        for (double bike_id : bikes_used_copy) {
+        for (String bike_id : bikes_owned_copy) {
             Log.d("MYTAG", "ID is: " + bike_id);
         }
 
@@ -131,11 +131,11 @@ public class BikesFragment extends ListFragment {
         mybikes.clear();
         global_postList.clear();
 
-        for (double bike_id : bikes_used_copy) {
+        for (String bike_id : bikes_owned_copy) {
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
             Log.d(MYTAG, "bikeID is!! : " + bike_id);
-            query.whereEqualTo("bikeID", bike_id);
+            query.whereEqualTo("bike_id", bike_id);
 
             // run query in foreground
 
