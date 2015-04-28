@@ -10,7 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -93,59 +96,71 @@ public class BikesFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
         Log.d("MYTAG","onCreateView");
 
-        String[] values = new String[]{"Joel's bike", "Saili's cruuuuiser", "My bike"};
-//        String[] mybikes = getMyBikes();
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-//                android.R.layout.simple_list_item_1, values);
-//        setListAdapter(adapter);
-//        getMyBikes(adapter);
+
+        Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // Perform action on click
+                Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
+                getMyBikes(adapter);
+            }
+        });
 
 
 
         return rootView;
     }
 
-    public void getMyBikes(ArrayAdapter adapter) {
+    public void getMyBikes(final ArrayAdapter adapter) {
         Log.d("MYTAG","getMyBikes");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         mybikes.clear();
-        ArrayList<Double> bikes_used_copy = new ArrayList<Double>();
+        ArrayList<String> bikes_owned_copy = new ArrayList<String>();
 
         ParseUser current_user = ParseUser.getCurrentUser();
 
-        bikes_used_copy = (ArrayList<Double>) current_user.get("bikes_used");
+        bikes_owned_copy.clear();
+        bikes_owned_copy = (ArrayList<String>) current_user.get("bikes_owned");
+        Log.d("MYTAG", "got bikes_owned. size: " + bikes_owned_copy.size());
+
+        for (String bike_id : bikes_owned_copy) {
+            Log.d("MYTAG", "ID is: " + bike_id);
+        }
+
 
         mybikes.clear();
         global_postList.clear();
 
-        for (double bike_id : bikes_used_copy) {
+        for (String bike_id : bikes_owned_copy) {
 
-            Log.d(MYTAG, "bikeID is : " + bike_id);
-            query.whereEqualTo("bikeID", bike_id);
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            Log.d(MYTAG, "bikeID is!! : " + bike_id);
+            query.whereEqualTo("bike_id", bike_id);
 
             // run query in foreground
-            try {
-                List<ParseObject> postList = query.find();
-                Log.d(MYTAG, "sent query");
 
-                for (ParseObject post : postList) {
-                    mybikes.add(post.getString("bikename"));
-                    global_postList.add(post);
-                    adapter.notifyDataSetChanged();
-                    setListAdapter(adapter);
-                    ((ArrayAdapter<String>) getListAdapter())
-                            .notifyDataSetChanged();
+            Log.d(MYTAG, "sending query");
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null) {
+                        mybikes.add(postList.get(0).getString("bike_name"));
+                        global_postList.add(postList.get(0));
+                        adapter.notifyDataSetChanged();
+                        setListAdapter(adapter);
+                        ((ArrayAdapter<String>) getListAdapter())
+                                .notifyDataSetChanged();
+                    } else {
+                        Log.d("MYTAG","Post retrieval failed...");
+                    }
                 }
+            });
 
 
-            } catch (ParseException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-                Log.d("Post retrieval", "Error: " + e1.getMessage());
-            }
         }
-
     }
+
+
 
 
     // TODO: Rename method, update argument and hook method into UI event
