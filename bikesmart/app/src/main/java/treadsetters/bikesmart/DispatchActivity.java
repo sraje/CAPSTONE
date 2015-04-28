@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.parse.Parse;
 import com.parse.ParseUser;
+
+import java.util.ArrayList;
 
 /**
  * Activity which starts an intent for either the logged in (MainActivity) or logged out
@@ -14,8 +15,8 @@ import com.parse.ParseUser;
  */
 public class DispatchActivity extends Activity {
 
-    public static String key1 = "Iy2F0D1cUhwVVeVBt9Akg6ovargei7nIZqUItdr0";
-    public static String key2 = "8rUgARpUSv8v1N7a7sN1DeLlnact6mITLLC4Bty5";
+    public static String MYTAG = "MYTAG";
+    public static ArrayList<Double> bikes_used;
 
   public DispatchActivity() {
   }
@@ -24,14 +25,20 @@ public class DispatchActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-      // Enable Local Datastore.
-      Log.d("MYTAG", "enabled");
-      Parse.initialize(this, key1, key2);
-
     // Check if there is current user info
     if (ParseUser.getCurrentUser() != null) {
       // Start an intent for the logged in activity
-      startActivity(new Intent(this, MainActivity.class));
+        Log.d("MYTAG", "User already logged in");
+
+        // initialize database values...
+        ParseUser current_user = ParseUser.getCurrentUser();
+        if(current_user.get("bikes_used") == null){
+            bikes_used = new ArrayList<Double>();
+            current_user.put("bikes_used",bikes_used);
+
+        }
+
+      startActivity(new Intent(this, MainActivity2.class));
     } else {
       // Start and intent for the logged out activity
       startActivity(new Intent(this, WelcomeActivity.class));
