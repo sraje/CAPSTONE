@@ -1,4 +1,5 @@
 package treadsetters.bikesmart;
+// package com.example.mapdemo;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -16,6 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.Parse;
 import com.parse.ParseUser;
 import java.util.ArrayList;
@@ -25,15 +32,18 @@ import java.util.ArrayList;
  */
 
 
+public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback {
+    public BikeDetailsFragment() {
+        // Required empty public constructor
+    }
 
-public class BikeDetailsFragment extends Fragment {
     private static final String TAG = "Bike Details";
-
     protected Location mLastLocation;
     protected TextView mLatitudeText;
-    protected TextView mLongitudeText;
 
+    protected TextView mLongitudeText;
     LocationService myService;
+
     volatile boolean isBound = false;
 
     private ServiceConnection myConnection = new ServiceConnection() {
@@ -51,19 +61,16 @@ public class BikeDetailsFragment extends Fragment {
 
     };
 
-    public BikeDetailsFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
 
         // Inflate the layout for this fragment
         View V = inflater.inflate(R.layout.fragment_bike_details, container, false);
-        mLatitudeText = (TextView) V.findViewById((R.id.latitude_text));
-        mLongitudeText = (TextView) V.findViewById((R.id.longitude_text));
+
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         final Button start_location_button = (Button) V.findViewById(R.id.start_location_button);
         start_location_button.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +93,7 @@ public class BikeDetailsFragment extends Fragment {
         return V;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
@@ -97,20 +105,28 @@ public class BikeDetailsFragment extends Fragment {
         currentActivity.bindService(new Intent(intent), myConnection, Context.BIND_AUTO_CREATE);
     }
 
+    @Override
+    public void onMapReady(GoogleMap map) {
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(34.4125, -119.8481))
+                .title("Bike Location"));
+
+    }
+
     private void startLocationUpdates(){
         myService.startLocationUpdates();
     }
 
+
     private void displayLocation(){
         mLastLocation = getCurrentLocation();
         if(mLastLocation != null) {
-            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+            //mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+            //mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
         }
         else{
             Log.i(TAG, "Location Not Available");
         }
-
     }
 
     private Location getCurrentLocation() {
