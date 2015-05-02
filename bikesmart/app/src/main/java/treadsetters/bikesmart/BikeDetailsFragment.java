@@ -1,6 +1,8 @@
 package treadsetters.bikesmart;
 // package com.example.mapdemo;
 
+import android.animation.ObjectAnimator;
+import android.animation.TypeEvaluator;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,16 +14,19 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Fragment;
 import android.util.Log;
+import android.util.Property;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.Parse;
 import com.parse.ParseUser;
@@ -38,10 +43,10 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
     }
 
     private static final String TAG = "Bike Details";
-    protected Location mLastLocation;
-    protected TextView mLatitudeText;
+    protected Location mLastLocation = null;
+    protected LatLng mLastLatLng = new LatLng(34.4125, -119.8481);
+    protected Marker bikeMarker = null;
 
-    protected TextView mLongitudeText;
     LocationService myService;
 
     volatile boolean isBound = false;
@@ -107,9 +112,12 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     @Override
     public void onMapReady(GoogleMap map) {
-        map.addMarker(new MarkerOptions()
-                .position(new LatLng(34.4125, -119.8481))
-                .title("Bike Location"));
+
+        map.moveCamera( CameraUpdateFactory.newLatLngZoom(mLastLatLng, 25.0f) );
+
+        bikeMarker = map.addMarker(new MarkerOptions()
+                                        .position(mLastLatLng)
+                                        .title("Last known bike location"));
 
     }
 
@@ -120,9 +128,12 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     private void displayLocation(){
         mLastLocation = getCurrentLocation();
+
         if(mLastLocation != null) {
-            //mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            //mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+            mLastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            if(bikeMarker != null) {
+                animateMarker(bikeMarker, mLastLatLng);
+            }
         }
         else{
             Log.i(TAG, "Location Not Available");
@@ -142,5 +153,25 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+
+    static LatLng interpolate(float fraction, LatLng a, LatLng b) {
+        double lat = (b.latitude - a.latitude) * fraction + a.latitude;
+        double lng = (b.longitude - a.longitude) * fraction + a.longitude;
+        return new LatLng(lat, lng);
+    }
+
+    static void animateMarker(Marker marker, LatLng finalPosition) {
+        TypeEvaluator<LatLng> typeEvaluator = new TypeEvaluator<LatLng>() {
+            @Override
+            public LatLng evaluate(float fraction, LatLng startValue, LatLng endValue) {
+                return interpolate(fraction, startValue, endValue);
+            }
+        };
+        Property<Marker, LatLng> property = Property.of(Marker.class, LatLng.class, "position");
+        ObjectAnimator animator = ObjectAnimator.ofObject(marker, property, typeEvaluator, finalPosition);
+        animator.setDuration(3000);
+        animator.start();
     }
 }
