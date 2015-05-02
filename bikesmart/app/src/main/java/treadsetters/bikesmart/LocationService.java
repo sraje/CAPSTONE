@@ -136,7 +136,13 @@ public class LocationService extends Service implements
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         ParseUser user = ParseUser.getCurrentUser();
-        user.add("location_history", mLastLocation);
+
+        Log.d(TAG, "2");
+        //user.add("location_history", mLastLocation);
+        user.add("location_history", "hello");
+        Log.d(TAG, "3");
+
+        user.saveInBackground();
 
         return mLastLocation;
     }
