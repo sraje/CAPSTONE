@@ -1,5 +1,6 @@
 package treadsetters.bikesmart;
-
+import android.widget.ImageView.ScaleType;
+import android.content.Context;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -14,7 +15,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import android.view.View.OnClickListener;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -23,7 +30,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 import java.util.ArrayList;
-
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +50,7 @@ public class HomeFragment extends Fragment {
     ImageView imageView1;
     RoundImage roundedImage;
     // TODO: Rename and change types of parameters
+    static final int SELECT_FILE = 201;
     private String mParam1;
     private String mParam2;
     public int count = 0;
@@ -72,7 +82,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Context context = getActivity();
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -94,6 +104,16 @@ public class HomeFragment extends Fragment {
 
         roundedImage = new RoundImage(bm);
         imageView1.setImageDrawable(roundedImage);
+
+        imageView1.setOnClickListener(new OnClickListener(){
+
+            public void onClick(View view) {
+
+
+
+            }});
+
+
         Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -106,7 +126,9 @@ public class HomeFragment extends Fragment {
             }
         });
         Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
-        buttonAddBike.setOnClickListener(new View.OnClickListener() {
+      //  buttonAddBike.setOnClickListener(new View.OnClickListener() {
+        imageView1.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 final EditText input = (EditText) rootView.findViewById(R.id.bike_name);
@@ -129,6 +151,15 @@ public class HomeFragment extends Fragment {
                         String description = e2.getText().toString();
                         String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
+                        /*grab photo from gallerY*/
+                                    Intent intent = new Intent(
+                                    Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"),
+                                SELECT_FILE);
+//finish selecting file I guessss
                         addBikeToParse(bikename, description, bikeID);
                     }
                 });
@@ -165,6 +196,43 @@ public class HomeFragment extends Fragment {
         });
 
         return rootView;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if(requestCode == SELECT_FILE){
+                Uri selectedImage = data.getData();
+                String[] projection = { MediaColumns.DATA };
+
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                        projection, null, null, null);
+                cursor.moveToFirst();
+                int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+                cursor.moveToFirst();
+
+                String selectedImagePath = cursor.getString(column_index);
+
+                Bitmap bm;
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(selectedImagePath, options);
+                final int REQUIRED_SIZE = 200;
+                int scale = 1;
+                while (options.outWidth / scale / 2 >= REQUIRED_SIZE
+                        && options.outHeight / scale / 2 >= REQUIRED_SIZE)
+                    scale *= 2;
+                options.inSampleSize = scale;
+                options.inJustDecodeBounds = false;
+                bm = BitmapFactory.decodeFile(selectedImagePath, options);
+                roundedImage = new RoundImage(bm);
+                imageView1.setScaleType(ScaleType.FIT_XY);
+                imageView1.setImageDrawable(roundedImage);
+
+            }
+
+        }
+
     }
 
     public void addBikeToParse(String bikename, String description, String bikeID) {

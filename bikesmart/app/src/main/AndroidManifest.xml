@@ -111,5 +111,5 @@
         </receiver>
         <meta-data android:name="com.parse.push.notification_icon" android:resource="@drawable/icon"/>
     </application>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 </manifest>

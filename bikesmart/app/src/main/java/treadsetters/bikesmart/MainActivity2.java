@@ -16,6 +16,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
@@ -23,6 +26,8 @@ import com.parse.ParseUser;
 
 public class MainActivity2 extends ActionBarActivity
         implements BlankFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, BikesFragment.OnFragmentInteractionListener, FriendsFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener{
+    ImageView imageView1;
+    RoundImage roundedImage;
     public void onFragmentInteraction(Uri uri){
         //you can leave it empty
     }
@@ -62,6 +67,9 @@ public class MainActivity2 extends ActionBarActivity
                     .add(R.id.container, new HomeFragment())
                     .commit();
         }
+
+
+
 
     /* Assinging the toolbar object ot the view
     and setting the the Action bar to our toolbar
