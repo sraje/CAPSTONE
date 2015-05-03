@@ -4,8 +4,7 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView android:layout_width="match_parent" android:layout_height="612dp"
-        android:background="@drawable/background_sample"
-         />
+        android:background="@drawable/bg_coffee" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,6 +49,50 @@
         android:scaleType="centerCrop"
         android:layout_gravity="center_horizontal|top"
         android:src="@drawable/def"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="30dp"
+        android:text="Click to Add Bike"
+        android:cropToPadding="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Click to Add Bike"
+        style="@android:style/TextAppearance.Large"
+        android:id="@+id/textView2"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="120dp"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="315dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+
+        android:text="Active Bike:"
+        android:id="@+id/textView6"
+        android:layout_gravity="center_horizontal|top"
+        android:background="#2F2F2F"
+        android:autoText="false"
+        android:textColor="@android:color/holo_green_light"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:layout_marginTop="255dp"
+        android:paddingLeft="30dp" />
+
+    <TextView
+        android:layout_width="315dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Last Seen:"
+        android:id="@+id/textView7"
+        android:layout_gravity="center_horizontal|top"
+        android:background="#2F2F2F"
+        android:autoText="false"
+        android:textColor="@android:color/holo_green_light"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:layout_marginTop="312dp"
+        android:paddingLeft="30dp" />
 
 </FrameLayout>
