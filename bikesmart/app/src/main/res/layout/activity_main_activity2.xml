@@ -22,6 +22,8 @@
             android:layout_height="wrap_content"
              />
 
+
+
         <fragment class="treadsetters.bikesmart.BlankFragment"
             android:id="@+id/container"
             android:layout_width="match_parent"
@@ -39,7 +41,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="left"
 
-        android:background="#ffffff"
+        android:background="#000000"
         android:scrollbars="vertical">
 
     </android.support.v7.widget.RecyclerView>

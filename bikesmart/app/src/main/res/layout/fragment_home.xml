@@ -3,7 +3,7 @@
     android:layout_height="match_parent" tools:context="treadsetters.bikesmart.HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+    <TextView android:layout_width="match_parent" android:layout_height="612dp"
         android:background="@drawable/background_sample"
          />
 
@@ -11,17 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:background="@color/hint_foreground_material_light">
-        <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/frag_name"
-        android:textColor="@android:color/white"
-        android:textSize="40dp"
-        android:id="@+id/textView"
-        android:gravity="center_horizontal"/>
-    </LinearLayout>
+        android:background="@color/hint_foreground_material_light"></LinearLayout>
 
     <Button
         android:layout_width="120dp"
@@ -52,5 +42,14 @@
         android:textStyle="bold"
         android:id="@+id/button_find_bikes"
         android:layout_gravity="left|bottom" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_horizontal|top"
+        android:src="@drawable/def"
+        android:layout_marginTop="30dp" />
 
 </FrameLayout>
