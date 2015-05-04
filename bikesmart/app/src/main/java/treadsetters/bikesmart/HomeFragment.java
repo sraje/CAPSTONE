@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    boolean lock = true;
     ImageView imageView1;
     ImageView button_locate;
     ImageView button_lock;
@@ -114,12 +115,41 @@ public class HomeFragment extends Fragment {
         roundedImage_location = new RoundImage(bm_locate);
         button_locate.setImageDrawable(roundedImage_location);
 
+
+
+
+
+        button_lock  = (ImageView)rootView.findViewById(R.id.button_lock);
+        button_lock.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if(lock == true){
+                    Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.unlock);
+                    roundedImage_lock = new RoundImage(bm_lock);
+                    button_lock.setImageDrawable(roundedImage_lock);
+                    //call unlock function here
+                    lock = false;
+                }else{
+                    Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.lock);
+                    roundedImage_lock = new RoundImage(bm_lock);
+                    button_lock.setImageDrawable(roundedImage_lock);
+                    button_lock.setTag(70);
+                    lock = true;
+                }
+
+            }
+        });
+
+
         button_lock = (ImageView)
                 rootView.findViewById(R.id.button_lock);
         Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.lock);
 
         roundedImage_lock = new RoundImage(bm_lock);
         button_lock.setImageDrawable(roundedImage_lock);
+
+
+
+
 
         button_light = (ImageView)
                 rootView.findViewById(R.id.button_light);
