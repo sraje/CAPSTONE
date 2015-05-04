@@ -80,7 +80,8 @@
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         android:layout_marginTop="255dp"
-        android:paddingLeft="30dp" />
+        android:paddingLeft="30dp"
+        android:textSize="18dp" />
 
     <TextView
         android:layout_width="315dp"
@@ -94,8 +95,9 @@
         android:textColor="@android:color/holo_green_light"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:layout_marginTop="318dp"
-        android:paddingLeft="30dp" />
+        android:layout_marginTop="300dp"
+        android:paddingLeft="30dp"
+        android:textSize="18dp" />
 
     <TextView
         android:layout_width="315dp"
@@ -107,8 +109,9 @@
         android:background="#2F2F2F"
         android:autoText="false"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="295dp"
-        android:paddingLeft="30dp" />
+        android:layout_marginTop="290dp"
+        android:paddingLeft="30dp"
+        android:textSize="14dp" />
 
     <TextView
         android:layout_width="315dp"
@@ -120,43 +123,46 @@
         android:background="#2F2F2F"
         android:autoText="false"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="360dp"
+        android:layout_marginTop="335dp"
         android:paddingLeft="30dp"
-        android:paddingBottom="15dp" />
+        android:paddingBottom="15dp"
+        android:textSize="14dp" />
 
     <ImageView
         android:id="@+id/button_lock"
-        android:layout_width="77dp"
-        android:layout_height="77dp"
+        android:layout_width="71dp"
+        android:layout_height="71dp"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         android:src="@drawable/lock"
         android:text="Click to Add Bike"
         android:cropToPadding="false"
-        android:layout_marginTop="100dp" />
+        android:layout_marginTop="80dp" />
 
     <ImageView
         android:id="@+id/button_locate"
-        android:layout_width="77dp"
-        android:layout_height="77dp"
+        android:layout_width="71dp"
+        android:layout_height="71dp"
         android:scaleType="centerCrop"
         android:layout_gravity="left|center_vertical"
         android:src="@drawable/locate"
         android:text="Click to Add Bike"
         android:cropToPadding="false"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="80dp"
         android:layout_marginLeft="45dp" />
 
     <ImageView
         android:id="@+id/button_light"
-        android:layout_width="77dp"
-        android:layout_height="77dp"
+        android:layout_width="71dp"
+        android:layout_height="71dp"
         android:scaleType="centerCrop"
         android:layout_gravity="right|center_vertical"
         android:src="@drawable/light"
         android:text="Click to Add Bike"
         android:cropToPadding="false"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="80dp"
         android:layout_marginRight="45dp" />
+
+
 
 </FrameLayout>
