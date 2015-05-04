@@ -16,22 +16,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.view.View.OnClickListener;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.widget.ImageView;
 import java.util.ArrayList;
-import android.os.Environment;
-import android.provider.MediaStore;
+
 import android.provider.MediaStore.MediaColumns;
 
 /**
@@ -48,7 +44,13 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     ImageView imageView1;
-    RoundImage roundedImage;
+    ImageView button_locate;
+    ImageView button_lock;
+    ImageView button_light;
+    RoundImage roundedImage_def;
+    RoundImage roundedImage_location;
+    RoundImage roundedImage_lock;
+    RoundImage roundedImage_light;
     // TODO: Rename and change types of parameters
     static final int SELECT_FILE = 201;
     private String mParam1;
@@ -102,8 +104,30 @@ public class HomeFragment extends Fragment {
                 rootView.findViewById(R.id.imageView1);
         Bitmap bm = BitmapFactory.decodeResource(getResources(),R.drawable.def);
 
-        roundedImage = new RoundImage(bm);
-        imageView1.setImageDrawable(roundedImage);
+        roundedImage_def = new RoundImage(bm);
+        imageView1.setImageDrawable(roundedImage_def);
+
+        button_locate = (ImageView)
+                rootView.findViewById(R.id.button_locate);
+        Bitmap bm_locate = BitmapFactory.decodeResource(getResources(),R.drawable.locate);
+
+        roundedImage_location = new RoundImage(bm_locate);
+        button_locate.setImageDrawable(roundedImage_location);
+
+        button_lock = (ImageView)
+                rootView.findViewById(R.id.button_lock);
+        Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.lock);
+
+        roundedImage_lock = new RoundImage(bm_lock);
+        button_lock.setImageDrawable(roundedImage_lock);
+
+        button_light = (ImageView)
+                rootView.findViewById(R.id.button_light);
+        Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.light);
+
+        roundedImage_light = new RoundImage(bm_light);
+        button_light.setImageDrawable(roundedImage_light);
+
 
         imageView1.setOnClickListener(new OnClickListener(){
 
@@ -225,9 +249,9 @@ public class HomeFragment extends Fragment {
                 options.inSampleSize = scale;
                 options.inJustDecodeBounds = false;
                 bm = BitmapFactory.decodeFile(selectedImagePath, options);
-                roundedImage = new RoundImage(bm);
+                roundedImage_def = new RoundImage(bm);
                 imageView1.setScaleType(ScaleType.FIT_XY);
-                imageView1.setImageDrawable(roundedImage);
+                imageView1.setImageDrawable(roundedImage_def);
 
             }
 

@@ -62,15 +62,17 @@
         android:id="@+id/textView2"
         android:layout_gravity="center_horizontal|top"
         android:layout_marginTop="120dp"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="315dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
 
-        android:text="Active Bike:"
-        android:id="@+id/textView6"
+        android:text="Active Bike"
+        android:id="@+id/active_bike_textview"
         android:layout_gravity="center_horizontal|top"
         android:background="#2F2F2F"
         android:autoText="false"
@@ -84,15 +86,77 @@
         android:layout_width="315dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Last Seen:"
-        android:id="@+id/textView7"
+        android:text="Last Seen"
+        android:id="@+id/LastSeen_textview"
         android:layout_gravity="center_horizontal|top"
         android:background="#2F2F2F"
         android:autoText="false"
         android:textColor="@android:color/holo_green_light"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:layout_marginTop="312dp"
+        android:layout_marginTop="318dp"
         android:paddingLeft="30dp" />
+
+    <TextView
+        android:layout_width="315dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Rachel&apos;s Road Bike"
+        android:id="@+id/activebike_name"
+        android:layout_gravity="center_horizontal|top"
+        android:background="#2F2F2F"
+        android:autoText="false"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="295dp"
+        android:paddingLeft="30dp" />
+
+    <TextView
+        android:layout_width="315dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Isla Vista, CA"
+        android:id="@+id/last_location"
+        android:layout_gravity="center_horizontal|top"
+        android:background="#2F2F2F"
+        android:autoText="false"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="360dp"
+        android:paddingLeft="30dp"
+        android:paddingBottom="15dp" />
+
+    <ImageView
+        android:id="@+id/button_lock"
+        android:layout_width="77dp"
+        android:layout_height="77dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center"
+        android:src="@drawable/lock"
+        android:text="Click to Add Bike"
+        android:cropToPadding="false"
+        android:layout_marginTop="100dp" />
+
+    <ImageView
+        android:id="@+id/button_locate"
+        android:layout_width="77dp"
+        android:layout_height="77dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="left|center_vertical"
+        android:src="@drawable/locate"
+        android:text="Click to Add Bike"
+        android:cropToPadding="false"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="45dp" />
+
+    <ImageView
+        android:id="@+id/button_light"
+        android:layout_width="77dp"
+        android:layout_height="77dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="right|center_vertical"
+        android:src="@drawable/light"
+        android:text="Click to Add Bike"
+        android:cropToPadding="false"
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="45dp" />
 
 </FrameLayout>

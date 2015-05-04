@@ -68,6 +68,7 @@
         <activity
             android:name=".MainActivity2"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_main_activity2" >
         </activity>
         <service android:name="com.parse.PushService" />
