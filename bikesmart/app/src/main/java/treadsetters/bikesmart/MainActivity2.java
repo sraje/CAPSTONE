@@ -1,28 +1,48 @@
 package treadsetters.bikesmart;
+
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Set;
+import java.util.UUID;
+
 
 public class MainActivity2 extends ActionBarActivity
         implements BlankFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, BikesFragment.OnFragmentInteractionListener, FriendsFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener{
+    ImageView imageView1;
+    RoundImage roundedImage;
+
+    public BluetoothAdapter mBluetoothAdapter;
+    public BluetoothSocket mBluetoothSocket;
+    public BluetoothDevice mBluetoothDevice;
+    public OutputStream outStream;
+    public static String address;
+    public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
     public void onFragmentInteraction(Uri uri){
         //you can leave it empty
     }
@@ -62,6 +82,9 @@ public class MainActivity2 extends ActionBarActivity
                     .add(R.id.container, new HomeFragment())
                     .commit();
         }
+
+
+
 
     /* Assinging the toolbar object ot the view
     and setting the the Action bar to our toolbar
@@ -227,12 +250,40 @@ public class MainActivity2 extends ActionBarActivity
             Log.d("MYTAG", "Hit settings...");
             return true;
         }
-        if(id ==R.id.action_logout){
+        if(id == R.id.action_logout){
             ParseUser.getCurrentUser().logOut();
             Intent intent = new Intent(MainActivity2.this, DispatchActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             return true;
+        }
+        if(id == R.id.action_bluetooth) {
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (!mBluetoothAdapter.isEnabled()) {
+                mBluetoothAdapter.enable();
+            }
+
+            if (mBluetoothDevice == null) {
+
+                Set<BluetoothDevice> paired = mBluetoothAdapter.getBondedDevices();
+                if (paired.size() > 0) {
+                    for (BluetoothDevice d : paired) {
+                        if (d.getName().equals("ExampleRobot")) {
+                            mBluetoothDevice = d;
+                            break;
+                        }
+                    }
+                }
+
+                try {
+                    mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(MY_UUID);
+                    mBluetoothSocket.connect();
+                    Toast.makeText(getApplicationContext(), "Bluetooth Connected", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), "Bluetooth Failed to Connect", Toast.LENGTH_SHORT).show();
+                }
+            }
+
         }
 
         return super.onOptionsItemSelected(item);
