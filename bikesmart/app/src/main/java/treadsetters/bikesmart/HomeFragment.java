@@ -1,34 +1,35 @@
 package treadsetters.bikesmart;
-import android.widget.ImageView.ScaleType;
-import android.content.Context;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-import android.view.View.OnClickListener;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore.MediaColumns;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import android.widget.ImageView;
+import java.io.IOException;
 import java.util.ArrayList;
-
-import android.provider.MediaStore.MediaColumns;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +45,7 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     boolean lock = true;
+    boolean light = false;
     ImageView imageView1;
     ImageView button_locate;
     ImageView button_lock;
@@ -128,12 +130,51 @@ public class HomeFragment extends Fragment {
                     button_lock.setImageDrawable(roundedImage_lock);
                     //call unlock function here
                     lock = false;
+                    MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(a.mBluetoothSocket != null) {
+
+                        try {
+                            a.outStream = a.mBluetoothSocket.getOutputStream();
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Socket Error", Toast.LENGTH_SHORT).show();
+                        }
+
+                        String message = "L0#";
+                        byte[] msgBuffer = message.getBytes();
+
+                        try {
+                            a.outStream.write(msgBuffer);
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Write Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
                 }else{
                     Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.lock);
                     roundedImage_lock = new RoundImage(bm_lock);
                     button_lock.setImageDrawable(roundedImage_lock);
                     button_lock.setTag(70);
                     lock = true;
+                    MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(a.mBluetoothSocket != null) {
+
+                        try {
+                            a.outStream = a.mBluetoothSocket.getOutputStream();
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Socket Error", Toast.LENGTH_SHORT).show();
+                        }
+
+                        String message = "L1#";
+                        byte[] msgBuffer = message.getBytes();
+
+                        try {
+                            a.outStream.write(msgBuffer);
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Write Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
 
             }
@@ -158,6 +199,55 @@ public class HomeFragment extends Fragment {
         roundedImage_light = new RoundImage(bm_light);
         button_light.setImageDrawable(roundedImage_light);
 
+        button_light.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if(light == true){
+                    light = false;
+                    MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(a.mBluetoothSocket != null) {
+
+                        try {
+                            a.outStream = a.mBluetoothSocket.getOutputStream();
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Socket Error", Toast.LENGTH_SHORT).show();
+                        }
+
+                        String message = "F0#";
+                        byte[] msgBuffer = message.getBytes();
+
+                        try {
+                            a.outStream.write(msgBuffer);
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Write Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+                else{
+                    light = true;
+                    MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(a.mBluetoothSocket != null) {
+
+                        try {
+                            a.outStream = a.mBluetoothSocket.getOutputStream();
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Socket Error", Toast.LENGTH_SHORT).show();
+                        }
+
+                        String message = "F1#";
+                        byte[] msgBuffer = message.getBytes();
+
+                        try {
+                            a.outStream.write(msgBuffer);
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Write Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+        });
+
 
         imageView1.setOnClickListener(new OnClickListener(){
 
@@ -180,7 +270,7 @@ public class HomeFragment extends Fragment {
             }
         });
         Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
-      //  buttonAddBike.setOnClickListener(new View.OnClickListener() {
+        //  buttonAddBike.setOnClickListener(new View.OnClickListener() {
         imageView1.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
@@ -206,8 +296,8 @@ public class HomeFragment extends Fragment {
                         String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
                         /*grab photo from gallerY*/
-                                    Intent intent = new Intent(
-                                    Intent.ACTION_PICK,
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("image/*");
                         startActivityForResult(
