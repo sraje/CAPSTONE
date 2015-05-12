@@ -137,9 +137,13 @@ public class MainActivity2 extends ActionBarActivity
                             //fragment = new MyFragment1();
                             break;
                         case 1://is home
+
                             fragment = new HomeFragment();
+
                             fragmentManager.beginTransaction()
-                                    .replace(R.id.container, fragment)
+                                    .detach(fragment)
+                                    //.replace(R.id.container, fragment)
+                                    .attach(fragment)
                                     .commit();
                             break;
                         case 2:

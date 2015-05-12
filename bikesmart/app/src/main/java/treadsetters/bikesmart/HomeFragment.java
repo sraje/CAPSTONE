@@ -45,6 +45,7 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     boolean lock = true;
+    boolean bike_pic = false;
     boolean light = false;
     ImageView imageView1;
     ImageView button_locate;
@@ -101,12 +102,22 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+            super.onCreate(savedInstanceState);
+
 
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         imageView1 = (ImageView)
                 rootView.findViewById(R.id.imageView1);
-        Bitmap bm = BitmapFactory.decodeResource(getResources(),R.drawable.def);
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.def);
+        if (bike_pic == false) {
+            bm = BitmapFactory.decodeResource(getResources(), R.drawable.def);
+            bike_pic = true;
+        }
+        else if (bike_pic==true) {
+            bm = BitmapFactory.decodeResource(getResources(), R.drawable.def_bike);
 
+
+        }
         roundedImage_def = new RoundImage(bm);
         imageView1.setImageDrawable(roundedImage_def);
 
