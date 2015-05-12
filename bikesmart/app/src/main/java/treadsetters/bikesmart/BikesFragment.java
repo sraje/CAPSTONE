@@ -2,7 +2,6 @@ package treadsetters.bikesmart;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.ListFragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -20,6 +20,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -31,7 +32,7 @@ import java.util.List;
  * Use the {@link BikesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BikesFragment extends ListFragment {
+public class BikesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -40,6 +41,13 @@ public class BikesFragment extends ListFragment {
     private ArrayList<String> mybikes;
     public static ArrayList<ParseObject> global_postList;
     public static ArrayAdapter<String> adapter;
+
+    public ExpandableListAdapter listAdapter;
+    public ExpandableListView expListView;
+    List<String> bikeHeaders;
+    HashMap<String, List<String>> bikeLists;
+    List<String> bikesOwned;
+    List<String> bikesUsed;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -77,24 +85,28 @@ public class BikesFragment extends ListFragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        Log.d("MYTAG","onCreate");
-        mybikes = new ArrayList<String>();
-        global_postList = new ArrayList<ParseObject>();
-        adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1, mybikes);
-        setListAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        getMyBikes(adapter);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
         Log.d("MYTAG","onCreateView");
+
+        bikeHeaders = new ArrayList<String>();
+        bikeLists = new HashMap<String, List<String>>();
+
+        bikeHeaders.add("Bikes I Own");
+        bikeHeaders.add("Bikes Shared With Me");
+
+        bikesOwned = new ArrayList<String>();
+        bikesUsed = new ArrayList<String>();
+        expListView = (ExpandableListView) rootView.findViewById(R.id.bike_lists);
+        getMyBikes();
+        listAdapter = new ExpandableListAdapter(getActivity(), bikeHeaders, bikeLists);
+        expListView.setAdapter(listAdapter);
 
 
         Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
@@ -102,7 +114,7 @@ public class BikesFragment extends ListFragment {
             public void onClick(View view) {
                 // Perform action on click
                 Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
-                getMyBikes(adapter);
+                getMyBikes();
             }
         });
 
@@ -111,27 +123,34 @@ public class BikesFragment extends ListFragment {
         return rootView;
     }
 
-    public void getMyBikes(final ArrayAdapter adapter) {
-        Log.d("MYTAG","getMyBikes");
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
-        mybikes.clear();
-        ArrayList<String> bikes_owned_copy = new ArrayList<String>();
+    public void getMyBikes() {
 
         ParseUser current_user = ParseUser.getCurrentUser();
 
-        bikes_owned_copy.clear();
+        ArrayList<String> bikes_owned_copy = new ArrayList<String>();
+        ArrayList<String> bikes_used_copy = new ArrayList<String>();
+
         bikes_owned_copy = (ArrayList<String>) current_user.get("bikes_owned");
-        Log.d("MYTAG", "got bikes_owned. size: " + bikes_owned_copy.size());
+        bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
 
         for (String bike_id : bikes_owned_copy) {
-            Log.d("MYTAG", "ID is: " + bike_id);
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            Log.d(MYTAG, "bikeID is!! : " + bike_id);
+            query.whereEqualTo("bike_id", bike_id);
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null) {
+                        bikesOwned.add(postList.get(0).getString("bike_name"));
+                    } else {
+                        Log.d("MYTAG","Post retrieval failed...");
+                    }
+                }
+            });
         }
 
-
-        mybikes.clear();
-        global_postList.clear();
-
-        for (String bike_id : bikes_owned_copy) {
+        /*for (String bike_id : bikes_used_copy) {
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
             Log.d(MYTAG, "bikeID is!! : " + bike_id);
@@ -144,12 +163,7 @@ public class BikesFragment extends ListFragment {
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
                     if (e == null) {
-                        mybikes.add(postList.get(0).getString("bike_name"));
-                        global_postList.add(postList.get(0));
-                        adapter.notifyDataSetChanged();
-                        setListAdapter(adapter);
-                        ((ArrayAdapter<String>) getListAdapter())
-                                .notifyDataSetChanged();
+                        bikesUsed.add(postList.get(0).getString("bike_name"));
                     } else {
                         Log.d("MYTAG","Post retrieval failed...");
                     }
@@ -157,7 +171,10 @@ public class BikesFragment extends ListFragment {
             });
 
 
-        }
+        }*/
+
+        bikeLists.put(bikeHeaders.get(0), bikesOwned);
+        bikeLists.put(bikeHeaders.get(1), bikesUsed);
     }
 
 
