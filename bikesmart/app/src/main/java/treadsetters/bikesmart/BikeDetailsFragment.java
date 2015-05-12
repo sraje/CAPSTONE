@@ -1,5 +1,4 @@
 package treadsetters.bikesmart;
-// package com.example.mapdemo;
 
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
@@ -19,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,40 +29,36 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.Parse;
 import com.parse.ParseUser;
 import java.util.ArrayList;
-
 /**
- * Created by Duncan on 4/5/2015.
+ * Created by Duncan Sommer on 4/5/2015.
  */
 
 
 public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback {
+    private static final String TAG = "Bike Details";
+
+    LocationService myService;
+    volatile boolean isBound = false;
+
+    protected Location mLastLocation;
+    protected LatLng mLastLatLng = new LatLng(34.4125, -119.8481);
+    protected GoogleMap mMap;
+    protected Marker bikeMarker;
+
     public BikeDetailsFragment() {
         // Required empty public constructor
     }
 
-    private static final String TAG = "Bike Details";
-    protected Location mLastLocation = null;
-    protected LatLng mLastLatLng = new LatLng(34.4125, -119.8481);
-    protected Marker bikeMarker = null;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
+        super.onCreate(savedInstanceState);
 
-    LocationService myService;
-
-    volatile boolean isBound = false;
-
-    private ServiceConnection myConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
-            myService = binder.getService();
-            isBound = true;
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-            isBound = false;
-        }
-
-    };
+        Activity currentActivity = getActivity();
+        Intent intent = new Intent(currentActivity, LocationService.class);
+        ComponentName myService = currentActivity.startService(intent);
+        currentActivity.bindService(new Intent(intent), myConnection, Context.BIND_AUTO_CREATE);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,33 +81,23 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
         final Button button2 = (Button) V.findViewById(R.id.location_button);
         button2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                displayLocation();
-//                ArrayList<Location> llist = getRecentLocations();
-//                for(Location l : llist){
-//                    continue;
-//                }
+                getCurrentLocation();
+
+                animateMarker(bikeMarker, mLastLatLng);
+                //mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(mLastLatLng, 14.0f) );
             }
         });
 
         return V;
     }
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
-        super.onCreate(savedInstanceState);
-
-        Activity currentActivity = getActivity();
-        Intent intent = new Intent(currentActivity, LocationService.class);
-        ComponentName myService = currentActivity.startService(intent);
-        currentActivity.bindService(new Intent(intent), myConnection, Context.BIND_AUTO_CREATE);
-    }
-
     @Override
     public void onMapReady(GoogleMap map) {
+        Log.d(TAG, "onMapReady");
+        mMap = map;
 
-        map.moveCamera( CameraUpdateFactory.newLatLngZoom(mLastLatLng, 25.0f) );
+
+        map.moveCamera( CameraUpdateFactory.newLatLngZoom(mLastLatLng, 14.0f) );
 
         bikeMarker = map.addMarker(new MarkerOptions()
                                         .position(mLastLatLng)
@@ -121,38 +105,41 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     }
 
+    private ServiceConnection myConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
+            myService = binder.getService();
+            isBound = true;
+        }
+
+        public void onServiceDisconnected(ComponentName arg0) {
+            isBound = false;
+        }
+
+    };
+
     private void startLocationUpdates(){
         myService.startLocationUpdates();
     }
 
-
-    private void displayLocation(){
-        mLastLocation = getCurrentLocation();
-
-        if(mLastLocation != null) {
-            mLastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            if(bikeMarker != null) {
-                animateMarker(bikeMarker, mLastLatLng);
-            }
-        }
-        else{
-            Log.i(TAG, "Location Not Available");
-        }
+    private void onLocationChanged(Location location) {
+        mLastLocation = location;
+        animateMarker(bikeMarker, mLastLatLng);
     }
 
     private Location getCurrentLocation() {
-        Location currentLocation = myService.getCurrentLocation();
-        return currentLocation;
-    }
+        mLastLocation = myService.getCurrentLocation();
 
-    private ArrayList<Location> getRecentLocations(){
-        ArrayList<Location> l = myService.getRecentLocations();
-        return l;
-    }
+        if(mLastLocation != null) {
+            mLastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        }
+        else{
+            Log.d(TAG, "Location Not Available");
+        }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        return mLastLocation;
     }
 
 
