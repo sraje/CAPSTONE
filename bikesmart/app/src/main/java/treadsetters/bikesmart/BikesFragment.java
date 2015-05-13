@@ -140,6 +140,28 @@ public class BikesFragment extends Fragment {
             }
         });
 
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id){
+                Log.d(MYTAG, "onListItemClick");
+                //Object bike = getListView().getItemAtPosition(position);
+
+                FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+                Fragment fragment = new BikeDetailsFragment();
+                Bundle args = new Bundle();
+                //args.put(bike); // Add the bike object here
+                fragment.setArguments(args);
+
+                // Switch to the bike details fragment.
+                transaction.replace(R.id.container, fragment);
+                // Make sure the user can press 'back'
+                transaction.addToBackStack(null);
+                transaction.commit();
+                return true;
+            }
+        });
+
 
         return rootView;
     }
@@ -172,18 +194,7 @@ public class BikesFragment extends Fragment {
 
         /*for (String bike_id : bikes_used_copy) {
 
-<<<<<<< HEAD
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
-            Log.d(MYTAG, "bikeID is!! : " + bike_id);
-            query.whereEqualTo("bike_id", bike_id);
-=======
-            } catch (ParseException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-                Log.d(MYTAG, "Post Retreival Error: " + e1.getMessage());
-            }
-        }
->>>>>>> bike details screen to display location data
+
 
             // run query in foreground
 
@@ -205,11 +216,6 @@ public class BikesFragment extends Fragment {
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
         bikeLists.put(bikeHeaders.get(1), bikesUsed);
     }
-
-
-
-
-
 
     @Override
     public void onAttach(Activity activity) {

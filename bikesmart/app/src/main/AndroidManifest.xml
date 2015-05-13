@@ -91,6 +91,11 @@
                 android:resource="@xml/device_filter" />
         </activity>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDRn-vujGlHN5yhMGzWQqsVxlRUZ23pq4c"/>
+
+
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">
             <intent-filter>

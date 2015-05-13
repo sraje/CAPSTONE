@@ -374,7 +374,6 @@ public class HomeFragment extends Fragment {
                 imageView1.setImageDrawable(roundedImage_def);
 
             }
-
         }
     }
 
@@ -384,6 +383,7 @@ public class HomeFragment extends Fragment {
         ArrayList<String> user_bikes = (ArrayList<String>) current_user.get("bikes_used");
         // Add the new bike to the list
         user_bikes.add(bikeID);
+
         current_user.put("my_groups", user_bikes);
         current_user.saveInBackground();
 
