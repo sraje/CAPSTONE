@@ -269,6 +269,8 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+
         Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
         //  buttonAddBike.setOnClickListener(new View.OnClickListener() {
         imageView1.setOnClickListener(new View.OnClickListener() {
@@ -296,14 +298,7 @@ public class HomeFragment extends Fragment {
                         String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
                         /*grab photo from gallerY*/
-                        Intent intent = new Intent(
-                                Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("image/*");
-                        startActivityForResult(
-                                Intent.createChooser(intent, "Select File"),
-                                SELECT_FILE);
-//finish selecting file I guessss
+
                         addBikeToParse(bikename, description, bikeID);
                     }
                 });
@@ -317,15 +312,19 @@ public class HomeFragment extends Fragment {
                 builder.show();
 
 
-//                Button add_pic = (Button) rootView.findViewById(R.id.add_pic);
-//                add_pic.setOnClickListener(new View.OnClickListener() {
-//                    public void onClick(View view) {
-//                        // Perform action on click
-//                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        startActivity(intent);
-//                    }
-//                });
+                Button add_pic = (Button) v.findViewById(R.id.add_pic);
+                add_pic.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"),
+                                SELECT_FILE);
+//finish selecting file I guessss
+                    }
+                });
 
 
             }
