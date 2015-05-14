@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -50,7 +51,9 @@ public class HomeFragment extends Fragment {
     ImageView button_locate;
     ImageView button_lock;
     ImageView button_light;
+    ImageView imageView;
     RoundImage roundedImage_def;
+    RoundImage roundedImage_overlay;
     RoundImage roundedImage_location;
     RoundImage roundedImage_lock;
     RoundImage roundedImage_light;
@@ -109,6 +112,15 @@ public class HomeFragment extends Fragment {
 
         roundedImage_def = new RoundImage(bm);
         imageView1.setImageDrawable(roundedImage_def);
+/* overlay switch buke */
+        imageView = (ImageView)
+                rootView.findViewById(R.id.imageView);
+        Bitmap bm1 = BitmapFactory.decodeResource(getResources(),R.drawable.overlay);
+
+        roundedImage_overlay = new RoundImage(bm1);
+        imageView.setImageDrawable(roundedImage_overlay);
+
+
 
         button_locate = (ImageView)
                 rootView.findViewById(R.id.button_locate);
@@ -180,7 +192,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
+        //imageView.compress(Bitmap.CompressFormat.JPEG, 90, out);
         button_lock = (ImageView)
                 rootView.findViewById(R.id.button_lock);
         Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.lock);
@@ -323,6 +335,8 @@ public class HomeFragment extends Fragment {
                                 Intent.createChooser(intent, "Select File"),
                                 SELECT_FILE);
 //finish selecting file I guessss
+                        TextView addbike = (TextView)rootView.findViewById(R.id.textView);
+                        addbike.setVisibility(View.INVISIBLE);
                     }
                 });
 
