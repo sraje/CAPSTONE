@@ -169,15 +169,15 @@ public class BikesFragment extends Fragment {
     public void getMyBikes() {
         ParseUser current_user = ParseUser.getCurrentUser();
 
-        ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
+        ArrayList<String> bikes_owned_copy = new ArrayList<String>();
         ArrayList<String> bikes_used_copy = new ArrayList<String>();
 
-        bikes_owned_copy = (ArrayList<Double>) current_user.get("bikes_owned");
+        bikes_owned_copy = (ArrayList<String>) current_user.get("bikes_owned");
         bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
 
         bikesOwned.clear();
 
-        for (Double bike_id : bikes_owned_copy) {
+        for (String bike_id : bikes_owned_copy) {
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
             Log.d(MYTAG, "bikeID is!! : " + bike_id);
