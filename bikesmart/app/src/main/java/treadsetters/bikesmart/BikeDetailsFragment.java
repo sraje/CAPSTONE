@@ -44,8 +44,6 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
     LocationService myService;
     volatile boolean isBound = false;
 
-    protected long bike_id;
-
     protected Location mLastLocation;
     protected LatLng mLastLatLng = new LatLng(34.4125, -119.8481);
     protected TextView distance_traveled_text_box;
@@ -62,8 +60,6 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
-        bike_id = (long) savedInstanceState.get("id");
-        
         Activity currentActivity = getActivity();
         Intent intent = new Intent(currentActivity, LocationService.class);
         ComponentName myService = currentActivity.startService(intent);
@@ -78,6 +74,12 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         // Inflate the layout for this fragment
         View V = inflater.inflate(R.layout.fragment_bike_details, container, false);
 
+        final TextView bike_title = (TextView) V.findViewById(R.id.bike_name);
+        String bike = (String) this.getArguments().getString("bike");
+        //bike_title.setText(bike);
+        Log.d(TAG, "Bike name:" + bike);
+
+
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -90,7 +92,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
             }
         });
 
-        final Button get_location_button = (Button) V.findViewById(R.id.location_button);
+        final Button get_location_button = (Button) V.findViewById(R.id.get_location_button);
         get_location_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onLocationChanged();
@@ -133,25 +135,25 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         myService.startLocationUpdates();
     }
 
-    @Override
     public void onLocationChanged() {
         Location location = myService.getCurrentLocation();
 
-        if(location != null) {
-            distance_traveled += mLastLocation.distanceTo(location);
+        if (location != null) {
+            if (mLastLocation != null) {
+                distance_traveled += mLastLocation.distanceTo(location);
+            }
 
             mLastLocation = location;
             mLastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
             distance_traveled_text_box.setText(Float.toString(distance_traveled / 1000));
             animateMarker(bikeMarker, mLastLatLng);
-        }
-
-        else{
+        } else {
             Log.d(TAG, "Location Not Available");
         }
-
     }
+    //CustomReceiver.setListener(this);
+
 
     static LatLng interpolate(float fraction, LatLng a, LatLng b) {
         double lat = (b.latitude - a.latitude) * fraction + a.latitude;

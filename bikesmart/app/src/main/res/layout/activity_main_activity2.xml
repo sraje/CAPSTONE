@@ -27,7 +27,7 @@
         <fragment class="treadsetters.bikesmart.BlankFragment"
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="722dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="-30dp" />   <!-- changed to fill_parent from match_parent -->
 
 

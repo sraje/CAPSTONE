@@ -7,34 +7,40 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:orientation="vertical" >
-    tools:context="treadsetters.bikesmart.BikeDetailsFragment"
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight = "1"
-        android:orientation="vertical" >
-
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.MapFragment"
-            tools:layout="@android:layout/simple_gallery_item" />
-
-    </LinearLayout>
+    android:orientation="vertical"
+    tools:context="treadsetters.bikesmart.BikeDetailsFragment" >
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
+    <TextView
+        android:id="@+id/bike_name"
+        android:text="Rachel's Road Bike"
+        android:textSize="24sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal" />
+
+
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="6"
+        android:name="com.google.android.gms.maps.MapFragment"
+        tools:layout="@android:layout/activity_list_item" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="2"
         android:gravity="center"
         android:orientation="horizontal" >
 
         <TextView
-            android:text="Distance Traveled (km):"
+            android:text="Distance Traveled (km): 3.5\nLast Used: Thursday, May 19"
+            android:textSize="20sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center" />
@@ -51,26 +57,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:gravity="center|bottom"
         android:orientation="horizontal" >
 
         <Button
             android:text="@string/get_location_button"
-            android:id="@+id/location_button"
+            android:id="@+id/get_location_button"
             android:layout_width="145dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center"/>
+            android:layout_height="wrap_content" />
 
         <Button
             android:text="Start Location"
             android:id="@+id/start_location_button"
             android:layout_width="145dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center" />
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
-
 
 </LinearLayout>
 

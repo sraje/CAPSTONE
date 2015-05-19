@@ -121,14 +121,15 @@ public class BikesFragment extends Fragment {
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Log.d(MYTAG, "onListItemClick");
-                //Object bike = getListView().getItemAtPosition(position);
+
+                String bike = (String) listAdapter.getChild(groupPosition, childPosition);
 
                 FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
 
                 Fragment fragment = new BikeDetailsFragment();
                 Bundle args = new Bundle();
-                args.putLong("id", id); // Add the bike object here
+                args.putString("bike", bike);
                 fragment.setArguments(args);
 
                 // Switch to the bike details fragment.
