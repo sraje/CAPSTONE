@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,6 +43,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     protected Location mLastLocation;
     protected LatLng mLastLatLng = new LatLng(34.4125, -119.8481);
+    protected float distance_traveled = 0;
     protected GoogleMap mMap;
     protected Marker bikeMarker;
 
@@ -71,6 +73,8 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        final TextView distance_traveled_text_box;
+
         final Button start_location_button = (Button) V.findViewById(R.id.start_location_button);
         start_location_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -78,8 +82,8 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
             }
         });
 
-        final Button button2 = (Button) V.findViewById(R.id.location_button);
-        button2.setOnClickListener(new View.OnClickListener() {
+        final Button get_location_button = (Button) V.findViewById(R.id.location_button);
+        get_location_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getCurrentLocation();
 
@@ -125,7 +129,9 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
     }
 
     private void onLocationChanged(Location location) {
+        distance_traveled += mLastLocation.distanceTo(location);
         mLastLocation = location;
+
         animateMarker(bikeMarker, mLastLatLng);
     }
 
