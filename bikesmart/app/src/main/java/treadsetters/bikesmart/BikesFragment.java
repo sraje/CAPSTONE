@@ -14,10 +14,10 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.ParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,13 +127,15 @@ public class BikesFragment extends Fragment {
 
         ParseUser current_user = ParseUser.getCurrentUser();
 
-        ArrayList<String> bikes_owned_copy = new ArrayList<String>();
+        ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
         ArrayList<String> bikes_used_copy = new ArrayList<String>();
 
-        bikes_owned_copy = (ArrayList<String>) current_user.get("bikes_owned");
+        bikes_owned_copy = (ArrayList<Double>) current_user.get("bikes_owned");
         bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
 
-        for (String bike_id : bikes_owned_copy) {
+        bikesOwned.clear();
+
+        for (Double bike_id : bikes_owned_copy) {
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
             Log.d(MYTAG, "bikeID is!! : " + bike_id);
@@ -141,7 +143,7 @@ public class BikesFragment extends Fragment {
 
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
-                    if (e == null) {
+                    if (e == null && postList.size() > 0) {
                         bikesOwned.add(postList.get(0).getString("bike_name"));
                     } else {
                         Log.d("MYTAG","Post retrieval failed...");
