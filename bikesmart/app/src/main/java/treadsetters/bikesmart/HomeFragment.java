@@ -304,14 +304,15 @@ public class HomeFragment extends Fragment {
 //                                String bikename = bikenameEditText.getText().toString().trim();
                         EditText e = (EditText) v.findViewById(R.id.bike_name);
                         EditText e2 = (EditText) v.findViewById(R.id.description);
-                        EditText e3 = (EditText) v.findViewById(R.id.bikeID);
+                        //EditText e3 = (EditText) v.findViewById(R.id.bikeID);
                         String bikename = e.getText().toString();
                         String description = e2.getText().toString();
-                        String bikeID = e3.getText().toString();
+                        //String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
                         /*grab photo from gallerY*/
 
-                        addBikeToParse(bikename, description, bikeID);
+                        //addBikeToParse(bikename, description, bikeID);
+                        addBikeToParse(bikename, description);
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -390,12 +391,16 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void addBikeToParse(String bikename, String description, String bikeID) {
+    //public void addBikeToParse(String bikename, String description, String bikeID) {
+    public void addBikeToParse(String bikename, String description) {
         ParseUser current_user = ParseUser.getCurrentUser();
+
+        double bikeID = Math.random() * 1000000;
+
         // Get the user's old list of bikes
         ArrayList<String> user_bikes = (ArrayList<String>) current_user.get("bikes_used");
         // Add the new bike to the list
-        user_bikes.add(bikeID);
+        user_bikes.add(Double.toString(bikeID));
 
         current_user.put("my_groups", user_bikes);
         current_user.saveInBackground();
@@ -404,6 +409,12 @@ public class HomeFragment extends Fragment {
         ParseObject new_bike = new ParseObject("bike");
         new_bike.put("bike_name", bikename);
         new_bike.put("bike_id", bikeID);
+        ArrayList<Double> temp_bikes_owned = new ArrayList<Double>();
+        temp_bikes_owned = (ArrayList<Double>) current_user.get("bikes_owned");
+        temp_bikes_owned.add(bikeID); // random bike ID value
+        current_user.put("bikes_used", temp_bikes_owned);
+
+     //new_bike.put("bike_id", bikeID);
         new_bike.put("bike_description", description);
         new_bike.put("owner_id", current_user.get("user_id"));
         new_bike.put("current_loc", "");
@@ -411,10 +422,10 @@ public class HomeFragment extends Fragment {
         new_bike.put("locked_flag", "false");
 
         Log.d("MYTAG", "bike_id: " + bikeID);
-        ArrayList<String> temp_bikes_owned = new ArrayList<String>();
-        temp_bikes_owned = (ArrayList<String>) current_user.get("bikes_owned");
-        temp_bikes_owned.add(bikeID); // random bike ID value
-        current_user.put("bikes_owned", temp_bikes_owned);
+//        ArrayList<String> temp_bikes_owned = new ArrayList<String>();
+//        temp_bikes_owned = (ArrayList<String>) current_user.get("bikes_owned");
+//        temp_bikes_owned.add(bikeID); // random bike ID value
+//        current_user.put("bikes_owned", temp_bikes_owned);
 //>>>>>>> 5fb9c98bc030b7d25e139f085e490766d03634cd
         count = count + 1;
 

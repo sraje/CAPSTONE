@@ -94,7 +94,7 @@ public class Database_Object {
         String owner_id;
         // current_loc
         // bike_id
-        String bike_id;
+        Double bike_id;
         // private_flag
         boolean private_flag;
         // locked
@@ -108,7 +108,7 @@ public class Database_Object {
         BikeSmart_Bike(String b_name, String o_id,
                        boolean p_flag, boolean lock, String b_description) {
 
-            this.bike_id = Integer.toString((int)Math.random() * 1000000);
+            this.bike_id = Math.random() * 1000000;
             this.bike_name = b_name;
             this.owner_id = o_id;
             this.private_flag = p_flag;
