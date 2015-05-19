@@ -9,15 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.ParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,14 +107,14 @@ public class BikesFragment extends Fragment {
         expListView.setAdapter(listAdapter);
 
 
-        Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
+        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
                 Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
                 getMyBikes();
             }
-        });
+        });*/
 
 
 

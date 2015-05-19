@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#000000">
+    android:background="#2F2F2F">
 
 
     <TextView
@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
         android:textSize="17dp"
-        android:textColor="#f9f93d" />
+        android:textColor = "@android:color/holo_green_light"/>
 
 </LinearLayout>

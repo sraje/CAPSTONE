@@ -270,7 +270,7 @@ public class HomeFragment extends Fragment {
             }});
 
 
-        Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
+        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
@@ -280,10 +280,10 @@ public class HomeFragment extends Fragment {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
-        });
+        });*/
 
 
-        Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
+        //Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
         //  buttonAddBike.setOnClickListener(new View.OnClickListener() {
         imageView1.setOnClickListener(new View.OnClickListener() {
 
@@ -309,7 +309,6 @@ public class HomeFragment extends Fragment {
                         String description = e2.getText().toString();
                         //String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
-                        /*grab photo from gallerY*/
 
                         //addBikeToParse(bikename, description, bikeID);
                         addBikeToParse(bikename, description);
@@ -331,7 +330,7 @@ public class HomeFragment extends Fragment {
                         Intent intent = new Intent(
                                 Intent.ACTION_PICK,
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("image/*");
+                        intent.setType("image*//*");
                         startActivityForResult(
                                 Intent.createChooser(intent, "Select File"),
                                 SELECT_FILE);
@@ -345,13 +344,15 @@ public class HomeFragment extends Fragment {
             }
             // Perform action on click
         });
+
+        /*
         Button buttonFindBike = (Button) rootView.findViewById(R.id.button_find_bikes);
         buttonFindBike.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
                 Toast.makeText(getActivity(), "Finding bikes...", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
         return rootView;
     }
