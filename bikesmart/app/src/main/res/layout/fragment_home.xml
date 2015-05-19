@@ -42,16 +42,7 @@
         android:id="@+id/button_find_bikes"
         android:layout_gravity="left|bottom" />
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:layout_gravity="center_horizontal|top"
-        android:src="@drawable/def"
-        android:layout_marginTop="30dp"
-        android:text="Click to Add Bike"
-        android:cropToPadding="false" />
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -163,6 +154,38 @@
         android:layout_marginTop="80dp"
         android:layout_marginRight="45dp" />
 
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_horizontal|top"
+        android:src="@drawable/def"
+        android:layout_marginTop="30dp"
+        android:text="Click to Add Bike"
+        android:cropToPadding="false" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:background="@null"
+        android:layout_width="200dp"
+        android:alpha=".35"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_horizontal|top"
+        android:src="@drawable/overlay"
+        android:layout_marginTop="30dp"
+        android:text="Click to Add Bike"
+        android:cropToPadding="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="ADD BIKE"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="120dp" />
 
 
 </FrameLayout>

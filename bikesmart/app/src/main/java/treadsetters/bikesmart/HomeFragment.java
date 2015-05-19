@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -50,7 +51,9 @@ public class HomeFragment extends Fragment {
     ImageView button_locate;
     ImageView button_lock;
     ImageView button_light;
+    ImageView imageView;
     RoundImage roundedImage_def;
+    RoundImage roundedImage_overlay;
     RoundImage roundedImage_location;
     RoundImage roundedImage_lock;
     RoundImage roundedImage_light;
@@ -109,6 +112,15 @@ public class HomeFragment extends Fragment {
 
         roundedImage_def = new RoundImage(bm);
         imageView1.setImageDrawable(roundedImage_def);
+/* overlay switch buke */
+        imageView = (ImageView)
+                rootView.findViewById(R.id.imageView);
+        Bitmap bm1 = BitmapFactory.decodeResource(getResources(),R.drawable.overlay);
+
+        roundedImage_overlay = new RoundImage(bm1);
+        imageView.setImageDrawable(roundedImage_overlay);
+
+
 
         button_locate = (ImageView)
                 rootView.findViewById(R.id.button_locate);
@@ -180,7 +192,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
+        //imageView.compress(Bitmap.CompressFormat.JPEG, 90, out);
         button_lock = (ImageView)
                 rootView.findViewById(R.id.button_lock);
         Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.lock);
@@ -269,6 +281,8 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+
         Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
         //  buttonAddBike.setOnClickListener(new View.OnClickListener() {
         imageView1.setOnClickListener(new View.OnClickListener() {
@@ -296,14 +310,7 @@ public class HomeFragment extends Fragment {
                         String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
                         /*grab photo from gallerY*/
-                        Intent intent = new Intent(
-                                Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("image/*");
-                        startActivityForResult(
-                                Intent.createChooser(intent, "Select File"),
-                                SELECT_FILE);
-//finish selecting file I guessss
+
                         addBikeToParse(bikename, description, bikeID);
                     }
                 });
@@ -317,15 +324,21 @@ public class HomeFragment extends Fragment {
                 builder.show();
 
 
-//                Button add_pic = (Button) rootView.findViewById(R.id.add_pic);
-//                add_pic.setOnClickListener(new View.OnClickListener() {
-//                    public void onClick(View view) {
-//                        // Perform action on click
-//                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        startActivity(intent);
-//                    }
-//                });
+                Button add_pic = (Button) v.findViewById(R.id.add_pic);
+                add_pic.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"),
+                                SELECT_FILE);
+//finish selecting file I guessss
+                        TextView addbike = (TextView)rootView.findViewById(R.id.textView);
+                        addbike.setVisibility(View.INVISIBLE);
+                    }
+                });
 
 
             }
