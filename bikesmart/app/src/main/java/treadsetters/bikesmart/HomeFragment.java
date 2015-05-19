@@ -395,12 +395,12 @@ public class HomeFragment extends Fragment {
     public void addBikeToParse(String bikename, String description) {
         ParseUser current_user = ParseUser.getCurrentUser();
 
-        double bikeID = Math.random() * 1000000;
+        Double bikeID = Math.random() * 1000000;
 
         // Get the user's old list of bikes
-        ArrayList<String> user_bikes = (ArrayList<String>) current_user.get("bikes_used");
+        ArrayList<Double> user_bikes = (ArrayList<Double>) current_user.get("bikes_used");
         // Add the new bike to the list
-        user_bikes.add(Double.toString(bikeID));
+        user_bikes.add(bikeID);
 
         current_user.put("my_groups", user_bikes);
         current_user.saveInBackground();

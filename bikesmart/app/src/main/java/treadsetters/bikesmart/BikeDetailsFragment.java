@@ -44,6 +44,8 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
     LocationService myService;
     volatile boolean isBound = false;
 
+    protected long bike_id;
+
     protected Location mLastLocation;
     protected LatLng mLastLatLng = new LatLng(34.4125, -119.8481);
     protected TextView distance_traveled_text_box;
@@ -60,6 +62,8 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
+        bike_id = (long) savedInstanceState.get("id");
+        
         Activity currentActivity = getActivity();
         Intent intent = new Intent(currentActivity, LocationService.class);
         ComponentName myService = currentActivity.startService(intent);
