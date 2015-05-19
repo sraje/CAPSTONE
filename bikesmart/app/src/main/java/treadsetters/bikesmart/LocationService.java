@@ -31,6 +31,8 @@ public class LocationService extends Service implements
     protected GoogleApiClient mGoogleApiClient;
     protected Location mLastLocation;
     protected Location mCurrentLocation;
+    protected float distance_traveled = 0;
+
     private static final String TAG = "LocationService";
     private final IBinder myBinder = new LocalBinder();
     private ArrayList<Location> recentLocations = new ArrayList<Location>();
@@ -128,6 +130,12 @@ public class LocationService extends Service implements
         mCurrentLocation = location;
         recentLocations.add(location);
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+
+        Intent i = new Intent("LOCATION_UPDATE");
+        i.putExtra("current_location", mCurrentLocation);
+        i.putExtra("last_update", mLastUpdateTime);
+        sendBroadcast(i);
+
         Toast.makeText(this, "Location Updated",
                 Toast.LENGTH_SHORT).show();
     }
@@ -135,17 +143,13 @@ public class LocationService extends Service implements
     public Location getCurrentLocation() {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-        ParseUser user = ParseUser.getCurrentUser();
-
-        Log.d(TAG, "2");
-        //user.add("location_history", mLastLocation);
-        user.add("location_history", "hello");
-        Log.d(TAG, "3");
-
-        user.saveInBackground();
+        //ParseUser user = ParseUser.getCurrentUser();
+        //user.saveInBackground();
 
         return mLastLocation;
     }
+
+
 
     public ArrayList<Location> getRecentLocations(){
         ArrayList<Location> tempLocations = new ArrayList<Location>(recentLocations);

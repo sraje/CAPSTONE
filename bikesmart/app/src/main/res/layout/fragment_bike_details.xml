@@ -10,7 +10,7 @@ android:orientation="vertical" >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight = "3"
+        android:layout_weight = "1"
         android:orientation="vertical" >
 
         <fragment
@@ -21,12 +21,27 @@ android:orientation="vertical" >
 
     </LinearLayout>
 
-    <TextView
-        android:text="Distance Traveled: "
-        android:id="@+id/distance_traveled_text_box"
-        android:layout_width="145dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|center" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:text="Distance Traveled (km):"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center" />
+
+        <TextView
+            android:id="@+id/distance_traveled_text_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center" />
+
+    </LinearLayout>
 
 
     <LinearLayout

@@ -183,7 +183,7 @@ public class BikesFragment extends Fragment {
 
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
-                    if (e == null) {
+                    if ((e == null) && !(postList.isEmpty())) {
                         bikesOwned.add(postList.get(0).getString("bike_name"));
                     } else {
                         Log.d("MYTAG","Post retrieval failed...");

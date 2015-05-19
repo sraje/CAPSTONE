@@ -3,11 +3,13 @@ package treadsetters.bikesmart;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -35,7 +37,8 @@ import java.util.ArrayList;
  */
 
 
-public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback {
+public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback, CustomReceiver.Listener
+{
     private static final String TAG = "Bike Details";
 
     LocationService myService;
@@ -43,6 +46,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
 
     protected Location mLastLocation;
     protected LatLng mLastLatLng = new LatLng(34.4125, -119.8481);
+    protected TextView distance_traveled_text_box;
     protected float distance_traveled = 0;
     protected GoogleMap mMap;
     protected Marker bikeMarker;
@@ -73,7 +77,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        final TextView distance_traveled_text_box;
+        distance_traveled_text_box = (TextView) V.findViewById(R.id.distance_traveled_text_box);
 
         final Button start_location_button = (Button) V.findViewById(R.id.start_location_button);
         start_location_button.setOnClickListener(new View.OnClickListener() {
@@ -85,10 +89,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
         final Button get_location_button = (Button) V.findViewById(R.id.location_button);
         get_location_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                getCurrentLocation();
-
-                animateMarker(bikeMarker, mLastLatLng);
-                //mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(mLastLatLng, 14.0f) );
+                onLocationChanged();
             }
         });
 
@@ -128,26 +129,25 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback 
         myService.startLocationUpdates();
     }
 
-    private void onLocationChanged(Location location) {
-        distance_traveled += mLastLocation.distanceTo(location);
-        mLastLocation = location;
+    @Override
+    public void onLocationChanged() {
+        Location location = myService.getCurrentLocation();
 
-        animateMarker(bikeMarker, mLastLatLng);
-    }
+        if(location != null) {
+            distance_traveled += mLastLocation.distanceTo(location);
 
-    private Location getCurrentLocation() {
-        mLastLocation = myService.getCurrentLocation();
+            mLastLocation = location;
+            mLastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        if(mLastLocation != null) {
-            mLastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            distance_traveled_text_box.setText(Float.toString(distance_traveled / 1000));
+            animateMarker(bikeMarker, mLastLatLng);
         }
+
         else{
             Log.d(TAG, "Location Not Available");
         }
 
-        return mLastLocation;
     }
-
 
     static LatLng interpolate(float fraction, LatLng a, LatLng b) {
         double lat = (b.latitude - a.latitude) * fraction + a.latitude;
