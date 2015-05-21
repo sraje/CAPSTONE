@@ -330,7 +330,7 @@ public class HomeFragment extends Fragment {
                         Intent intent = new Intent(
                                 Intent.ACTION_PICK,
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("image*//*");
+                        intent.setType("image/");
                         startActivityForResult(
                                 Intent.createChooser(intent, "Select File"),
                                 SELECT_FILE);
