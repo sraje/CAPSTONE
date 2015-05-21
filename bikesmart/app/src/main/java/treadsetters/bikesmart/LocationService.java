@@ -7,22 +7,62 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.parse.ParseUser;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Joel on 1/30/15.
  */
 
 public class LocationService extends Service implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     protected GoogleApiClient mGoogleApiClient;
     protected Location mLastLocation;
+    protected Location mCurrentLocation;
+    protected float distance_traveled = 0;
+
     private static final String TAG = "LocationService";
     private final IBinder myBinder = new LocalBinder();
+    private ArrayList<Location> recentLocations = new ArrayList<Location>();
+
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+
+    /**
+     * The fastest rate for active location updates. Exact. Updates will never be more frequent
+     * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+
+    // Keys for storing activity state in the Bundle.
+    protected final static String REQUESTING_LOCATION_UPDATES_KEY = "requesting-location-updates-key";
+    protected final static String LOCATION_KEY = "location-key";
+    protected final static String LAST_UPDATED_TIME_STRING_KEY = "last-updated-time-string-key";
+
+    /**
+     * Stores parameters for requests to the FusedLocationProviderApi.
+     */
+    protected LocationRequest mLocationRequest;
+
+    /**
+     * Time when the location was updated represented as a String.
+     */
+    protected String mLastUpdateTime;
 
     @Override
     public void onCreate() {
@@ -50,16 +90,71 @@ public class LocationService extends Service implements
     }
 
     protected synchronized void buildGoogleApiClient() {
+        Log.i(TAG, "Building GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        createLocationRequest();
+    }
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+
+        // Sets the desired interval for active location updates. This interval is
+        // inexact. You may not receive updates at all if no location sources are available, or
+        // you may receive them slower than requested. You may also receive updates faster than
+        // requested if other applications are requesting location at a faster interval.
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        // Sets the fastest rate for active location updates. This interval is exact, and your
+        // application will never receive updates faster than this value.
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void startLocationUpdates() {
+        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    /**
+     * Callback that fires when the location changes.
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+        recentLocations.add(location);
+        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+
+        Intent i = new Intent("LOCATION_UPDATE");
+        i.putExtra("current_location", mCurrentLocation);
+        i.putExtra("last_update", mLastUpdateTime);
+        sendBroadcast(i);
+
+        Toast.makeText(this, "Location Updated",
+                Toast.LENGTH_SHORT).show();
     }
 
     public Location getCurrentLocation() {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        //ParseUser user = ParseUser.getCurrentUser();
+        //user.saveInBackground();
+
         return mLastLocation;
+    }
+
+
+
+    public ArrayList<Location> getRecentLocations(){
+        ArrayList<Location> tempLocations = new ArrayList<Location>(recentLocations);
+        recentLocations.clear();
+        return tempLocations;
     }
 
     /**

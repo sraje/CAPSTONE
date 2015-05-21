@@ -6,3 +6,6 @@
 /app/app.iml
 .DS_Store
 /build
+*screenshot*
+test_servers
+.irb-history
