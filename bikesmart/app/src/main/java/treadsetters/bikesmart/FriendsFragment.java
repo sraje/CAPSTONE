@@ -90,6 +90,7 @@ public class FriendsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        // Add Friend Button and dialog
         final View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
         Button button_add_friend = (Button) rootView.findViewById(R.id.button_add_friend);
         button_add_friend.setOnClickListener(new View.OnClickListener() {
@@ -122,9 +123,10 @@ public class FriendsFragment extends Fragment {
             }
         });
 
+        // Friend List Accordian
+
         friendHeader = new ArrayList<String>();
         friendList = new HashMap<String, List<String>>();
-
         friendHeader.add("My Friends");
 
         getFriendList();
@@ -217,13 +219,13 @@ public class FriendsFragment extends Fragment {
 //            return;
 //        }
 
-
-
+        // Add friend to parse.
+        // TODO: fix ugly remove/add code
         myFriends.add(friendName);
         ParseUser.getCurrentUser().remove("friends");
         ParseUser.getCurrentUser().addAll("friends", myFriends);
 
-        // Save the post and return
+        // Save the post and return. Also show "Friend Added" Toast
         ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
 
             @Override
@@ -239,6 +241,7 @@ public class FriendsFragment extends Fragment {
 
         });
 
+        // Let's refresh the list when we add people too.
         listAdapter.notifyDataSetChanged();
 
 
