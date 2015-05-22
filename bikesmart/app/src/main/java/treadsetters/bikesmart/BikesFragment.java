@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -114,10 +115,12 @@ public class BikesFragment extends Fragment {
         expListView.setLongClickable(true);
         expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+                // Grab text from item clicked
+                TextView name = (TextView)v.findViewById(R.id.bike_list_item);
+                final String bikeName = name.getText().toString();
 
+                // Show add friends alert dialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                final EditText input = (EditText) getView().findViewById(R.id.friend_name);
-
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 final View view = inflater.inflate(R.layout.add_friends, null);
                 builder.setView(view);
@@ -129,7 +132,7 @@ public class BikesFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
                         EditText e = (EditText) view.findViewById(R.id.friend_name);
                         String friendName = e.getText().toString();
-                        if (shareBike(friendName))
+                        if (shareBike(friendName, bikeName))
                             Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -160,7 +163,8 @@ public class BikesFragment extends Fragment {
         return rootView;
     }
 
-    public boolean shareBike(String friendName) {
+    public boolean shareBike(String friendName, String bikeName) {
+        Log.d("AYY", friendName + " " + bikeName);
         return true;
     }
 
