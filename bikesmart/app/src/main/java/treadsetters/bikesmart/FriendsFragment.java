@@ -1,12 +1,26 @@
 package treadsetters.bikesmart;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ExpandableListView;
+import android.widget.Toast;
+
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -26,6 +40,17 @@ public class FriendsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Button button_add_friend;
+
+    public ExpandableListAdapter listAdapter;
+    public ExpandableListView expListView;
+    List<String> friendHeader;
+    HashMap<String, List<String>> friendList;
+    List <String> myFriends;
+    boolean friendNameExists;
+
+
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,13 +83,60 @@ public class FriendsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friends, container, false);
+        // Add Friend Button and dialog
+        final View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
+        Button button_add_friend = (Button) rootView.findViewById(R.id.button_add_friend);
+        button_add_friend.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final EditText input = (EditText) rootView.findViewById(R.id.friend_name);
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final View v = inflater.inflate(R.layout.add_friends, null);
+                builder.setView(v);
+                builder.setTitle(R.string.add_friend);
+
+                // Add action buttons
+                builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        EditText e = (EditText) v.findViewById(R.id.friend_name);
+                        String friendName = e.getText().toString();
+                        addFriendToParse(friendName);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.create();
+                builder.show();
+            }
+        });
+
+        // Friend List Accordian
+
+        friendHeader = new ArrayList<String>();
+        friendList = new HashMap<String, List<String>>();
+        friendHeader.add("My Friends");
+
+        getFriendList();
+
+        expListView = (ExpandableListView) rootView.findViewById(R.id.friend_list);
+        listAdapter = new ExpandableListAdapter(getActivity(), friendHeader, friendList);
+        expListView.setAdapter(listAdapter);
+        expListView.expandGroup(0);
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -74,11 +146,20 @@ public class FriendsFragment extends Fragment {
         }
     }
 
+    public void getFriendList() {
+        myFriends = ParseUser.getCurrentUser().getList("friends");
+        if (myFriends == null) {
+            myFriends = new ArrayList();
+        }
+        friendList.put(friendHeader.get(0), myFriends);
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
+
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -106,4 +187,63 @@ public class FriendsFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    public void addFriendToParse(final String friendName) {
+        //reset contains
+        friendNameExists = false;
+        getFriendList();
+
+        if(myFriends.contains(friendName)) {
+            Toast.makeText(getActivity(), "User is already your friend!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // prevent from adding users that don't exist. problem with parse query
+
+//        final ArrayList<String> allUsers = new ArrayList<String>();
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+//        query.addAscendingOrder("username");
+//
+//        query.findInBackground(new FindCallback<ParseObject>() {
+//            public void done(List<ParseObject> postList, ParseException e) {
+//                if (e == null && postList.size() > 0) {
+//                    if (postList.contains(friendName))
+//                        friendNameExists = true;
+//                } else {
+//                    Log.d("Friends", "Post retrieval failed...");
+//                }
+//            }
+//        });
+//
+//        if (!friendNameExists){
+//            Toast.makeText(getActivity(), "User does not exist.", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
+        // Add friend to parse.
+        // TODO: fix ugly remove/add code
+        myFriends.add(friendName);
+        ParseUser.getCurrentUser().remove("friends");
+        ParseUser.getCurrentUser().addAll("friends", myFriends);
+
+        // Save the post and return. Also show "Friend Added" Toast
+        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Toast.makeText(getActivity(), "Friend \"" + friendName + "\" Successfully Added!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(),
+                            "Error saving: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+        });
+
+        // Let's refresh the list when we add people too.
+        listAdapter.notifyDataSetChanged();
+
+
+    }
 }
