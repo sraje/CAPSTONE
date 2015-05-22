@@ -198,6 +198,7 @@ public class BikesFragment extends Fragment {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Log.d(MYTAG, "onChildClick");
 
+<<<<<<< HEAD
                 ParseUser current_user = ParseUser.getCurrentUser();
                 ArrayList<Double> bikes;
 
@@ -302,19 +303,54 @@ public class BikesFragment extends Fragment {
                     return true;
                 }
                 return false;
-            }
-
-        });
 
 
         return rootView;
 
-
-    }
     public void deleteBike(String bike) {
 
         final String deleteBikeName = bike;
-        Log.d(MYTAG, "Deleting bikes " + bike);
+        Log.d("MYTAG", "Deleting bikes " + bike);
+
+        final ParseUser current_user = ParseUser.getCurrentUser();
+        ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
+        ArrayList<String> bikes_used_copy = new ArrayList<String>();
+
+        bikes_owned_copy = (ArrayList<Double>) current_user.get("bikes_owned");
+        bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
+
+        for (Double bike_id : bikes_owned_copy) {
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            Log.d(MYTAG, "bikeID is!! : " + bike_id);
+            query.whereEqualTo("bike_id", bike_id);
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null && postList.size() > 0) {
+                        Log.d("MYTAG", "postList size: " + postList.size());
+                        if(postList.get(0).getString("bike_name").toString().equals(deleteBikeName)) {
+                            Log.d("MYTAG", "Found " + deleteBikeName + "!!!!");
+
+                            postList.get(0).deleteInBackground();
+                            Log.d("MYTAG", "Finished deleting bike.");
+
+                        }
+
+
+                    } else {
+                        Log.d("MYTAG","Post retrieval failed...");
+                    }
+                }
+            });
+        }
+    }
+
+    public void getMyBikes() {
+
+        Log.d("MYTAG", "Getting bikes...");
+
+        ParseUser current_user = ParseUser.getCurrentUser();
 
         final ParseUser current_user = ParseUser.getCurrentUser();
         ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
@@ -432,8 +468,6 @@ public class BikesFragment extends Fragment {
                 }
             }
         });
-
-
     }
 
     public void addBikeToParse(String bikename, String description) {
