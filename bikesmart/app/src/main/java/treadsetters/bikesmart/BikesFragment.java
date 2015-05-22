@@ -53,6 +53,10 @@ public class BikesFragment extends Fragment {
     List<String> bikesOwned;
     List<String> bikesUsed;
 
+    ParseObject sharedBike;
+    boolean shared;
+
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -134,6 +138,9 @@ public class BikesFragment extends Fragment {
                         String friendName = e.getText().toString();
                         if (shareBike(friendName, bikeName))
                             Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getActivity(), "Error sharing bike with " + friendName + "!", Toast.LENGTH_SHORT).show();
+
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -163,9 +170,28 @@ public class BikesFragment extends Fragment {
         return rootView;
     }
 
-    public boolean shareBike(String friendName, String bikeName) {
+    public boolean shareBike(final String friendName, String bikeName) {
         Log.d("AYY", friendName + " " + bikeName);
-        return true;
+
+        // Get bike
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+        query.whereEqualTo("bike_name", bikeName);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> postList, ParseException e) {
+                if (e == null && postList.size() > 0) {
+                    sharedBike = postList.get(0);
+                    sharedBike.add("access", friendName);
+
+                    sharedBike.saveEventually();
+                    shared = true;
+                } else {
+                    Log.d("MYTAG", "Post retrieval failed...");
+                    shared = false;
+                }
+            }
+        });
+
+        return shared ? true : false;
     }
 
 
