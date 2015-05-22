@@ -1,15 +1,20 @@
 package treadsetters.bikesmart;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -106,8 +111,42 @@ public class BikesFragment extends Fragment {
         listAdapter = new ExpandableListAdapter(getActivity(), bikeHeaders, bikeLists);
         expListView.setAdapter(listAdapter);
 
+        expListView.setLongClickable(true);
+        expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
 
-        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final EditText input = (EditText) getView().findViewById(R.id.friend_name);
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final View view = inflater.inflate(R.layout.add_friends, null);
+                builder.setView(view);
+                builder.setTitle(R.string.share_bike);
+
+                // Add action buttons
+                builder.setPositiveButton(R.string.share, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        EditText e = (EditText) view.findViewById(R.id.friend_name);
+                        String friendName = e.getText().toString();
+                        if (shareBike(friendName))
+                            Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.create();
+                builder.show();
+                return true;
+            }
+
+        });
+
+         /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
@@ -120,6 +159,11 @@ public class BikesFragment extends Fragment {
 
         return rootView;
     }
+
+    public boolean shareBike(String friendName) {
+        return true;
+    }
+
 
     public void getMyBikes() {
 

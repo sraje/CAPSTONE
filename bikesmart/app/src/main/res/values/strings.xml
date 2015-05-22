@@ -59,8 +59,11 @@
     <string name="bike_name">Bike Identifier</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="share">Share</string>
     <string name="add_friend">Add Friend</string>
     <string name="friend_name">Friend\'s Name</string>
     <string name="refresh">Refresh</string>
+    <string name="share_bike">Who would you like to share this bike with?</string>
+
 
 </resources>
