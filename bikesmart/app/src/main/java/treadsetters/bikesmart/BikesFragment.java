@@ -1,21 +1,15 @@
 package treadsetters.bikesmart;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -52,10 +46,6 @@ public class BikesFragment extends Fragment {
     HashMap<String, List<String>> bikeLists;
     List<String> bikesOwned;
     List<String> bikesUsed;
-
-    ParseObject sharedBike;
-    boolean shared;
-
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -116,47 +106,8 @@ public class BikesFragment extends Fragment {
         listAdapter = new ExpandableListAdapter(getActivity(), bikeHeaders, bikeLists);
         expListView.setAdapter(listAdapter);
 
-        expListView.setLongClickable(true);
-        expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-                // Grab text from item clicked
-                TextView name = (TextView)v.findViewById(R.id.bike_list_item);
-                final String bikeName = name.getText().toString();
 
-                // Show add friends alert dialog
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                final View view = inflater.inflate(R.layout.add_friends, null);
-                builder.setView(view);
-                builder.setTitle(R.string.share_bike);
-
-                // Add action buttons
-                builder.setPositiveButton(R.string.share, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        EditText e = (EditText) view.findViewById(R.id.friend_name);
-                        String friendName = e.getText().toString();
-                        if (shareBike(friendName, bikeName))
-                            Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(getActivity(), "Error sharing bike with " + friendName + "!", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.create();
-                builder.show();
-                return true;
-            }
-
-        });
-
-         /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
+        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
@@ -169,31 +120,6 @@ public class BikesFragment extends Fragment {
 
         return rootView;
     }
-
-    public boolean shareBike(final String friendName, String bikeName) {
-        Log.d("AYY", friendName + " " + bikeName);
-
-        // Get bike
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
-        query.whereEqualTo("bike_name", bikeName);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> postList, ParseException e) {
-                if (e == null && postList.size() > 0) {
-                    sharedBike = postList.get(0);
-                    sharedBike.add("access", friendName);
-
-                    sharedBike.saveEventually();
-                    shared = true;
-                } else {
-                    Log.d("MYTAG", "Post retrieval failed...");
-                    shared = false;
-                }
-            }
-        });
-
-        return shared ? true : false;
-    }
-
 
     public void getMyBikes() {
 
