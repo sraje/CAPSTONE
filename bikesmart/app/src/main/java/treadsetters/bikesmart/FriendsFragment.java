@@ -47,6 +47,7 @@ public class FriendsFragment extends Fragment {
     List<String> friendHeader;
     HashMap<String, List<String>> friendList;
     List <String> myFriends;
+    boolean friendNameExists;
 
 
 
@@ -89,6 +90,7 @@ public class FriendsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        // Add Friend Button and dialog
         final View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
         Button button_add_friend = (Button) rootView.findViewById(R.id.button_add_friend);
         button_add_friend.setOnClickListener(new View.OnClickListener() {
@@ -121,9 +123,10 @@ public class FriendsFragment extends Fragment {
             }
         });
 
+        // Friend List Accordian
+
         friendHeader = new ArrayList<String>();
         friendList = new HashMap<String, List<String>>();
-
         friendHeader.add("My Friends");
 
         getFriendList();
@@ -131,6 +134,7 @@ public class FriendsFragment extends Fragment {
         expListView = (ExpandableListView) rootView.findViewById(R.id.friend_list);
         listAdapter = new ExpandableListAdapter(getActivity(), friendHeader, friendList);
         expListView.setAdapter(listAdapter);
+        expListView.expandGroup(0);
 
         return rootView;
     }
@@ -184,7 +188,8 @@ public class FriendsFragment extends Fragment {
     }
 
     public void addFriendToParse(final String friendName) {
-        //get current friends
+        //reset contains
+        friendNameExists = false;
         getFriendList();
 
         if(myFriends.contains(friendName)) {
@@ -192,12 +197,35 @@ public class FriendsFragment extends Fragment {
             return;
         }
 
+        // prevent from adding users that don't exist. problem with parse query
 
+//        final ArrayList<String> allUsers = new ArrayList<String>();
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+//        query.addAscendingOrder("username");
+//
+//        query.findInBackground(new FindCallback<ParseObject>() {
+//            public void done(List<ParseObject> postList, ParseException e) {
+//                if (e == null && postList.size() > 0) {
+//                    if (postList.contains(friendName))
+//                        friendNameExists = true;
+//                } else {
+//                    Log.d("Friends", "Post retrieval failed...");
+//                }
+//            }
+//        });
+//
+//        if (!friendNameExists){
+//            Toast.makeText(getActivity(), "User does not exist.", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
+        // Add friend to parse.
+        // TODO: fix ugly remove/add code
         myFriends.add(friendName);
         ParseUser.getCurrentUser().remove("friends");
         ParseUser.getCurrentUser().addAll("friends", myFriends);
 
-        // Save the post and return
+        // Save the post and return. Also show "Friend Added" Toast
         ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
 
             @Override
@@ -212,6 +240,9 @@ public class FriendsFragment extends Fragment {
 
 
         });
+
+        // Let's refresh the list when we add people too.
+        listAdapter.notifyDataSetChanged();
 
 
     }
