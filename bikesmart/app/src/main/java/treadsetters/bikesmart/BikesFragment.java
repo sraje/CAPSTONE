@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 
@@ -107,6 +108,39 @@ public class BikesFragment extends Fragment {
         expListView.setAdapter(listAdapter);
 
 
+
+        expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                int itemType = ExpandableListView.getPackedPositionType(id);
+                int childPosition;
+                int groupPosition;
+
+                if ( itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                    childPosition = ExpandableListView.getPackedPositionChild(id);
+                    groupPosition = ExpandableListView.getPackedPositionGroup(id);
+                    Log.d("MYTAG", "Positions are " + childPosition + " " + groupPosition);
+                    Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
+                    deleteBike(bikesOwned.get(childPosition));
+
+                    //do your per-item callback here
+//                    return retVal; //true if we consumed the click, false if not
+                    return true;
+
+                } else if(itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                    groupPosition = ExpandableListView.getPackedPositionGroup(id);
+                    //do your per-group callback here
+//                    return retVal; //true if we consumed the click, false if not
+                    return true;
+
+                } else {
+                    // null item; we don't consume the click
+                    return false;
+                }
+            }
+        });
+
+
         /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -121,7 +155,49 @@ public class BikesFragment extends Fragment {
         return rootView;
     }
 
+
+    public void deleteBike(String bike) {
+
+        final String deleteBikeName = bike;
+        Log.d("MYTAG", "Deleting bikes " + bike);
+
+        final ParseUser current_user = ParseUser.getCurrentUser();
+        ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
+        ArrayList<String> bikes_used_copy = new ArrayList<String>();
+
+        bikes_owned_copy = (ArrayList<Double>) current_user.get("bikes_owned");
+        bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
+
+        for (Double bike_id : bikes_owned_copy) {
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            Log.d(MYTAG, "bikeID is!! : " + bike_id);
+            query.whereEqualTo("bike_id", bike_id);
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null && postList.size() > 0) {
+                        Log.d("MYTAG", "postList size: " + postList.size());
+                        if(postList.get(0).getString("bike_name").toString().equals(deleteBikeName)) {
+                            Log.d("MYTAG", "Found " + deleteBikeName + "!!!!");
+
+                            postList.get(0).deleteInBackground();
+                            Log.d("MYTAG", "Finished deleting bike.");
+
+                        }
+
+
+                    } else {
+                        Log.d("MYTAG","Post retrieval failed...");
+                    }
+                }
+            });
+        }
+    }
+
     public void getMyBikes() {
+
+        Log.d("MYTAG", "Getting bikes...");
 
         ParseUser current_user = ParseUser.getCurrentUser();
 
@@ -175,8 +251,9 @@ public class BikesFragment extends Fragment {
 
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
         bikeLists.put(bikeHeaders.get(1), bikesUsed);
-    }
 
+        Log.d("MYTAG", "Got bikes...");
+    }
 
 
 
