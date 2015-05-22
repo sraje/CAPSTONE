@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,10 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -48,9 +52,7 @@ public class FriendsFragment extends Fragment {
     HashMap<String, List<String>> friendList;
     List <String> myFriends;
     boolean friendNameExists;
-
-
-
+    boolean nameFound;
 
     private OnFragmentInteractionListener mListener;
 
@@ -188,36 +190,20 @@ public class FriendsFragment extends Fragment {
     }
 
     public void addFriendToParse(final String friendName) {
-        //reset contains
-        friendNameExists = false;
-        getFriendList();
-
+        // Catch Duplicates
         if(myFriends.contains(friendName)) {
             Toast.makeText(getActivity(), "User is already your friend!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // prevent from adding users that don't exist. problem with parse query
+        // Search for username
+       //friendNameExists = doesUserExist(friendName);
+        friendNameExists = true;
 
-//        final ArrayList<String> allUsers = new ArrayList<String>();
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
-//        query.addAscendingOrder("username");
-//
-//        query.findInBackground(new FindCallback<ParseObject>() {
-//            public void done(List<ParseObject> postList, ParseException e) {
-//                if (e == null && postList.size() > 0) {
-//                    if (postList.contains(friendName))
-//                        friendNameExists = true;
-//                } else {
-//                    Log.d("Friends", "Post retrieval failed...");
-//                }
-//            }
-//        });
-//
-//        if (!friendNameExists){
-//            Toast.makeText(getActivity(), "User does not exist.", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
+        if (!friendNameExists){
+            Toast.makeText(getActivity(), "User does not exist.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Add friend to parse.
         // TODO: fix ugly remove/add code
@@ -238,12 +224,33 @@ public class FriendsFragment extends Fragment {
                 }
             }
 
-
         });
 
         // Let's refresh the list when we add people too.
         listAdapter.notifyDataSetChanged();
+    }
 
+    public boolean doesUserExist(final String friendName) {
+        final ArrayList<String> allUsers = new ArrayList<String>();
+        nameFound = false;
 
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> postList, ParseException e) {
+                if (e == null && postList.size() > 0) {
+                    // Get list of usernames and make sure this user actually exists
+                    for (ParseObject o : postList) {
+                        allUsers.add(o.get("username").toString());
+                    }
+
+                    // Let's add em if they're real
+                    if (allUsers.contains(friendName))
+                        nameFound = true;
+                } else {
+                    Log.d("Friends", "Post retrieval failed...");
+                }
+            }
+        });
+        return nameFound ? true : false;
     }
 }
