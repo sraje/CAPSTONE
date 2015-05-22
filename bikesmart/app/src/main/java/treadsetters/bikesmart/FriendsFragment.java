@@ -51,6 +51,7 @@ public class FriendsFragment extends Fragment {
     List<String> friendHeader;
     HashMap<String, List<String>> friendList;
     List <String> myFriends;
+    final ArrayList<String> allUsers = new ArrayList<String>();
     boolean friendNameExists;
     boolean nameFound;
 
@@ -132,6 +133,7 @@ public class FriendsFragment extends Fragment {
         friendHeader.add("My Friends");
 
         getFriendList();
+        getAllUsers();
 
         expListView = (ExpandableListView) rootView.findViewById(R.id.friend_list);
         listAdapter = new ExpandableListAdapter(getActivity(), friendHeader, friendList);
@@ -197,8 +199,8 @@ public class FriendsFragment extends Fragment {
         }
 
         // Search for username
-       //friendNameExists = doesUserExist(friendName);
-        friendNameExists = true;
+       friendNameExists = doesUserExist(friendName);
+       // friendNameExists = true;
 
         if (!friendNameExists){
             Toast.makeText(getActivity(), "User does not exist.", Toast.LENGTH_SHORT).show();
@@ -231,26 +233,24 @@ public class FriendsFragment extends Fragment {
     }
 
     public boolean doesUserExist(final String friendName) {
-        final ArrayList<String> allUsers = new ArrayList<String>();
-        nameFound = false;
+        return allUsers.contains(friendName) ? true : false;
+    }
 
+    public void getAllUsers() {
+        allUsers.clear();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> postList, ParseException e) {
                 if (e == null && postList.size() > 0) {
-                    // Get list of usernames and make sure this user actually exists
-                    for (ParseObject o : postList) {
+                    for (ParseObject o : postList)
                         allUsers.add(o.get("username").toString());
-                    }
 
-                    // Let's add em if they're real
-                    if (allUsers.contains(friendName))
-                        nameFound = true;
                 } else {
                     Log.d("Friends", "Post retrieval failed...");
                 }
             }
         });
-        return nameFound ? true : false;
     }
+
+
 }
