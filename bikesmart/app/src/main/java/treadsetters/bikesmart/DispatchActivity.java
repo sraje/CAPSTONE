@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class DispatchActivity extends Activity {
 
     public static String MYTAG = "MYTAG";
-    public static ArrayList<String> bikes_used;
+    public static ArrayList<Double> bikes_used;
 
   public DispatchActivity() {
   }
@@ -33,7 +33,7 @@ public class DispatchActivity extends Activity {
         // initialize database values...
         ParseUser current_user = ParseUser.getCurrentUser();
         if(current_user.get("bikes_used") == null){
-            bikes_used = new ArrayList<String>();
+            bikes_used = new ArrayList<Double>();
             current_user.put("bikes_used",bikes_used);
 
         }

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -18,6 +19,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -39,6 +41,14 @@ public class FriendsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private Button button_add_friend;
+
+    public ExpandableListAdapter listAdapter;
+    public ExpandableListView expListView;
+    List<String> friendHeader;
+    HashMap<String, List<String>> friendList;
+    List <String> myFriends;
+
+
 
 
     private OnFragmentInteractionListener mListener;
@@ -97,7 +107,6 @@ public class FriendsFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
                         EditText e = (EditText) v.findViewById(R.id.friend_name);
                         String friendName = e.getText().toString();
-                        //Toast.makeText(getActivity(), "FriendName: " + friendName, Toast.LENGTH_SHORT).show();
                         addFriendToParse(friendName);
                     }
                 });
@@ -111,7 +120,19 @@ public class FriendsFragment extends Fragment {
                 builder.show();
             }
         });
-            return rootView;
+
+        friendHeader = new ArrayList<String>();
+        friendList = new HashMap<String, List<String>>();
+
+        friendHeader.add("My Friends");
+
+        getFriendList();
+
+        expListView = (ExpandableListView) rootView.findViewById(R.id.friend_list);
+        listAdapter = new ExpandableListAdapter(getActivity(), friendHeader, friendList);
+        expListView.setAdapter(listAdapter);
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -119,6 +140,14 @@ public class FriendsFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    public void getFriendList() {
+        myFriends = ParseUser.getCurrentUser().getList("friends");
+        if (myFriends == null) {
+            myFriends = new ArrayList();
+        }
+        friendList.put(friendHeader.get(0), myFriends);
     }
 
     @Override
@@ -156,10 +185,7 @@ public class FriendsFragment extends Fragment {
 
     public void addFriendToParse(final String friendName) {
         //get current friends
-        List myFriends = ParseUser.getCurrentUser().getList("friends");
-        if (myFriends == null) {
-            myFriends = new ArrayList();
-        }
+        getFriendList();
 
         if(myFriends.contains(friendName)) {
             Toast.makeText(getActivity(), "User is already your friend!", Toast.LENGTH_SHORT).show();

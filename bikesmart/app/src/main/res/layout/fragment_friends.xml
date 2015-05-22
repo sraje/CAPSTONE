@@ -6,13 +6,11 @@
     <TextView android:layout_width="match_parent" android:layout_height="match_parent"
          />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ExpandableListView
+        android:id="@+id/friend_list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Friends"
-        android:id="@+id/textView3"
-        android:layout_gravity="center" />
+        android:layout_marginTop="10dp" />
 
     <Button
         android:layout_width="120dp"
