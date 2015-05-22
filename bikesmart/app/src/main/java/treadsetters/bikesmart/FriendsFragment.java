@@ -47,6 +47,7 @@ public class FriendsFragment extends Fragment {
     List<String> friendHeader;
     HashMap<String, List<String>> friendList;
     List <String> myFriends;
+    boolean friendNameExists;
 
 
 
@@ -131,6 +132,7 @@ public class FriendsFragment extends Fragment {
         expListView = (ExpandableListView) rootView.findViewById(R.id.friend_list);
         listAdapter = new ExpandableListAdapter(getActivity(), friendHeader, friendList);
         expListView.setAdapter(listAdapter);
+        expListView.expandGroup(0);
 
         return rootView;
     }
@@ -184,13 +186,37 @@ public class FriendsFragment extends Fragment {
     }
 
     public void addFriendToParse(final String friendName) {
-        //get current friends
+        //reset contains
+        friendNameExists = false;
         getFriendList();
 
         if(myFriends.contains(friendName)) {
             Toast.makeText(getActivity(), "User is already your friend!", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // prevent from adding users that don't exist. problem with parse query
+
+//        final ArrayList<String> allUsers = new ArrayList<String>();
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+//        query.addAscendingOrder("username");
+//
+//        query.findInBackground(new FindCallback<ParseObject>() {
+//            public void done(List<ParseObject> postList, ParseException e) {
+//                if (e == null && postList.size() > 0) {
+//                    if (postList.contains(friendName))
+//                        friendNameExists = true;
+//                } else {
+//                    Log.d("Friends", "Post retrieval failed...");
+//                }
+//            }
+//        });
+//
+//        if (!friendNameExists){
+//            Toast.makeText(getActivity(), "User does not exist.", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
 
 
         myFriends.add(friendName);
@@ -212,6 +238,8 @@ public class FriendsFragment extends Fragment {
 
 
         });
+
+        listAdapter.notifyDataSetChanged();
 
 
     }
