@@ -154,8 +154,11 @@ public class BluetoothLeService extends Service {
             //intent.putExtra(EXTRA_DATA, String.valueOf(crankTime));
             //}
 
-            String outputtxt = "Wheel Count: " + String.valueOf(wheelRevolutions) + ", Crank Count: " + String.valueOf(crankRevolutions);
-            intent.putExtra(EXTRA_DATA, outputtxt);
+            //String outputtxt = "Wheel Count: " + String.valueOf(wheelRevolutions) + ", Crank Count: " + String.valueOf(crankRevolutions);
+            intent.putExtra("WheelRev", wheelRevolutions);
+            intent.putExtra("WheelTime", wheelTime);
+            intent.putExtra("CrankRev", crankRevolutions);
+            intent.putExtra("CrankTime", crankTime);
 
         } else {
             // For all other profiles, writes the data formatted in HEX.
