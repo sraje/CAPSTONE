@@ -410,7 +410,7 @@ public class HomeFragment extends Fragment {
         ArrayList<Double> temp_bikes_owned = new ArrayList<Double>();
         temp_bikes_owned = (ArrayList<Double>) current_user.get("bikes_owned");
         temp_bikes_owned.add(bikeID); // random bike ID value
-        current_user.put("bikes_used", temp_bikes_owned);
+        current_user.put("bikes_owned", temp_bikes_owned);
 
      //new_bike.put("bike_id", bikeID);
         new_bike.put("bike_description", description);
