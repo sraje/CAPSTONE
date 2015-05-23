@@ -181,6 +181,7 @@ public class BikesFragment extends Fragment {
                 if (e == null && postList.size() > 0) {
                     sharedBike = postList.get(0);
                     sharedBike.add("access", friendName);
+                    Log.d("AYY", "Got here");
 
                     sharedBike.saveEventually();
                     shared = true;
@@ -191,7 +192,7 @@ public class BikesFragment extends Fragment {
             }
         });
 
-        return shared ? true : false;
+        return shared ? false : true;
     }
 
 
