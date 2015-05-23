@@ -255,7 +255,6 @@ public class BikesFragment extends Fragment {
     public void getSharedBikes() {
         final ArrayList<Object> allBikes = new ArrayList<>();
         final String username=ParseUser.getCurrentUser().getUsername();
-        Log.d("AYY", "username: " + username);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -264,10 +263,8 @@ public class BikesFragment extends Fragment {
                     // Get list of usernames and make sure this user actually exists
                     for (ParseObject o : postList) {
                         if(o.get("access") != null) {
-                            Log.d("AYY", "access: " + o.get("access").toString());
                             if (o.get("access").toString().contains(username)) {
                                 bikesUsed.add(o.get("bike_name").toString());
-                                Log.d("AYY", "got here: ");
                             }
                         }
                     }
