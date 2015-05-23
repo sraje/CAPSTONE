@@ -191,8 +191,9 @@ public class BikesFragment extends Fragment {
                 }
             }
         });
-
-        return shared ? false : true;
+        /*TODO: fix this once we are able to check if user is friend or not*/
+        return true;
+        //return shared;
     }
 
 

@@ -251,6 +251,6 @@ public class FriendsFragment extends Fragment {
                 }
             }
         });
-        return nameFound ? false : true;
+        return nameFound;
     }
 }
