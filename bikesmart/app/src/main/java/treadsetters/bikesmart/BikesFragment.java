@@ -113,6 +113,7 @@ public class BikesFragment extends Fragment {
         bikesUsed = new ArrayList<String>();
         expListView = (ExpandableListView) rootView.findViewById(R.id.bike_lists);
         getMyBikes();
+        getSharedBikes();
         listAdapter = new ExpandableListAdapter(getActivity(), bikeHeaders, bikeLists);
         expListView.setAdapter(listAdapter);
 
@@ -181,7 +182,6 @@ public class BikesFragment extends Fragment {
                 if (e == null && postList.size() > 0) {
                     sharedBike = postList.get(0);
                     sharedBike.add("access", friendName);
-                    Log.d("AYY", "Got here");
 
                     sharedBike.saveEventually();
                     shared = true;
@@ -250,6 +250,35 @@ public class BikesFragment extends Fragment {
 
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
         bikeLists.put(bikeHeaders.get(1), bikesUsed);
+    }
+
+    public void getSharedBikes() {
+        final ArrayList<Object> allBikes = new ArrayList<>();
+        final String username=ParseUser.getCurrentUser().getUsername();
+        Log.d("AYY", "username: " + username);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> postList, ParseException e) {
+                if (e == null && postList.size() > 0) {
+                    // Get list of usernames and make sure this user actually exists
+                    for (ParseObject o : postList) {
+                        if(o.get("access") != null) {
+                            Log.d("AYY", "access: " + o.get("access").toString());
+                            if (o.get("access").toString().contains(username)) {
+                                bikesUsed.add(o.get("bike_name").toString());
+                                Log.d("AYY", "got here: ");
+                            }
+                        }
+                    }
+                    bikeLists.put(bikeHeaders.get(1), bikesUsed);
+                    } else {
+                    Log.d("Friends", "Post retrieval failed...");
+                }
+            }
+        });
+
+
     }
 
 

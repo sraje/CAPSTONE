@@ -196,7 +196,7 @@ public class FriendsFragment extends Fragment {
             return;
         }
 
-        // Search for username
+        // Search for username, this clears the bikelist locally for some reason
        //friendNameExists = doesUserExist(friendName);
         friendNameExists = true;
 
@@ -251,6 +251,6 @@ public class FriendsFragment extends Fragment {
                 }
             }
         });
-        return nameFound ? true : false;
+        return nameFound ? false : true;
     }
 }
