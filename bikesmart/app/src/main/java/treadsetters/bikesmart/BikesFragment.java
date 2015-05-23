@@ -124,7 +124,7 @@ public class BikesFragment extends Fragment {
                 TextView name = (TextView)v.findViewById(R.id.bike_list_item);
                 final String bikeName = name.getText().toString();
 
-                // Show add friends alert dialog
+                // Show add friends alert dialog (same one from addfriends)
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 final View view = inflater.inflate(R.layout.add_friends, null);
@@ -137,10 +137,10 @@ public class BikesFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
                         EditText e = (EditText) view.findViewById(R.id.friend_name);
                         String friendName = e.getText().toString();
-                        if (shareBike(friendName, bikeName))
-                            Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(getActivity(), "Error sharing bike with " + friendName + "!", Toast.LENGTH_SHORT).show();
+                        shareBike(friendName, bikeName);
+                        Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
+//                        else
+//                            Toast.makeText(getActivity(), "Error sharing bike with " + friendName + "!", Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -171,7 +171,7 @@ public class BikesFragment extends Fragment {
         return rootView;
     }
 
-    public boolean shareBike(final String friendName, String bikeName) {
+    public void shareBike(final String friendName, String bikeName) {
         Log.d("AYY", friendName + " " + bikeName);
 
         // Get bike
@@ -191,8 +191,6 @@ public class BikesFragment extends Fragment {
                 }
             }
         });
-
-        return shared ? false : true;
     }
 
 
