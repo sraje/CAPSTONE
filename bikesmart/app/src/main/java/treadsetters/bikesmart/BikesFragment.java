@@ -251,7 +251,6 @@ public class BikesFragment extends Fragment {
     }
 
     public void getSharedBikes() {
-        final ArrayList<Object> allBikes = new ArrayList<>();
         final String username=ParseUser.getCurrentUser().getUsername();
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
