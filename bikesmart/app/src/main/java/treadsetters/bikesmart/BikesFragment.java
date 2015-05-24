@@ -171,36 +171,36 @@ public class BikesFragment extends Fragment {
 
                                 // Delete
                         .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Delete bike
-                                int itemType = ExpandableListView.getPackedPositionType(final_id);
-                                int childPosition;
-                                int groupPosition;
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Delete bike
+                                        int itemType = ExpandableListView.getPackedPositionType(final_id);
+                                        int childPosition;
+                                        int groupPosition;
 
-                                if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                                    childPosition = ExpandableListView.getPackedPositionChild(final_id);
-                                    groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
-                                    Log.d("MYTAG", "Positions are " + childPosition + " " + groupPosition);
-                                    Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
-                                    deleteBike(bikesOwned.get(childPosition));
-                                    Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
+                                        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                                            childPosition = ExpandableListView.getPackedPositionChild(final_id);
+                                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                                            Log.d("MYTAG", "Positions are " + childPosition + " " + groupPosition);
+                                            Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
+                                            deleteBike(bikesOwned.get(childPosition));
+                                            Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
 
-                                    //do your per-item callback here
+                                            //do your per-item callback here
 //                    return retVal; //true if we consumed the click, false if not
 //                                    return true;
-                                    return;
-                                } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-                                    groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
-                                    //do your per-group callback here
+                                            return;
+                                        } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                                            //do your per-group callback here
 //                    return retVal; //true if we consumed the click, false if not
 //                                    return true;
-                                    return;
-                                } else {
-                                    // null item; we don't consume the click
+                                            return;
+                                        } else {
+                                            // null item; we don't consume the click
 //                                    return false;
-                                    return;
-                                }
-                            }
+                                            return;
+                                        }
+                                    }
 
                         }).create();
 
