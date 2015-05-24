@@ -198,7 +198,6 @@ public class BikesFragment extends Fragment {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Log.d(MYTAG, "onChildClick");
 
-<<<<<<< HEAD
                 ParseUser current_user = ParseUser.getCurrentUser();
                 ArrayList<Double> bikes;
 
@@ -435,7 +434,6 @@ public class BikesFragment extends Fragment {
                 }
             });
         }
-
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
 
     }
