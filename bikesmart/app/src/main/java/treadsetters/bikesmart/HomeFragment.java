@@ -206,7 +206,7 @@ public class HomeFragment extends Fragment {
 
         button_light = (ImageView)
                 rootView.findViewById(R.id.button_light);
-        Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.light);
+        Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.no_light);
 
         roundedImage_light = new RoundImage(bm_light);
         button_light.setImageDrawable(roundedImage_light);
@@ -214,6 +214,11 @@ public class HomeFragment extends Fragment {
         button_light.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if(light == true){
+                    Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.no_light);
+                    roundedImage_light = new RoundImage(bm_light);
+                    button_light.setImageDrawable(roundedImage_light);
+                    //call unlock function here
+
                     light = false;
                     MainActivity2 a = (MainActivity2)getActivity();
 
@@ -236,6 +241,11 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 else{
+                    Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.light);
+                    roundedImage_light = new RoundImage(bm_light);
+                    button_light.setImageDrawable(roundedImage_light);
+                    button_light.setTag(70);
+
                     light = true;
                     MainActivity2 a = (MainActivity2)getActivity();
 
