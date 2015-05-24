@@ -128,7 +128,7 @@ public class BikesFragment extends Fragment {
                 TextView name = (TextView) v.findViewById(R.id.bike_list_item);
                 final String bikeName = name.getText().toString();
 
-                AlertDialog delete_or_share = new AlertDialog.Builder(getActivity())
+                new AlertDialog.Builder(getActivity())
                         // Set Dialog Title
                         .setTitle("Would you like to share or delete this bike?")
                                 // Set Dialog Message
@@ -201,8 +201,8 @@ public class BikesFragment extends Fragment {
                                             return;
                                         }
                                     }
-                                }
-                        ).create();
+
+                        }).create();
 
 
                 return true;
