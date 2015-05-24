@@ -131,7 +131,47 @@ public class MainActivity2 extends ActionBarActivity
                     Fragment fragment;
                     //fragment = null;
                     FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+//                    FragmentManager; fragmentManager = getSupportFragmentManager();
+
                     switch(position) {
+                        case 0:
+                            break;
+                        case 1:
+                            if(fragmentManager.findFragmentByTag("home") != null) {
+                                //if the fragment exists, show it.
+                                fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("home")).commit();
+                            } else {
+                                //if the fragment does not exist, add it to fragment manager.
+                                fragmentManager.beginTransaction().add(R.id.container, new HomeFragment(), "home").commit();
+                            }
+                            if(fragmentManager.findFragmentByTag("bikes") != null){
+                                //if the other fragment is visible, hide it.
+                                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("bikes")).commit();
+                            }
+                            break;
+                        case 2:
+                            if(fragmentManager.findFragmentByTag("bikes") != null) {
+                                //if the fragment exists, show it.
+                                fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("bikes")).commit();
+                            } else {
+                                //if the fragment does not exist, add it to fragment manager.
+                                fragmentManager.beginTransaction().add(R.id.container, new BikesFragment(), "bikes").commit();
+                            }
+                            if(fragmentManager.findFragmentByTag("home") != null){
+                                Toast.makeText(MainActivity2.this,"home fragment exists must hide nao",Toast.LENGTH_SHORT).show();
+                                //if the other fragment is visible, hide it.
+                                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
+                                Toast.makeText(MainActivity2.this,"hidden",Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+
+
+                    }
+
+
+
+
+                    /*switch(position) {
                         default:
                         case 0:
                             //fragment = new MyFragment1();
@@ -179,7 +219,7 @@ public class MainActivity2 extends ActionBarActivity
                             //Toast.makeText(MainActivity2.this,"Bikess???",Toast.LENGTH_SHORT).show();
 
                             break;
-                    }
+                    }*/
 
 
 

@@ -3,19 +3,22 @@
     android:layout_height="match_parent" tools:context="treadsetters.bikesmart.BikesFragment">
 
     <!-- TODO: Update blank fragment layout -->
+    <TextView android:layout_width="match_parent" android:layout_height="612dp"
+        android:background="@drawable/bg_coffee" />
 
     <ExpandableListView
         android:id="@+id/bike_lists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="0dp"
+        android:layout_gravity="center_horizontal|top" />
 
-<!--    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/refresh"
-        android:id="@+id/button_refresh"
-        android:layout_gravity="center_horizontal|bottom" />-->
+    <!--    <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/refresh"
+            android:id="@+id/button_refresh"
+            android:layout_gravity="center_horizontal|bottom" />-->
 
 </FrameLayout>
