@@ -101,7 +101,7 @@ public class BikesFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
-        Log.d("MYTAG","onCreateView");
+        Log.d("MYTAG", "onCreateView");
 
         bikeHeaders = new ArrayList<String>();
         bikeLists = new HashMap<String, List<String>>();
@@ -112,6 +112,7 @@ public class BikesFragment extends Fragment {
         bikesOwned = new ArrayList<String>();
         bikesUsed = new ArrayList<String>();
         expListView = (ExpandableListView) rootView.findViewById(R.id.bike_lists);
+
         getMyBikes();
         getSharedBikes();
         listAdapter = new ExpandableListAdapter(getActivity(), bikeHeaders, bikeLists);
@@ -120,42 +121,99 @@ public class BikesFragment extends Fragment {
         expListView.setLongClickable(true);
         expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+
+                final long final_id = id;
+
                 // Grab text from item clicked
-                TextView name = (TextView)v.findViewById(R.id.bike_list_item);
+                TextView name = (TextView) v.findViewById(R.id.bike_list_item);
                 final String bikeName = name.getText().toString();
 
-                // Show add friends alert dialog (same one from addfriends)
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                final View view = inflater.inflate(R.layout.add_friends, null);
-                builder.setView(view);
-                builder.setTitle(R.string.share_bike);
+                AlertDialog delete_or_share = new AlertDialog.Builder(getActivity())
+                        // Set Dialog Title
+                        .setTitle("Would you like to share or delete this bike?")
+                                // Set Dialog Message
+                        .setMessage(bikeName)
 
-                // Add action buttons
-                builder.setPositiveButton(R.string.share, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        EditText e = (EditText) view.findViewById(R.id.friend_name);
-                        String friendName = e.getText().toString();
-                        shareBike(friendName, bikeName);
-                        Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
+                                // Share
+                        .setPositiveButton("Share", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Share bike
+                                // Show add friends alert dialog (same one from addfriends)
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                LayoutInflater inflater = getActivity().getLayoutInflater();
+                                final View view = inflater.inflate(R.layout.add_friends, null);
+                                builder.setView(view);
+                                builder.setTitle(R.string.share_bike);
+
+                                // Add action buttons
+                                builder.setPositiveButton(R.string.share, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        EditText e = (EditText) view.findViewById(R.id.friend_name);
+                                        String friendName = e.getText().toString();
+                                        shareBike(friendName, bikeName);
+                                        Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
 //                        else
 //                            Toast.makeText(getActivity(), "Error sharing bike with " + friendName + "!", Toast.LENGTH_SHORT).show();
 
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
+                                    }
+                                });
+                                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
 
-                builder.create();
-                builder.show();
+                                builder.create();
+                                builder.show();
+                            }
+                        })
+
+                                // Delete
+                        .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Delete bike
+                                        int itemType = ExpandableListView.getPackedPositionType(final_id);
+                                        int childPosition;
+                                        int groupPosition;
+
+                                        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                                            childPosition = ExpandableListView.getPackedPositionChild(final_id);
+                                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                                            Log.d("MYTAG", "Positions are " + childPosition + " " + groupPosition);
+                                            Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
+                                            deleteBike(bikesOwned.get(childPosition));
+                                            Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
+
+                                            //do your per-item callback here
+//                    return retVal; //true if we consumed the click, false if not
+//                                    return true;
+                                            return;
+                                        } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                                            //do your per-group callback here
+//                    return retVal; //true if we consumed the click, false if not
+//                                    return true;
+                                            return;
+                                        } else {
+                                            // null item; we don't consume the click
+//                                    return false;
+                                            return;
+                                        }
+                                    }
+                                }
+                        ).create();
+
+
                 return true;
             }
 
         });
+
+        return rootView;
+    }
+
+
 
          /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
@@ -168,8 +226,46 @@ public class BikesFragment extends Fragment {
 
 
 
-        return rootView;
+
+    public void deleteBike(String bike) {
+
+        final String deleteBikeName = bike;
+        Log.d("MYTAG", "Deleting bikes " + bike);
+
+        final ParseUser current_user = ParseUser.getCurrentUser();
+        ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
+        ArrayList<String> bikes_used_copy = new ArrayList<String>();
+
+        bikes_owned_copy = (ArrayList<Double>) current_user.get("bikes_owned");
+        bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
+
+        for (Double bike_id : bikes_owned_copy) {
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            Log.d(MYTAG, "bikeID is!! : " + bike_id);
+            query.whereEqualTo("bike_id", bike_id);
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null && postList.size() > 0) {
+                        Log.d("MYTAG", "postList size: " + postList.size());
+                        if(postList.get(0).getString("bike_name").toString().equals(deleteBikeName)) {
+                            Log.d("MYTAG", "Found " + deleteBikeName + "!!!!");
+
+                            postList.get(0).deleteInBackground();
+                            Log.d("MYTAG", "Finished deleting bike.");
+
+                        }
+
+
+                    } else {
+                        Log.d("MYTAG","Post retrieval failed...");
+                    }
+                }
+            });
+        }
     }
+
 
     public void shareBike(final String friendName, String bikeName) {
         Log.d("AYY", friendName + " " + bikeName);
@@ -259,14 +355,14 @@ public class BikesFragment extends Fragment {
                 if (e == null && postList.size() > 0) {
                     // Get list of usernames and make sure this user actually exists
                     for (ParseObject o : postList) {
-                        if(o.get("access") != null) {
+                        if (o.get("access") != null) {
                             if (o.get("access").toString().contains(username)) {
                                 bikesUsed.add(o.get("bike_name").toString());
                             }
                         }
                     }
                     bikeLists.put(bikeHeaders.get(1), bikesUsed);
-                    } else {
+                } else {
                     Log.d("Friends", "Post retrieval failed...");
                 }
             }
@@ -301,6 +397,7 @@ public class BikesFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
 
     /**
