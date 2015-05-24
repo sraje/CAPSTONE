@@ -24,13 +24,16 @@ import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,6 +103,52 @@ public class HomeFragment extends Fragment {
 
     }
 
+    public void populateActiveBike() {
+        ParseUser current_user = ParseUser.getCurrentUser();
+
+        double active_id = (double) current_user.get("active_bike");
+        Log.d("MYTAG", "Active bike id is " + active_id);
+
+        if(active_id != -1) {
+            boolean stop = false;
+
+            ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
+            ArrayList<String> bikes_used_copy = new ArrayList<String>();
+
+            bikes_owned_copy = (ArrayList<Double>) current_user.get("bikes_owned");
+            bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
+
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            Log.d("MYTAG", "Setting active bike to " + active_id);
+            query.whereEqualTo("bike_id", active_id);
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null && postList.size() > 0) {
+                        Log.d("MYTAG", "postList size: " + postList.size());
+                        String active_name = postList.get(0).getString("bike_name").toString();
+                        setActiveText(active_name);
+                        Log.d("MYTAG", "Active bike is " + active_name);
+
+                        // TODO: Actually save bike pictures to Parse
+                        postList.get(0).get("bike_picture");
+
+                    } else {
+                        Log.d("MYTAG", "Post retrieval failed...");
+                    }
+                }
+            });
+        }
+
+
+    }
+
+    public void setActiveText(String name) {
+        TextView activeNameTextView = (TextView) getActivity().findViewById(R.id.add_bike_textview);
+        activeNameTextView.setText(name);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -130,6 +179,24 @@ public class HomeFragment extends Fragment {
         button_locate.setImageDrawable(roundedImage_location);
 
 
+        /*
+        TODO: Set and save active bike
+        I'm thinkin ...somethin like...saving an attribute to
+        this current parse user called "active_bike" or sumthin..
+        then like...totally just storing a bike_id in there. and
+        then like...if there's no active bike, store -1 in there
+        or sumthin...then just run a query here in onCreate, get
+        that value, check if -1, otherwise, query for that bike_id,
+        populate dis business....will be super chill.
+         */
+        populateActiveBike();
+
+
+        /*
+        TODO: Set last seen location.
+         */
+        TextView lastLocationTextView = (TextView)rootView.findViewById(R.id.last_location);
+        lastLocationTextView.setText("in your butt");
 
 
 
@@ -265,7 +332,7 @@ public class HomeFragment extends Fragment {
 
             public void onClick(View view) {
 
-
+                Log.d("MYTAG", "ImageView1 onClick 1");
 
             }});
 
@@ -291,6 +358,7 @@ public class HomeFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 final EditText input = (EditText) rootView.findViewById(R.id.bike_name);
 
+                Log.d("MYTAG", "ImageView1 onClick 2");
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 final EditText bikenameEditText = new EditText(getActivity());
                 final View v = inflater.inflate(R.layout.add_bike, null);
@@ -394,7 +462,15 @@ public class HomeFragment extends Fragment {
 
     }
 
-    //public void addBikeToParse(String bikename, String description, String bikeID) {
+
+    public void setActiveBike(double bike_id) {
+
+        ParseUser current_user = ParseUser.getCurrentUser();
+        current_user.put("active_bike", bike_id);
+
+    }
+
+
     public void addBikeToParse(String bikename, String description) {
         ParseUser current_user = ParseUser.getCurrentUser();
         ParseObject new_bike = new ParseObject("bike");
@@ -419,12 +495,9 @@ public class HomeFragment extends Fragment {
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
 
+
+
         Log.d("MYTAG", "bike_id: " + bikeID);
-//        ArrayList<String> temp_bikes_owned = new ArrayList<String>();
-//        temp_bikes_owned = (ArrayList<String>) current_user.get("bikes_owned");
-//        temp_bikes_owned.add(bikeID); // random bike ID value
-//        current_user.put("bikes_owned", temp_bikes_owned);
-//>>>>>>> 5fb9c98bc030b7d25e139f085e490766d03634cd
         count = count + 1;
 
         current_user.saveInBackground();
@@ -447,6 +520,9 @@ public class HomeFragment extends Fragment {
 
 
         });
+
+        setActiveBike(bikeID);
+        populateActiveBike();
 
 
     }

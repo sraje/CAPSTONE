@@ -226,29 +226,6 @@ public class BikesFragment extends Fragment {
             });
         }
 
-        /*for (String bike_id : bikes_used_copy) {
-
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
-            Log.d(MYTAG, "bikeID is!! : " + bike_id);
-            query.whereEqualTo("bike_id", bike_id);
-
-            // run query in foreground
-
-            Log.d(MYTAG, "sending query");
-
-            query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> postList, ParseException e) {
-                    if (e == null) {
-                        bikesUsed.add(postList.get(0).getString("bike_name"));
-                    } else {
-                        Log.d("MYTAG","Post retrieval failed...");
-                    }
-                }
-            });
-
-
-        }*/
-
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
         bikeLists.put(bikeHeaders.get(1), bikesUsed);
 
