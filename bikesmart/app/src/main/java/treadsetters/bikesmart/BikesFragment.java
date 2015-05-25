@@ -200,6 +200,7 @@ public class BikesFragment extends Fragment {
 
                 ParseUser current_user = ParseUser.getCurrentUser();
                 ArrayList<Double> bikes;
+
                 if(groupPosition==0) {
                     bikes = (ArrayList<Double>) current_user.get("bikes_owned");
                 } else {
@@ -384,10 +385,8 @@ public class BikesFragment extends Fragment {
         ParseUser current_user = ParseUser.getCurrentUser();
 
         ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
-        ArrayList<String> bikes_used_copy = new ArrayList<String>();
 
         bikes_owned_copy = (ArrayList<Double>) current_user.get("bikes_owned");
-        bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
 
         bikesOwned.clear();
 
@@ -408,28 +407,6 @@ public class BikesFragment extends Fragment {
             });
         }
 
-        /*for (String bike_id : bikes_used_copy) {
-
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
-            Log.d(MYTAG, "bikeID is!! : " + bike_id);
-            query.whereEqualTo("bike_id", bike_id);
-
-            // run query in foreground
-
-            Log.d(MYTAG, "sending query");
-
-            query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> postList, ParseException e) {
-                    if (e == null) {
-                        bikesUsed.add(postList.get(0).getString("bike_name"));
-                    } else {
-                        Log.d("MYTAG","Post retrieval failed...");
-                    }
-                }
-            });
-
-
-        }*/
 
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
         bikeLists.put(bikeHeaders.get(1), bikesUsed);

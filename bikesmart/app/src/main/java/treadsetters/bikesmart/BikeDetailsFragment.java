@@ -86,15 +86,14 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> postList, ParseException e) {
                 if (e == null && postList.size() > 0) {
-                    bike = postList.get(0);
                     Log.d(TAG, "bike found");
+                    bike = postList.get(0);
+                    bike_name.setText(bike.getString("bike_name"));
                 } else {
                     Log.d(TAG,"Post retrieval failed...");
                 }
             }
         });
-
-        bike_name.setText(bike.getString("bike_name"));
 
 
         MapFragment mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
