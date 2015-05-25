@@ -26,9 +26,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Duncan Sommer on 4/5/2015.
  */
@@ -47,6 +53,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
     protected float distance_traveled = 0;
     protected GoogleMap mMap;
     protected Marker bikeMarker;
+    ParseObject bike;
 
     public BikeDetailsFragment() {
         // Required empty public constructor
@@ -72,9 +79,22 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         View V = inflater.inflate(R.layout.fragment_bike_details, container, false);
 
         final TextView bike_name = (TextView) V.findViewById(R.id.bike_name);
-        String bike = (String) this.getArguments().getString("bike");
-        bike_name.setText(bike);
-        Log.d(TAG, "Bike name:" + bike);
+        final Double bike_id = this.getArguments().getDouble("bike");
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+        query.whereEqualTo("bike_id", bike_id);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> postList, ParseException e) {
+                if (e == null && postList.size() > 0) {
+                    bike = postList.get(0);
+                    Log.d(TAG, "bike found");
+                } else {
+                    Log.d(TAG,"Post retrieval failed...");
+                }
+            }
+        });
+
+        bike_name.setText(bike.getString("bike_name"));
 
 
         MapFragment mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
