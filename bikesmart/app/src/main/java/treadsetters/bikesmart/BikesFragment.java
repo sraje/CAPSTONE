@@ -399,31 +399,7 @@ public class BikesFragment extends Fragment {
             });
         }
 
-        /*for (String bike_id : bikes_used_copy) {
-
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
-            Log.d(MYTAG, "bikeID is!! : " + bike_id);
-            query.whereEqualTo("bike_id", bike_id);
-
-            // run query in foreground
-
-            Log.d(MYTAG, "sending query");
-
-            query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> postList, ParseException e) {
-                    if (e == null) {
-                        bikesUsed.add(postList.get(0).getString("bike_name"));
-                    } else {
-                        Log.d("MYTAG","Post retrieval failed...");
-                    }
-                }
-            });
-
-
-        }*/
-
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
-        bikeLists.put(bikeHeaders.get(1), bikesUsed);
     }
 
     public void getSharedBikes() {
@@ -476,10 +452,6 @@ public class BikesFragment extends Fragment {
         new_bike.put("locked_flag", "false");
 
         Log.d("MYTAG", "bike_id: " + bikeID);
-//        ArrayList<String> temp_bikes_owned = new ArrayList<String>();
-//        temp_bikes_owned = (ArrayList<String>) current_user.get("bikes_owned");
-//        temp_bikes_owned.add(bikeID); // random bike ID value
-//        current_user.put("bikes_owned", temp_bikes_owned);
 
         current_user.saveInBackground();
 
@@ -489,8 +461,6 @@ public class BikesFragment extends Fragment {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-//                    setResult(RESULT_OK);
-//                    finish();
                     Toast.makeText(getActivity(), "Bike Successfully Added!", Toast.LENGTH_SHORT).show();
 
                 } else {
