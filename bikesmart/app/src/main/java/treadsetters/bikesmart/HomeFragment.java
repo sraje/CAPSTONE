@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.MediaColumns;
@@ -26,12 +27,15 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +52,10 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int CHANGE_BIKE = 5;
     boolean lock = true;
     boolean light = false;
+    private ParseFile photoFile;
     ImageView imageView1;
     ImageView button_locate;
     ImageView button_lock;
@@ -60,6 +66,10 @@ public class HomeFragment extends Fragment {
     RoundImage roundedImage_location;
     RoundImage roundedImage_lock;
     RoundImage roundedImage_light;
+    TextView activeBikeText;
+    TextView changeDefaultBikeText;
+    ParseUser current_user;
+    Double currentDefaultBikeId;
     // TODO: Rename and change types of parameters
     static final int SELECT_FILE = 201;
     private String mParam1;
@@ -155,6 +165,28 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
 
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
+        current_user = ParseUser.getCurrentUser();
+
+        changeDefaultBikeText = (TextView) rootView.findViewById(R.id.defaultBikeText);
+
+        activeBikeText = (TextView) rootView.findViewById(R.id.activebike_name);
+        currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
+        if(currentDefaultBikeId != 0){
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            query.whereEqualTo("bike_id", currentDefaultBikeId);
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null && postList.size() > 0) {
+                        activeBikeText.setText(postList.get(0).getString("bike_name"));
+                    } else {
+                        Log.d("MYTAG","Post retrieval failed...");
+                    }
+                }
+            });
+        }
+
         imageView1 = (ImageView)
                 rootView.findViewById(R.id.imageView1);
         Bitmap bm = BitmapFactory.decodeResource(getResources(),R.drawable.def);
@@ -273,7 +305,7 @@ public class HomeFragment extends Fragment {
 
         button_light = (ImageView)
                 rootView.findViewById(R.id.button_light);
-        Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.light);
+        Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.no_light);
 
         roundedImage_light = new RoundImage(bm_light);
         button_light.setImageDrawable(roundedImage_light);
@@ -281,6 +313,11 @@ public class HomeFragment extends Fragment {
         button_light.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if(light == true){
+                    Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.no_light);
+                    roundedImage_light = new RoundImage(bm_light);
+                    button_light.setImageDrawable(roundedImage_light);
+                    //call unlock function here
+
                     light = false;
                     MainActivity2 a = (MainActivity2)getActivity();
 
@@ -303,6 +340,11 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 else{
+                    Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.light);
+                    roundedImage_light = new RoundImage(bm_light);
+                    button_light.setImageDrawable(roundedImage_light);
+                    button_light.setTag(70);
+
                     light = true;
                     MainActivity2 a = (MainActivity2)getActivity();
 
@@ -336,22 +378,13 @@ public class HomeFragment extends Fragment {
 
             }});
 
+        changeDefaultBikeText.setOnClickListener(new OnClickListener(){
 
-        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                // Perform action on click
-                Toast.makeText(getActivity(), "Logging out...", Toast.LENGTH_SHORT).show();
-                ParseUser.getCurrentUser().logOut();
-                Intent intent = new Intent(getActivity(), DispatchActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                startActivityForResult(new Intent(getActivity(), ChangeBikesActivity.class), CHANGE_BIKE);
             }
-        });*/
+        });
 
-
-        //Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
-        //  buttonAddBike.setOnClickListener(new View.OnClickListener() {
         imageView1.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
@@ -378,7 +411,6 @@ public class HomeFragment extends Fragment {
                         //String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
 
-                        //addBikeToParse(bikename, description, bikeID);
                         addBikeToParse(bikename, description);
                     }
                 });
@@ -430,6 +462,15 @@ public class HomeFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode == SELECT_FILE){
                 Uri selectedImage = data.getData();
+                try {
+                    InputStream iStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                    byte[] bikePhotoData = getBytes(iStream);
+                    saveActiveBikePhoto(bikePhotoData);
+                } catch (IOException e) {
+                    Log.d("MYTAG", "Failed to save photo.");
+                    e.printStackTrace();
+                }
+
                 String[] projection = { MediaColumns.DATA };
 
                 Cursor cursor = getActivity().getContentResolver().query(selectedImage,
@@ -457,9 +498,61 @@ public class HomeFragment extends Fragment {
                 imageView1.setImageDrawable(roundedImage_def);
 
             }
+            else if(requestCode == CHANGE_BIKE){
+                activeBikeText.setText(data.getStringExtra("bike_name"));
+                current_user.put("default_bike_id", data.getDoubleExtra("bike_id", 0));
+                current_user.saveInBackground();
+            }
 
         }
 
+    }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+
+    public void saveActiveBikePhoto(byte[] data) {
+
+        // Resize photo from camera byte array
+        Bitmap mealImage = BitmapFactory.decodeByteArray(data, 0, data.length);
+        Bitmap mealImageScaled = Bitmap.createScaledBitmap(mealImage, 200, 200
+                * mealImage.getHeight() / mealImage.getWidth(), false);
+
+        // Override Android default landscape orientation and save portrait
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap rotatedScaledMealImage = Bitmap.createBitmap(mealImageScaled, 0,
+                0, mealImageScaled.getWidth(), mealImageScaled.getHeight(),
+                matrix, true);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        rotatedScaledMealImage.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+
+        byte[] scaledData = bos.toByteArray();
+
+        photoFile = new ParseFile("meal_photo.jpg", scaledData);
+        photoFile.saveInBackground(new SaveCallback() {
+
+            public void done(ParseException e) {
+                if (e != null) {
+                    Toast.makeText(getActivity(),
+                            "Error saving: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    ParseUser.getCurrentUser().put("active_bike_photo", photoFile);
+                }
+            }
+        });
     }
 
 
@@ -473,7 +566,15 @@ public class HomeFragment extends Fragment {
 
     public void addBikeToParse(String bikename, String description) {
         ParseUser current_user = ParseUser.getCurrentUser();
+        // Get the user's old list of bikes
+        ArrayList<Double> user_bikes = (ArrayList<Double>) current_user.get("bikes_used");
+        // Add the new bike to the list
+        current_user.put("my_groups", user_bikes);
+        current_user.saveInBackground();
+
+        // Create a new bike object
         ParseObject new_bike = new ParseObject("bike");
+
         new_bike.put("bike_name", bikename);
 
 
@@ -486,7 +587,7 @@ public class HomeFragment extends Fragment {
         ArrayList<Double> temp_bikes_owned = new ArrayList<Double>();
         temp_bikes_owned = (ArrayList<Double>) current_user.get("bikes_owned");
         temp_bikes_owned.add(bikeID); // random bike ID value
-        current_user.put("bikes_used", temp_bikes_owned);
+        current_user.put("bikes_owned", temp_bikes_owned);
 
      //new_bike.put("bike_id", bikeID);
         new_bike.put("bike_description", description);
@@ -500,7 +601,14 @@ public class HomeFragment extends Fragment {
         Log.d("MYTAG", "bike_id: " + bikeID);
         count = count + 1;
 
+        currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
+        if(currentDefaultBikeId == 0){
+            current_user.put("default_bike_id", bikeID);
+            activeBikeText.setText(bikename);
+        }
+
         current_user.saveInBackground();
+
 
         // Save the post and return
         new_bike.saveInBackground(new SaveCallback() {

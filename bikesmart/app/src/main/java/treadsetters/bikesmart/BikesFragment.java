@@ -1,7 +1,14 @@
 package treadsetters.bikesmart;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,13 +17,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,17 +50,22 @@ public class BikesFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    public static String MYTAG = "MYTAG";
+    public static String MYTAG = "Bikes";
     private ArrayList<String> mybikes;
     public static ArrayList<ParseObject> global_postList;
     public static ArrayAdapter<String> adapter;
-
+    static final int SELECT_FILE = 201;
     public ExpandableListAdapter listAdapter;
     public ExpandableListView expListView;
     List<String> bikeHeaders;
     HashMap<String, List<String>> bikeLists;
     List<String> bikesOwned;
     List<String> bikesUsed;
+
+    ParseObject sharedBike;
+    boolean shared;
+    ImageView button_plus;
+    RoundImage roundedImage_plus;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -84,15 +103,85 @@ public class BikesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
-        Log.d("MYTAG","onCreateView");
+        final View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
+        button_plus = (ImageView) rootView.findViewById(R.id.button_plus);
+        Bitmap bm_locate = BitmapFactory.decodeResource(getResources(), R.drawable.plus);
+
+        roundedImage_plus = new RoundImage(bm_locate);
+        button_plus.setImageDrawable(roundedImage_plus);
+
+
+        button_plus.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final EditText input = (EditText) rootView.findViewById(R.id.bike_name);
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final EditText bikenameEditText = new EditText(getActivity());
+                final View v = inflater.inflate(R.layout.add_bike, null);
+                builder.setView(v);
+                builder.setTitle(R.string.add_bike);
+
+                // Add action buttons
+                builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+//                                String bikename = bikenameEditText.getText().toString().trim();
+                        EditText e = (EditText) v.findViewById(R.id.bike_name);
+                        EditText e2 = (EditText) v.findViewById(R.id.description);
+                        //EditText e3 = (EditText) v.findViewById(R.id.bikeID);
+                        String bikename = e.getText().toString();
+                        String description = e2.getText().toString();
+                        //String bikeID = e3.getText().toString();
+                        Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
+
+                        //addBikeToParse(bikename, description, bikeID);
+                        addBikeToParse(bikename, description);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.create();
+                builder.show();
+
+
+                Button add_pic = (Button) v.findViewById(R.id.add_pic);
+                add_pic.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                       /* Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"),
+                                SELECT_FILE);
+//finish selecting file I guessss
+                        TextView addbike = (TextView) v.findViewById(R.id.textView);
+                        addbike.setVisibility(View.INVISIBLE);*/
+                    }
+                });
+
+
+            }
+            // Perform action on click
+        });
+
+
+        Log.d("MYTAG", "onCreateView");
 
         bikeHeaders = new ArrayList<String>();
         bikeLists = new HashMap<String, List<String>>();
@@ -103,11 +192,39 @@ public class BikesFragment extends Fragment {
         bikesOwned = new ArrayList<String>();
         bikesUsed = new ArrayList<String>();
         expListView = (ExpandableListView) rootView.findViewById(R.id.bike_lists);
+
         getMyBikes();
+        getSharedBikes();
         listAdapter = new ExpandableListAdapter(getActivity(), bikeHeaders, bikeLists);
         expListView.setAdapter(listAdapter);
 
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Log.d(MYTAG, "onListItemClick");
+                String bike = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).toString();
 
+                FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+                Fragment fragment = new BikeDetailsFragment();
+                Bundle args = new Bundle();
+                args.putString("bike", bike); // Add the bike object here
+                fragment.setArguments(args);
+
+                // Switch to the bike details fragment.
+                transaction.replace(R.id.container, fragment);
+                // Make sure the user can press 'back'
+                transaction.addToBackStack(null);
+                transaction.commit();
+                return true;
+            }
+        });
+
+        expListView.setLongClickable(true);
+        expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+
+<<<<<<< HEAD
 
         expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -142,6 +259,72 @@ public class BikesFragment extends Fragment {
 
 
         /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
+=======
+                final long final_id = id;
+
+                // Grab text from item clicked
+                TextView name = (TextView) v.findViewById(R.id.bike_list_item);
+                final String bikeName = name.getText().toString();
+                // Show add friends alert dialog (same one from addfriends)
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final View view = inflater.inflate(R.layout.add_friends, null);
+                builder.setView(view);
+                builder.setTitle("Would you like to Share or Delete this Bike?");
+                // Add action buttons
+                builder.setNegativeButton(R.string.share, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                      /*  EditText e = (EditText) view.findViewById(R.id.friend_name);
+                        String friendName = e.getText().toString();
+                        shareBike(friendName, bikeName);
+                        Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();*/
+
+
+            }
+        });
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Delete bike
+                        int itemType = ExpandableListView.getPackedPositionType(final_id);
+                        int childPosition;
+                        int groupPosition;
+
+                        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                            childPosition = ExpandableListView.getPackedPositionChild(final_id);
+                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                            Log.d("MYTAG", "Positions are " + childPosition + " " + groupPosition);
+                            Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
+                            deleteBike(bikesOwned.get(childPosition));
+                            Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                            return;
+                        } else {
+                            return;
+                        }
+                    }
+
+                }).create();
+
+
+                builder.create();
+                builder.show();
+
+                return true;
+            }
+
+        });
+
+
+        return rootView;
+
+
+
+
+         /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
+>>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
@@ -152,15 +335,21 @@ public class BikesFragment extends Fragment {
 
 
 
-        return rootView;
     }
+    public void deleteBike(String bike) {
 
+<<<<<<< HEAD
 
     public void deleteBike(String bike) {
 
         final String deleteBikeName = bike;
         Log.d("MYTAG", "Deleting bikes " + bike);
 
+=======
+        final String deleteBikeName = bike;
+        Log.d("MYTAG", "Deleting bikes " + bike);
+
+>>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
         final ParseUser current_user = ParseUser.getCurrentUser();
         ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
         ArrayList<String> bikes_used_copy = new ArrayList<String>();
@@ -183,12 +372,16 @@ public class BikesFragment extends Fragment {
 
                             postList.get(0).deleteInBackground();
                             Log.d("MYTAG", "Finished deleting bike.");
+<<<<<<< HEAD
+=======
+                            getMyBikes();
+>>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
 
                         }
 
 
                     } else {
-                        Log.d("MYTAG","Post retrieval failed...");
+                        Log.d("MYTAG", "Post retrieval failed...");
                     }
                 }
             });
@@ -197,7 +390,37 @@ public class BikesFragment extends Fragment {
 
     public void getMyBikes() {
 
+<<<<<<< HEAD
         Log.d("MYTAG", "Getting bikes...");
+=======
+    }
+
+    public void shareBike(final String friendName, String bikeName) {
+        Log.d("AYY", friendName + " " + bikeName);
+
+        // Get bike
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+        query.whereEqualTo("bike_name", bikeName);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> postList, ParseException e) {
+                if (e == null && postList.size() > 0) {
+                    sharedBike = postList.get(0);
+                    sharedBike.add("access", friendName);
+
+                    sharedBike.saveEventually();
+                    shared = true;
+                } else {
+                    Log.d("MYTAG", "Post retrieval failed...");
+                    shared = false;
+                }
+            }
+        });
+
+    }
+
+
+    public void getMyBikes() {
+>>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
 
         ParseUser current_user = ParseUser.getCurrentUser();
 
@@ -225,13 +448,91 @@ public class BikesFragment extends Fragment {
                 }
             });
         }
+<<<<<<< HEAD
 
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
         bikeLists.put(bikeHeaders.get(1), bikesUsed);
 
         Log.d("MYTAG", "Got bikes...");
     }
+=======
 
+        bikeLists.put(bikeHeaders.get(0), bikesOwned);
+    }
+
+    public void getSharedBikes() {
+        final String username=ParseUser.getCurrentUser().getUsername();
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> postList, ParseException e) {
+                if (e == null && postList.size() > 0) {
+                    // Get list of usernames and make sure this user actually exists
+                    for (ParseObject o : postList) {
+                        if (o.get("access") != null) {
+                            if (o.get("access").toString().contains(username)) {
+                                bikesUsed.add(o.get("bike_name").toString());
+                            }
+                        }
+                    }
+                    bikeLists.put(bikeHeaders.get(1), bikesUsed);
+                } else {
+                    Log.d("Friends", "Post retrieval failed...");
+                }
+            }
+        });
+
+
+    }
+
+    public void addBikeToParse(String bikename, String description) {
+        ParseUser current_user = ParseUser.getCurrentUser();
+        ParseObject new_bike = new ParseObject("bike");
+        new_bike.put("bike_name", bikename);
+
+
+//        double bikeID = count;
+        double bikeID = Math.random() * 1000000;
+
+
+        Log.d("MYTAG", "bikeID: " + bikeID);
+        new_bike.put("bike_id", bikeID);
+        ArrayList<Double> temp_bikes_owned = new ArrayList<Double>();
+        temp_bikes_owned = (ArrayList<Double>) current_user.get("bikes_owned");
+        temp_bikes_owned.add(bikeID); // random bike ID value
+        current_user.put("bikes_owned", temp_bikes_owned);
+
+        //new_bike.put("bike_id", bikeID);
+        new_bike.put("bike_description", description);
+        new_bike.put("owner_id", current_user.get("user_id"));
+        new_bike.put("current_loc", "");
+        new_bike.put("private_flag", "false");
+        new_bike.put("locked_flag", "false");
+>>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
+
+        Log.d("MYTAG", "bike_id: " + bikeID);
+
+        current_user.saveInBackground();
+
+        // Save the post and return
+        new_bike.saveInBackground(new SaveCallback() {
+
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Toast.makeText(getActivity(), "Bike Successfully Added!", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(getActivity(),
+                            "Error saving: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+        });
+
+
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -257,6 +558,7 @@ public class BikesFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
 
     /**

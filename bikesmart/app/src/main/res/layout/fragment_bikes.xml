@@ -1,21 +1,49 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="treadsetters.bikesmart.BikesFragment">
+    android:layout_height="match_parent" tools:context="treadsetters.bikesmart.BikesFragment"
+    android:clickable="true">
 
     <!-- TODO: Update blank fragment layout -->
+    <TextView android:layout_width="match_parent" android:layout_height="612dp"
+        android:background="@drawable/bg_coffee" />
 
     <ExpandableListView
         android:id="@+id/bike_lists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="0dp"
+        android:layout_gravity="center_horizontal|top" />
 
-<!--    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/refresh"
-        android:id="@+id/button_refresh"
-        android:layout_gravity="center_horizontal|bottom" />-->
+    <ImageView
+        android:id="@+id/button_plus"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="right|bottom"
+        android:src="@drawable/plus"
+        android:text="Click to Add Bike"
+        android:cropToPadding="false"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp" />
+
+    <TextView
+        android:layout_width="64dp"
+        android:layout_height="82dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF"
+        android:text="+"
+        android:id="@+id/textView3"
+        android:layout_gravity="right|bottom"
+        android:layout_marginLeft="-60dp"
+        android:textSize="50dp" />
+
+    <!--    <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/refresh"
+            android:id="@+id/button_refresh"
+            android:layout_gravity="center_horizontal|bottom" />-->
 
 </FrameLayout>
