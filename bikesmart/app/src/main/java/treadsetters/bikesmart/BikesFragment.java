@@ -249,10 +249,10 @@ public class BikesFragment extends Fragment {
                 builder.setNegativeButton(R.string.share, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                      /*  EditText e = (EditText) view.findViewById(R.id.friend_name);
+                        EditText e = (EditText) view.findViewById(R.id.friend_name);
                         String friendName = e.getText().toString();
                         shareBike(friendName, bikeName);
-                        Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();*/
+                        Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
 
 
             }
