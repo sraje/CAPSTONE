@@ -65,6 +65,7 @@
     <string name="friend_name">Friend\'s Name</string>
     <string name="refresh">Refresh</string>
     <string name="share_bike">Who would you like to share this bike with?</string>
+    <string name="title_activity_change_bikes">ChangeBikesActivity</string>
 
 
 </resources>

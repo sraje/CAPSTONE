@@ -271,30 +271,13 @@ public class HomeFragment extends Fragment {
         });
 
 
-        imageView1.setOnClickListener(new OnClickListener(){
+        imageView.setOnClickListener(new OnClickListener(){
 
             public void onClick(View view) {
-
-
-
-            }});
-
-
-        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                // Perform action on click
-                Toast.makeText(getActivity(), "Logging out...", Toast.LENGTH_SHORT).show();
-                ParseUser.getCurrentUser().logOut();
-                Intent intent = new Intent(getActivity(), DispatchActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                startActivityForResult(new Intent(getActivity(), ChangeBikesActivity.class), 1);
             }
-        });*/
+        });
 
-
-        //Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
-        //  buttonAddBike.setOnClickListener(new View.OnClickListener() {
         imageView1.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
