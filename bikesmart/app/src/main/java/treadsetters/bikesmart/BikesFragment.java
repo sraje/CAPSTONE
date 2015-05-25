@@ -51,7 +51,6 @@ public class BikesFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static String MYTAG = "Bikes";
-    private ArrayList<String> mybikes;
     public static ArrayList<ParseObject> global_postList;
     public static ArrayAdapter<String> adapter;
     static final int SELECT_FILE = 201;
@@ -145,7 +144,6 @@ public class BikesFragment extends Fragment {
                         //String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
 
-                        //addBikeToParse(bikename, description, bikeID);
                         addBikeToParse(bikename, description);
                     }
                 });
@@ -200,15 +198,27 @@ public class BikesFragment extends Fragment {
 
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Log.d(MYTAG, "onListItemClick");
-                String bike = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).toString();
+                Log.d(MYTAG, "onChildClick");
+
+                ParseUser current_user = ParseUser.getCurrentUser();
+                ArrayList<Double> bikes;
+
+                if(groupPosition==0) {
+                    bikes = (ArrayList<Double>) current_user.get("bikes_owned");
+                } else {
+                    bikes = (ArrayList<Double>) current_user.get("bikes_used");
+                }
+                Double bike_id = bikes.get(childPosition);
+                Log.d(MYTAG, "childposition, bike_id = " + childPosition);
+                Log.d(MYTAG, bike_id.toString());
+
 
                 FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-
                 Fragment fragment = new BikeDetailsFragment();
                 Bundle args = new Bundle();
-                args.putString("bike", bike); // Add the bike object here
+
+                args.putDouble("bike_id", bike_id); // Add the bike object here
                 fragment.setArguments(args);
 
                 // Switch to the bike details fragment.
@@ -369,10 +379,8 @@ public class BikesFragment extends Fragment {
         ParseUser current_user = ParseUser.getCurrentUser();
 
         ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
-        ArrayList<String> bikes_used_copy = new ArrayList<String>();
 
         bikes_owned_copy = (ArrayList<Double>) current_user.get("bikes_owned");
-        bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
 
         bikesOwned.clear();
 

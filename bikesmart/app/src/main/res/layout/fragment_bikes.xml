@@ -7,11 +7,12 @@
     <TextView android:layout_width="match_parent" android:layout_height="612dp"
         android:background="@drawable/bg_coffee" />
 
+    <!--android:layout_marginTop="0dp"-->
     <ExpandableListView
         android:id="@+id/bike_lists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
+
         android:layout_gravity="center_horizontal|top" />
 
     <ImageView

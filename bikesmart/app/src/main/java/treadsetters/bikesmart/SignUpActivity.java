@@ -111,7 +111,8 @@ public class SignUpActivity extends Activity {
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
-        user.put("user_id", "");
+        Double user_id = Math.random() * 1000000;
+        user.put("user_id", user_id.toString());
         user.put("default_bike_id", 0);
         user.put("bikes_owned", new ArrayList<Double>());
         user.put("bikes_used", new ArrayList<String>());
