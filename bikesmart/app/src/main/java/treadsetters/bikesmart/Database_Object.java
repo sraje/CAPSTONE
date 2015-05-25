@@ -73,17 +73,6 @@ public class Database_Object {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     /*
     Class to add new bike to BikeSmart database
      */
@@ -154,17 +143,15 @@ public class Database_Object {
             });
         }
 
+        public void deleteBike(String bikeName) {
+
+        }
+
+        public void deleteBike(Double bikeID) {
+
+        }
+
     }
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.MediaColumns;
@@ -26,12 +27,15 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +55,7 @@ public class HomeFragment extends Fragment {
     private static final int CHANGE_BIKE = 5;
     boolean lock = true;
     boolean light = false;
+    private ParseFile photoFile;
     ImageView imageView1;
     ImageView button_locate;
     ImageView button_lock;
@@ -108,6 +113,85 @@ public class HomeFragment extends Fragment {
 
     }
 
+    public void populateActiveBike() {
+        ParseUser current_user = ParseUser.getCurrentUser();
+
+        double active_id = (double) current_user.get("active_bike");
+        Log.d("MYTAG", "Active bike id is " + active_id);
+
+
+        if(active_id != -1) {
+            boolean stop = false;
+
+            ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
+            ArrayList<String> bikes_used_copy = new ArrayList<String>();
+
+            bikes_owned_copy = (ArrayList<Double>) current_user.get("bikes_owned");
+            bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
+
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            Log.d("MYTAG", "Setting active bike to " + active_id);
+            query.whereEqualTo("bike_id", active_id);
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null && postList.size() > 0) {
+                        Log.d("MYTAG", "postList size: " + postList.size());
+                        String active_name = postList.get(0).getString("bike_name").toString();
+                        setActiveText(active_name);
+                        Log.d("MYTAG", "Active bike is " + active_name);
+
+                        // TODO: Actually save bike pictures to Parse
+                        postList.get(0).get("bike_picture");
+
+                    } else {
+                        Log.d("MYTAG", "Post retrieval failed...");
+                    }
+                }
+            });
+        }
+
+        // ParseUser.getCurrentUser().put("active_bike_photo", photoFile);
+        ParseFile photoFile = (ParseFile) current_user.get("active_bike_photo");
+        Uri imageUri = Uri.parse(photoFile.getUrl());
+        setActiveBikePhoto(imageUri);
+
+    }
+
+    public void setActiveBikePhoto(Uri image) {
+        String[] projection = { MediaColumns.DATA };
+
+        Cursor cursor = getActivity().getContentResolver().query(image,
+                projection, null, null, null);
+        cursor.moveToFirst();
+        int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+        cursor.moveToFirst();
+
+        String selectedImagePath = cursor.getString(column_index);
+
+        Bitmap bm;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(selectedImagePath, options);
+        final int REQUIRED_SIZE = 200;
+        int scale = 1;
+        while (options.outWidth / scale / 2 >= REQUIRED_SIZE
+                && options.outHeight / scale / 2 >= REQUIRED_SIZE)
+            scale *= 2;
+        options.inSampleSize = scale;
+        options.inJustDecodeBounds = false;
+        bm = BitmapFactory.decodeFile(selectedImagePath, options);
+        roundedImage_def = new RoundImage(bm);
+        imageView1.setScaleType(ScaleType.FIT_XY);
+        imageView1.setImageDrawable(roundedImage_def);
+    }
+
+    public void setActiveText(String name) {
+        TextView activeNameTextView = (TextView) getActivity().findViewById(R.id.add_bike_textview);
+        activeNameTextView.setText(name);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -160,6 +244,24 @@ public class HomeFragment extends Fragment {
         button_locate.setImageDrawable(roundedImage_location);
 
 
+        /*
+        TODO: Set and save active bike
+        I'm thinkin ...somethin like...saving an attribute to
+        this current parse user called "active_bike" or sumthin..
+        then like...totally just storing a bike_id in there. and
+        then like...if there's no active bike, store -1 in there
+        or sumthin...then just run a query here in onCreate, get
+        that value, check if -1, otherwise, query for that bike_id,
+        populate dis business....will be super chill.
+         */
+        populateActiveBike();
+
+
+        /*
+        TODO: Set last seen location.
+         */
+        TextView lastLocationTextView = (TextView)rootView.findViewById(R.id.last_location);
+        lastLocationTextView.setText("in your butt");
 
 
 
@@ -301,6 +403,14 @@ public class HomeFragment extends Fragment {
         });
 
 
+        imageView1.setOnClickListener(new OnClickListener(){
+
+            public void onClick(View view) {
+
+                Log.d("MYTAG", "ImageView1 onClick 1");
+
+            }});
+
         changeDefaultBikeText.setOnClickListener(new OnClickListener(){
 
             public void onClick(View view) {
@@ -314,6 +424,7 @@ public class HomeFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 final EditText input = (EditText) rootView.findViewById(R.id.bike_name);
 
+                Log.d("MYTAG", "ImageView1 onClick 2");
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 final EditText bikenameEditText = new EditText(getActivity());
                 final View v = inflater.inflate(R.layout.add_bike, null);
@@ -357,8 +468,8 @@ public class HomeFragment extends Fragment {
                                 Intent.createChooser(intent, "Select File"),
                                 SELECT_FILE);
 //finish selecting file I guessss
-                        TextView addbike = (TextView)rootView.findViewById(R.id.textView);
-                        addbike.setVisibility(View.INVISIBLE);
+//                        TextView addbike = (TextView)rootView.findViewById(R.id.textView);
+//                        addbike.setVisibility(View.INVISIBLE);
                     }
                 });
 
@@ -384,31 +495,16 @@ public class HomeFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode == SELECT_FILE){
                 Uri selectedImage = data.getData();
-                String[] projection = { MediaColumns.DATA };
+                try {
+                    InputStream iStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                    byte[] bikePhotoData = getBytes(iStream);
+                    saveActiveBikePhoto(bikePhotoData);
+                } catch (IOException e) {
+                    Log.d("MYTAG", "Failed to save photo.");
+                    e.printStackTrace();
+                }
 
-                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-                        projection, null, null, null);
-                cursor.moveToFirst();
-                int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
-                cursor.moveToFirst();
-
-                String selectedImagePath = cursor.getString(column_index);
-
-                Bitmap bm;
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(selectedImagePath, options);
-                final int REQUIRED_SIZE = 200;
-                int scale = 1;
-                while (options.outWidth / scale / 2 >= REQUIRED_SIZE
-                        && options.outHeight / scale / 2 >= REQUIRED_SIZE)
-                    scale *= 2;
-                options.inSampleSize = scale;
-                options.inJustDecodeBounds = false;
-                bm = BitmapFactory.decodeFile(selectedImagePath, options);
-                roundedImage_def = new RoundImage(bm);
-                imageView1.setScaleType(ScaleType.FIT_XY);
-                imageView1.setImageDrawable(roundedImage_def);
+                setActiveBikePhoto(selectedImage);
 
             }
             else if(requestCode == CHANGE_BIKE){
@@ -420,6 +516,62 @@ public class HomeFragment extends Fragment {
         }
 
     }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+
+    public void saveActiveBikePhoto(byte[] data) {
+
+        // Resize photo from camera byte array
+        Bitmap bikeImage = BitmapFactory.decodeByteArray(data, 0, data.length);
+        Bitmap bikeImageScaled = Bitmap.createScaledBitmap(bikeImage, 200, 200
+                * bikeImage.getHeight() / bikeImage.getWidth(), false);
+
+        // Override Android default landscape orientation and save portrait
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap rotatedScaledMealImage = Bitmap.createBitmap(bikeImageScaled, 0,
+                0, bikeImageScaled.getWidth(), bikeImageScaled.getHeight(),
+                matrix, true);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        rotatedScaledMealImage.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+
+        byte[] scaledData = bos.toByteArray();
+
+        photoFile = new ParseFile("bike_photo.jpg", scaledData);
+        photoFile.saveInBackground(new SaveCallback() {
+
+            public void done(ParseException e) {
+                if (e != null) {
+                    Toast.makeText(getActivity(),
+                            "Error saving: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    ParseUser.getCurrentUser().put("active_bike_photo", photoFile);
+                }
+            }
+        });
+    }
+
+
+    public void setActiveBike(double bike_id) {
+
+        ParseUser current_user = ParseUser.getCurrentUser();
+        current_user.put("active_bike", bike_id);
+
+    }
+
 
     public void addBikeToParse(String bikename, String description) {
         ParseUser current_user = ParseUser.getCurrentUser();
@@ -453,12 +605,9 @@ public class HomeFragment extends Fragment {
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
 
+
+
         Log.d("MYTAG", "bike_id: " + bikeID);
-//        ArrayList<String> temp_bikes_owned = new ArrayList<String>();
-//        temp_bikes_owned = (ArrayList<String>) current_user.get("bikes_owned");
-//        temp_bikes_owned.add(bikeID); // random bike ID value
-//        current_user.put("bikes_owned", temp_bikes_owned);
-//>>>>>>> 5fb9c98bc030b7d25e139f085e490766d03634cd
         count = count + 1;
 
         currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
@@ -488,6 +637,9 @@ public class HomeFragment extends Fragment {
 
 
         });
+
+        setActiveBike(bikeID);
+        populateActiveBike();
 
 
     }
