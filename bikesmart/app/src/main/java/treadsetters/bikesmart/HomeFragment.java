@@ -333,7 +333,6 @@ public class HomeFragment extends Fragment {
                         //String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
 
-                        //addBikeToParse(bikename, description, bikeID);
                         addBikeToParse(bikename, description);
                     }
                 });
@@ -422,9 +421,17 @@ public class HomeFragment extends Fragment {
 
     }
 
-    //public void addBikeToParse(String bikename, String description, String bikeID) {
     public void addBikeToParse(String bikename, String description) {
+        ParseUser current_user = ParseUser.getCurrentUser();
+        // Get the user's old list of bikes
+        ArrayList<Double> user_bikes = (ArrayList<Double>) current_user.get("bikes_used");
+        // Add the new bike to the list
+        current_user.put("my_groups", user_bikes);
+        current_user.saveInBackground();
+
+        // Create a new bike object
         ParseObject new_bike = new ParseObject("bike");
+
         new_bike.put("bike_name", bikename);
 
 
@@ -461,6 +468,7 @@ public class HomeFragment extends Fragment {
         }
 
         current_user.saveInBackground();
+
 
         // Save the post and return
         new_bike.saveInBackground(new SaveCallback() {

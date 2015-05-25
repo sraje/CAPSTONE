@@ -47,7 +47,7 @@ public class MainActivity2 extends ActionBarActivity
         //you can leave it empty
     }
     //First We Declare Titles And Icons For Our Navigation Drawer List View
-    //This Icons And Titles Are holded in an Array as you can see
+    //The Icons and Titles are held in an Array
 
     String TITLES[] = {"Home","Bikes","Friends","Messages","Notifications"};
     int ICONS[] = {R.drawable.ic_home,R.drawable.ic_bikes,R.drawable.ic_friends,R.drawable.ic_messages,R.drawable.ic_notifications};
@@ -129,7 +129,6 @@ public class MainActivity2 extends ActionBarActivity
                     //Toast.makeText(MainActivity2.this,"The Item Clicked is: "+recyclerView.getChildPosition(child),Toast.LENGTH_SHORT).show();
                     int position = recyclerView.getChildPosition(child);
                     Fragment fragment;
-                    //fragment = null;
                     FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
 //                    FragmentManager; fragmentManager = getSupportFragmentManager();
 

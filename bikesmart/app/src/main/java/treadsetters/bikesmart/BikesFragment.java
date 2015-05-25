@@ -3,8 +3,12 @@ package treadsetters.bikesmart;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,8 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +30,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,11 +50,11 @@ public class BikesFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    public static String MYTAG = "MYTAG";
+    public static String MYTAG = "Bikes";
     private ArrayList<String> mybikes;
     public static ArrayList<ParseObject> global_postList;
     public static ArrayAdapter<String> adapter;
-
+    static final int SELECT_FILE = 201;
     public ExpandableListAdapter listAdapter;
     public ExpandableListView expListView;
     List<String> bikeHeaders;
@@ -56,7 +64,8 @@ public class BikesFragment extends Fragment {
 
     ParseObject sharedBike;
     boolean shared;
-
+    ImageView button_plus;
+    RoundImage roundedImage_plus;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -94,6 +103,7 @@ public class BikesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
 
@@ -103,7 +113,74 @@ public class BikesFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_bikes, container, false);
+        button_plus = (ImageView) rootView.findViewById(R.id.button_plus);
+        Bitmap bm_locate = BitmapFactory.decodeResource(getResources(), R.drawable.plus);
+
+        roundedImage_plus = new RoundImage(bm_locate);
+        button_plus.setImageDrawable(roundedImage_plus);
+
+
+        button_plus.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final EditText input = (EditText) rootView.findViewById(R.id.bike_name);
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final EditText bikenameEditText = new EditText(getActivity());
+                final View v = inflater.inflate(R.layout.add_bike, null);
+                builder.setView(v);
+                builder.setTitle(R.string.add_bike);
+
+                // Add action buttons
+                builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+//                                String bikename = bikenameEditText.getText().toString().trim();
+                        EditText e = (EditText) v.findViewById(R.id.bike_name);
+                        EditText e2 = (EditText) v.findViewById(R.id.description);
+                        //EditText e3 = (EditText) v.findViewById(R.id.bikeID);
+                        String bikename = e.getText().toString();
+                        String description = e2.getText().toString();
+                        //String bikeID = e3.getText().toString();
+                        Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
+
+                        //addBikeToParse(bikename, description, bikeID);
+                        addBikeToParse(bikename, description);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.create();
+                builder.show();
+
+
+                Button add_pic = (Button) v.findViewById(R.id.add_pic);
+                add_pic.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                       /* Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"),
+                                SELECT_FILE);
+//finish selecting file I guessss
+                        TextView addbike = (TextView) v.findViewById(R.id.textView);
+                        addbike.setVisibility(View.INVISIBLE);*/
+                    }
+                });
+
+
+            }
+            // Perform action on click
+        });
+
+
         Log.d("MYTAG", "onCreateView");
 
         bikeHeaders = new ArrayList<String>();
@@ -120,6 +197,28 @@ public class BikesFragment extends Fragment {
         getSharedBikes();
         listAdapter = new ExpandableListAdapter(getActivity(), bikeHeaders, bikeLists);
         expListView.setAdapter(listAdapter);
+
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Log.d(MYTAG, "onListItemClick");
+                String bike = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).toString();
+
+                FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+                Fragment fragment = new BikeDetailsFragment();
+                Bundle args = new Bundle();
+                args.putString("bike", bike); // Add the bike object here
+                fragment.setArguments(args);
+
+                // Switch to the bike details fragment.
+                transaction.replace(R.id.container, fragment);
+                // Make sure the user can press 'back'
+                transaction.addToBackStack(null);
+                transaction.commit();
+                return true;
+            }
+        });
 
         expListView.setLongClickable(true);
         expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -139,9 +238,9 @@ public class BikesFragment extends Fragment {
                 // Add action buttons
                 builder.setNegativeButton(R.string.share, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
+                        //Nada
+                    }
+                });
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Delete bike
@@ -179,6 +278,17 @@ public class BikesFragment extends Fragment {
 
         return rootView;
 
+
+
+
+         /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // Perform action on click
+                Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
+                getMyBikes();
+            }
+        });*/
 
     }
     public void deleteBike(String bike) {
@@ -304,7 +414,59 @@ public class BikesFragment extends Fragment {
 
     }
 
+    public void addBikeToParse(String bikename, String description) {
+        ParseUser current_user = ParseUser.getCurrentUser();
+        ParseObject new_bike = new ParseObject("bike");
+        new_bike.put("bike_name", bikename);
 
+
+//        double bikeID = count;
+        double bikeID = Math.random() * 1000000;
+
+
+        Log.d("MYTAG", "bikeID: " + bikeID);
+        new_bike.put("bike_id", bikeID);
+        ArrayList<Double> temp_bikes_owned = new ArrayList<Double>();
+        temp_bikes_owned = (ArrayList<Double>) current_user.get("bikes_owned");
+        temp_bikes_owned.add(bikeID); // random bike ID value
+        current_user.put("bikes_owned", temp_bikes_owned);
+
+        //new_bike.put("bike_id", bikeID);
+        new_bike.put("bike_description", description);
+        new_bike.put("owner_id", current_user.get("user_id"));
+        new_bike.put("current_loc", "");
+        new_bike.put("private_flag", "false");
+        new_bike.put("locked_flag", "false");
+
+        Log.d("MYTAG", "bike_id: " + bikeID);
+//        ArrayList<String> temp_bikes_owned = new ArrayList<String>();
+//        temp_bikes_owned = (ArrayList<String>) current_user.get("bikes_owned");
+//        temp_bikes_owned.add(bikeID); // random bike ID value
+//        current_user.put("bikes_owned", temp_bikes_owned);
+
+        current_user.saveInBackground();
+
+        // Save the post and return
+        new_bike.saveInBackground(new SaveCallback() {
+
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+//                    setResult(RESULT_OK);
+//                    finish();
+                    Toast.makeText(getActivity(), "Bike Successfully Added!", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(getActivity(),
+                            "Error saving: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+        });
+
+
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event
