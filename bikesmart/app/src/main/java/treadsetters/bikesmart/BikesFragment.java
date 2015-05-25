@@ -267,6 +267,30 @@ public class BikesFragment extends Fragment {
                             shareBike(friendName, bikeName);
                             Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
 
+                    }
+                });
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Delete bike
+                        int itemType = ExpandableListView.getPackedPositionType(final_id);
+                        int childPosition;
+                        int groupPosition;
+
+                        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                            childPosition = ExpandableListView.getPackedPositionChild(final_id);
+                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                            Log.d("MYTAG", "Positions are " + childPosition + " " + groupPosition);
+                            Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
+                            deleteBike(bikesOwned.get(childPosition));
+                            Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                            return;
+                        } else {
+                            return;
+                        }
+                    }
 
                         }
                     });
@@ -306,6 +330,9 @@ public class BikesFragment extends Fragment {
 
         return rootView;
 
+
+
+    }
     public void deleteBike(String bike) {
 
         final String deleteBikeName = bike;
@@ -333,6 +360,7 @@ public class BikesFragment extends Fragment {
 
                             postList.get(0).deleteInBackground();
                             Log.d("MYTAG", "Finished deleting bike.");
+                            getMyBikes();
 
                         }
 
@@ -343,7 +371,6 @@ public class BikesFragment extends Fragment {
                 }
             });
         }
-    }
 
     public void getMyBikes() {
 
@@ -435,7 +462,6 @@ public class BikesFragment extends Fragment {
             });
         }
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
-
     }
 
     public void getSharedBikes() {
