@@ -24,13 +24,16 @@ import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +48,7 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int CHANGE_BIKE = 5;
     boolean lock = true;
     boolean light = false;
     ImageView imageView1;
@@ -57,6 +61,9 @@ public class HomeFragment extends Fragment {
     RoundImage roundedImage_location;
     RoundImage roundedImage_lock;
     RoundImage roundedImage_light;
+    TextView activeBikeText;
+    ParseUser current_user;
+    double currentDefaultBikeId;
     // TODO: Rename and change types of parameters
     static final int SELECT_FILE = 201;
     private String mParam1;
@@ -106,6 +113,26 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
 
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
+        current_user = ParseUser.getCurrentUser();
+
+        activeBikeText = (TextView) rootView.findViewById(R.id.activebike_name);
+        currentDefaultBikeId = (double) current_user.get("default_bike_id");
+        if(currentDefaultBikeId != 0){
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            query.whereEqualTo("bike_id", currentDefaultBikeId);
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e == null && postList.size() > 0) {
+                        activeBikeText.setText(postList.get(0).getString("bike_name"));
+                    } else {
+                        Log.d("MYTAG","Post retrieval failed...");
+                    }
+                }
+            });
+        }
+
         imageView1 = (ImageView)
                 rootView.findViewById(R.id.imageView1);
         Bitmap bm = BitmapFactory.decodeResource(getResources(),R.drawable.def);
@@ -274,7 +301,7 @@ public class HomeFragment extends Fragment {
         imageView.setOnClickListener(new OnClickListener(){
 
             public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), ChangeBikesActivity.class), 1);
+                startActivityForResult(new Intent(getActivity(), ChangeBikesActivity.class), CHANGE_BIKE);
             }
         });
 
@@ -382,6 +409,11 @@ public class HomeFragment extends Fragment {
                 imageView1.setImageDrawable(roundedImage_def);
 
             }
+            else if(requestCode == CHANGE_BIKE){
+                activeBikeText.setText(data.getStringExtra("bike_name"));
+                current_user.put("default_bike_id", data.getDoubleExtra("bike_id", 0));
+                current_user.saveInBackground();
+            }
 
         }
 
@@ -389,7 +421,6 @@ public class HomeFragment extends Fragment {
 
     //public void addBikeToParse(String bikename, String description, String bikeID) {
     public void addBikeToParse(String bikename, String description) {
-        ParseUser current_user = ParseUser.getCurrentUser();
         ParseObject new_bike = new ParseObject("bike");
         new_bike.put("bike_name", bikename);
 
@@ -419,6 +450,12 @@ public class HomeFragment extends Fragment {
 //        current_user.put("bikes_owned", temp_bikes_owned);
 //>>>>>>> 5fb9c98bc030b7d25e139f085e490766d03634cd
         count = count + 1;
+
+        currentDefaultBikeId = (double) current_user.get("default_bike_id");
+        if(currentDefaultBikeId == 0){
+            current_user.put("default_bike_id", bikeID);
+            activeBikeText.setText(bikename);
+        }
 
         current_user.saveInBackground();
 

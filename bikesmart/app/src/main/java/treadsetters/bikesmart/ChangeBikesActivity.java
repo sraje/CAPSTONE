@@ -1,10 +1,13 @@
 package treadsetters.bikesmart;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 
@@ -31,7 +34,9 @@ public class ChangeBikesActivity extends ActionBarActivity {
     List<String> bikeHeaders;
     HashMap<String, List<String>> bikeLists;
     List<String> bikesOwned;
+    List<Double> bikesOwnedId;
     List<String> bikesUsed;
+    List<Double> bikesUsedId;
 
     ParseObject sharedBike;
     boolean shared;
@@ -48,13 +53,32 @@ public class ChangeBikesActivity extends ActionBarActivity {
         bikeHeaders.add("Bikes Shared With Me");
 
         bikesOwned = new ArrayList<String>();
+        bikesOwnedId = new ArrayList<Double>();
         bikesUsed = new ArrayList<String>();
+        bikesUsedId = new ArrayList<Double>();
         expListView = (ExpandableListView) findViewById(R.id.bike_lists);
 
         getMyBikes();
         getSharedBikes();
         listAdapter = new ExpandableListAdapter(this, bikeHeaders, bikeLists);
         expListView.setAdapter(listAdapter);
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Intent result = new Intent();
+                if(groupPosition == 0){
+                    result.putExtra("bike_name", bikesOwned.get(childPosition));
+                    result.putExtra("bike_id", bikesOwnedId.get(childPosition));
+                }
+                else if(groupPosition == 1){
+                    result.putExtra("bike_name", bikesUsed.get(childPosition));
+                    result.putExtra("bike_id", bikesUsedId.get(childPosition));
+                }
+                setResult(Activity.RESULT_OK, result);
+                finish();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -90,8 +114,9 @@ public class ChangeBikesActivity extends ActionBarActivity {
         bikes_used_copy = (ArrayList<String>) current_user.get("bike_used");
 
         bikesOwned.clear();
+        bikesOwnedId.clear();
 
-        for (Double bike_id : bikes_owned_copy) {
+        for (final Double bike_id : bikes_owned_copy) {
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
             Log.d(MYTAG, "bikeID is!! : " + bike_id);
@@ -101,6 +126,7 @@ public class ChangeBikesActivity extends ActionBarActivity {
                 public void done(List<ParseObject> postList, ParseException e) {
                     if (e == null && postList.size() > 0) {
                         bikesOwned.add(postList.get(0).getString("bike_name"));
+                        bikesOwnedId.add(bike_id);
                     } else {
                         Log.d("MYTAG","Post retrieval failed...");
                     }
@@ -109,7 +135,6 @@ public class ChangeBikesActivity extends ActionBarActivity {
         }
 
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
-        bikeLists.put(bikeHeaders.get(1), bikesUsed);
     }
 
     public void getSharedBikes() {
@@ -124,6 +149,7 @@ public class ChangeBikesActivity extends ActionBarActivity {
                         if (o.get("access") != null) {
                             if (o.get("access").toString().contains(username)) {
                                 bikesUsed.add(o.get("bike_name").toString());
+                                bikesUsedId.add((Double) o.get("bike_id"));
                             }
                         }
                     }

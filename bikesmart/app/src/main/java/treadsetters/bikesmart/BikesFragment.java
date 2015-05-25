@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -94,6 +95,8 @@ public class BikesFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -211,7 +214,7 @@ public class BikesFragment extends Fragment {
 
 
                     } else {
-                        Log.d("MYTAG","Post retrieval failed...");
+                        Log.d("MYTAG", "Post retrieval failed...");
                     }
                 }
             });
