@@ -73,7 +73,6 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
 
         final TextView bike_name = (TextView) V.findViewById(R.id.bike_name);
         String bike = (String) this.getArguments().getString("bike");
-        if(bike == null) {Log.d(TAG, "bike==null");}
         bike_name.setText(bike);
         Log.d(TAG, "Bike name:" + bike);
 
