@@ -415,6 +415,19 @@ public class HomeFragment extends Fragment {
                 activeBikeText.setText(data.getStringExtra("bike_name"));
                 current_user.put("default_bike_id", data.getDoubleExtra("bike_id", 0));
                 current_user.saveInBackground();
+
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+                query.whereEqualTo("bike_id", data.getDoubleExtra("bike_id", 0));
+
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    public void done(List<ParseObject> postList, ParseException e) {
+                        if (e == null && postList.size() > 0) {
+                            postList.get(0).put("last_user",current_user.get("user_id"));
+                        } else {
+                            Log.d("MYTAG", "Post retrieval failed...");
+                        }
+                    }
+                });
             }
 
         }
@@ -449,6 +462,7 @@ public class HomeFragment extends Fragment {
      //new_bike.put("bike_id", bikeID);
         new_bike.put("bike_description", description);
         new_bike.put("owner_id", current_user.get("user_id"));
+        new_bike.put("last_user", 0);
         new_bike.put("current_loc", "");
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
@@ -464,6 +478,7 @@ public class HomeFragment extends Fragment {
         currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
         if(currentDefaultBikeId == 0){
             current_user.put("default_bike_id", bikeID);
+            new_bike.put("last_user", current_user.get("user_id"));
             activeBikeText.setText(bikename);
         }
 
