@@ -119,6 +119,8 @@ public class HomeFragment extends Fragment {
 
 
         if(active_id != -1) {
+            // Active bike has been set and a photo has been uploaded.
+
             boolean stop = false;
 
             ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
@@ -148,12 +150,14 @@ public class HomeFragment extends Fragment {
                     }
                 }
             });
+
+            // ParseUser.getCurrentUser().put("active_bike_photo", photoFile);
+            ParseFile photoFile = (ParseFile) current_user.get("active_bike_photo");
+            Uri imageUri = Uri.parse(photoFile.getUrl());
+            setActiveBikePhoto(imageUri);
         }
 
-        // ParseUser.getCurrentUser().put("active_bike_photo", photoFile);
-        ParseFile photoFile = (ParseFile) current_user.get("active_bike_photo");
-        Uri imageUri = Uri.parse(photoFile.getUrl());
-        setActiveBikePhoto(imageUri);
+
 
     }
 
