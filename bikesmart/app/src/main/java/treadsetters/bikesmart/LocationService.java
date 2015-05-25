@@ -18,6 +18,15 @@ import com.google.android.gms.location.LocationServices;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseException;
 
 /**
  * Created by Joel on 1/30/15.
@@ -33,6 +42,7 @@ public class LocationService extends Service implements
     private static final String TAG = "LocationService";
     private final IBinder myBinder = new LocalBinder();
     private ArrayList<Location> recentLocations = new ArrayList<Location>();
+    private ParseObject defaultBike;
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -66,6 +76,20 @@ public class LocationService extends Service implements
         super.onCreate();
         buildGoogleApiClient();
         mGoogleApiClient.connect();
+        ParseUser user = ParseUser.getCurrentUser();
+        final Double defaultBikeId = user.getDouble("default_bike_id");
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+        query.whereEqualTo("bike_id", defaultBikeId);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> bikeList, ParseException e) {
+                if (e == null && bikeList.size() > 0) {
+                    defaultBike = bikeList.get(0);
+                } else {
+                    Log.d("score", "Error: " + e.getMessage());
+                }
+            }
+        });
     }
 
     @Override
@@ -129,6 +153,8 @@ public class LocationService extends Service implements
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         Toast.makeText(this, "Location Updated",
                 Toast.LENGTH_SHORT).show();
+        defaultBike.put("current_loc", new ParseGeoPoint(location.getLatitude(), location.getLongitude()));
+        defaultBike.saveInBackground();
     }
 
     public Location getCurrentLocation() {
