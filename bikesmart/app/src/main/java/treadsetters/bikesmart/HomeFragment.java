@@ -320,7 +320,7 @@ public class HomeFragment extends Fragment {
                         //String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
 
-                        //addBikeToParse(bikename, description, bikeID);
+                        //(bikename, description, bikeID);
                         addBikeToParse(bikename, description);
                     }
                 });
