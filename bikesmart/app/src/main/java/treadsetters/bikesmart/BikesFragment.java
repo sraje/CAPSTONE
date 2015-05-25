@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -224,42 +222,6 @@ public class BikesFragment extends Fragment {
         expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
 
-<<<<<<< HEAD
-
-        expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                int itemType = ExpandableListView.getPackedPositionType(id);
-                int childPosition;
-                int groupPosition;
-
-                if ( itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                    childPosition = ExpandableListView.getPackedPositionChild(id);
-                    groupPosition = ExpandableListView.getPackedPositionGroup(id);
-                    Log.d("MYTAG", "Positions are " + childPosition + " " + groupPosition);
-                    Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
-                    deleteBike(bikesOwned.get(childPosition));
-
-                    //do your per-item callback here
-//                    return retVal; //true if we consumed the click, false if not
-                    return true;
-
-                } else if(itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-                    groupPosition = ExpandableListView.getPackedPositionGroup(id);
-                    //do your per-group callback here
-//                    return retVal; //true if we consumed the click, false if not
-                    return true;
-
-                } else {
-                    // null item; we don't consume the click
-                    return false;
-                }
-            }
-        });
-
-
-        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
-=======
                 final long final_id = id;
 
                 // Grab text from item clicked
@@ -281,8 +243,8 @@ public class BikesFragment extends Fragment {
                         Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();*/
 
 
-            }
-        });
+                    }
+                });
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Delete bike
@@ -324,7 +286,6 @@ public class BikesFragment extends Fragment {
 
 
          /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
->>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
@@ -338,18 +299,9 @@ public class BikesFragment extends Fragment {
     }
     public void deleteBike(String bike) {
 
-<<<<<<< HEAD
-
-    public void deleteBike(String bike) {
-
         final String deleteBikeName = bike;
         Log.d("MYTAG", "Deleting bikes " + bike);
 
-=======
-        final String deleteBikeName = bike;
-        Log.d("MYTAG", "Deleting bikes " + bike);
-
->>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
         final ParseUser current_user = ParseUser.getCurrentUser();
         ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
         ArrayList<String> bikes_used_copy = new ArrayList<String>();
@@ -372,10 +324,7 @@ public class BikesFragment extends Fragment {
 
                             postList.get(0).deleteInBackground();
                             Log.d("MYTAG", "Finished deleting bike.");
-<<<<<<< HEAD
-=======
                             getMyBikes();
->>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
 
                         }
 
@@ -386,13 +335,7 @@ public class BikesFragment extends Fragment {
                 }
             });
         }
-    }
 
-    public void getMyBikes() {
-
-<<<<<<< HEAD
-        Log.d("MYTAG", "Getting bikes...");
-=======
     }
 
     public void shareBike(final String friendName, String bikeName) {
@@ -420,7 +363,6 @@ public class BikesFragment extends Fragment {
 
 
     public void getMyBikes() {
->>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
 
         ParseUser current_user = ParseUser.getCurrentUser();
 
@@ -448,14 +390,6 @@ public class BikesFragment extends Fragment {
                 }
             });
         }
-<<<<<<< HEAD
-
-        bikeLists.put(bikeHeaders.get(0), bikesOwned);
-        bikeLists.put(bikeHeaders.get(1), bikesUsed);
-
-        Log.d("MYTAG", "Got bikes...");
-    }
-=======
 
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
     }
@@ -508,7 +442,6 @@ public class BikesFragment extends Fragment {
         new_bike.put("current_loc", "");
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
->>>>>>> c5063e52962e0f1d0407ccb88240f7d18c548b75
 
         Log.d("MYTAG", "bike_id: " + bikeID);
 
