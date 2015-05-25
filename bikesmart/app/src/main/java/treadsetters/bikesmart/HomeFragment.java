@@ -120,7 +120,7 @@ public class HomeFragment extends Fragment {
         changeDefaultBikeText = (TextView) rootView.findViewById(R.id.defaultBikeText);
 
         activeBikeText = (TextView) rootView.findViewById(R.id.activebike_name);
-        currentDefaultBikeId = (double) current_user.get("default_bike_id");
+        currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
         if(currentDefaultBikeId != 0){
             ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
             query.whereEqualTo("bike_id", currentDefaultBikeId);
@@ -461,7 +461,7 @@ public class HomeFragment extends Fragment {
 //>>>>>>> 5fb9c98bc030b7d25e139f085e490766d03634cd
         count = count + 1;
 
-        currentDefaultBikeId = (double) current_user.get("default_bike_id");
+        currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
         if(currentDefaultBikeId == 0){
             current_user.put("default_bike_id", bikeID);
             activeBikeText.setText(bikename);
