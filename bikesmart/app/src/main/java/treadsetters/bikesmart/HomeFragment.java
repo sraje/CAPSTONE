@@ -119,6 +119,7 @@ public class HomeFragment extends Fragment {
         double active_id = (double) current_user.get("active_bike");
         Log.d("MYTAG", "Active bike id is " + active_id);
 
+
         if(active_id != -1) {
             boolean stop = false;
 
@@ -151,7 +152,39 @@ public class HomeFragment extends Fragment {
             });
         }
 
+        // ParseUser.getCurrentUser().put("active_bike_photo", photoFile);
+        ParseFile photoFile = (ParseFile) current_user.get("active_bike_photo");
+        Uri imageUri = Uri.parse(photoFile.getUrl());
+        setActiveBikePhoto(imageUri);
 
+    }
+
+    public void setActiveBikePhoto(Uri image) {
+        String[] projection = { MediaColumns.DATA };
+
+        Cursor cursor = getActivity().getContentResolver().query(image,
+                projection, null, null, null);
+        cursor.moveToFirst();
+        int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+        cursor.moveToFirst();
+
+        String selectedImagePath = cursor.getString(column_index);
+
+        Bitmap bm;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(selectedImagePath, options);
+        final int REQUIRED_SIZE = 200;
+        int scale = 1;
+        while (options.outWidth / scale / 2 >= REQUIRED_SIZE
+                && options.outHeight / scale / 2 >= REQUIRED_SIZE)
+            scale *= 2;
+        options.inSampleSize = scale;
+        options.inJustDecodeBounds = false;
+        bm = BitmapFactory.decodeFile(selectedImagePath, options);
+        roundedImage_def = new RoundImage(bm);
+        imageView1.setScaleType(ScaleType.FIT_XY);
+        imageView1.setImageDrawable(roundedImage_def);
     }
 
     public void setActiveText(String name) {
@@ -435,8 +468,8 @@ public class HomeFragment extends Fragment {
                                 Intent.createChooser(intent, "Select File"),
                                 SELECT_FILE);
 //finish selecting file I guessss
-                        TextView addbike = (TextView)rootView.findViewById(R.id.textView);
-                        addbike.setVisibility(View.INVISIBLE);
+//                        TextView addbike = (TextView)rootView.findViewById(R.id.textView);
+//                        addbike.setVisibility(View.INVISIBLE);
                     }
                 });
 
@@ -471,31 +504,7 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                String[] projection = { MediaColumns.DATA };
-
-                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-                        projection, null, null, null);
-                cursor.moveToFirst();
-                int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
-                cursor.moveToFirst();
-
-                String selectedImagePath = cursor.getString(column_index);
-
-                Bitmap bm;
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(selectedImagePath, options);
-                final int REQUIRED_SIZE = 200;
-                int scale = 1;
-                while (options.outWidth / scale / 2 >= REQUIRED_SIZE
-                        && options.outHeight / scale / 2 >= REQUIRED_SIZE)
-                    scale *= 2;
-                options.inSampleSize = scale;
-                options.inJustDecodeBounds = false;
-                bm = BitmapFactory.decodeFile(selectedImagePath, options);
-                roundedImage_def = new RoundImage(bm);
-                imageView1.setScaleType(ScaleType.FIT_XY);
-                imageView1.setImageDrawable(roundedImage_def);
+                setActiveBikePhoto(selectedImage);
 
             }
             else if(requestCode == CHANGE_BIKE){
@@ -524,15 +533,15 @@ public class HomeFragment extends Fragment {
     public void saveActiveBikePhoto(byte[] data) {
 
         // Resize photo from camera byte array
-        Bitmap mealImage = BitmapFactory.decodeByteArray(data, 0, data.length);
-        Bitmap mealImageScaled = Bitmap.createScaledBitmap(mealImage, 200, 200
-                * mealImage.getHeight() / mealImage.getWidth(), false);
+        Bitmap bikeImage = BitmapFactory.decodeByteArray(data, 0, data.length);
+        Bitmap bikeImageScaled = Bitmap.createScaledBitmap(bikeImage, 200, 200
+                * bikeImage.getHeight() / bikeImage.getWidth(), false);
 
         // Override Android default landscape orientation and save portrait
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
-        Bitmap rotatedScaledMealImage = Bitmap.createBitmap(mealImageScaled, 0,
-                0, mealImageScaled.getWidth(), mealImageScaled.getHeight(),
+        Bitmap rotatedScaledMealImage = Bitmap.createBitmap(bikeImageScaled, 0,
+                0, bikeImageScaled.getWidth(), bikeImageScaled.getHeight(),
                 matrix, true);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -540,7 +549,7 @@ public class HomeFragment extends Fragment {
 
         byte[] scaledData = bos.toByteArray();
 
-        photoFile = new ParseFile("meal_photo.jpg", scaledData);
+        photoFile = new ParseFile("bike_photo.jpg", scaledData);
         photoFile.saveInBackground(new SaveCallback() {
 
             public void done(ParseException e) {
