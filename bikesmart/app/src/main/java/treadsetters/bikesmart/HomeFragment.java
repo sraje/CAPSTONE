@@ -3,15 +3,25 @@ package treadsetters.bikesmart;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore.MediaColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -19,8 +29,8 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.IOException;
 import java.util.ArrayList;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,10 +45,23 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    boolean lock = true;
+    boolean light = false;
+    ImageView imageView1;
+    ImageView button_locate;
+    ImageView button_lock;
+    ImageView button_light;
+    ImageView imageView;
+    RoundImage roundedImage_def;
+    RoundImage roundedImage_overlay;
+    RoundImage roundedImage_location;
+    RoundImage roundedImage_lock;
+    RoundImage roundedImage_light;
     // TODO: Rename and change types of parameters
+    static final int SELECT_FILE = 201;
     private String mParam1;
     private String mParam2;
+    public int count = 0;
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,7 +90,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Context context = getActivity();
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -83,8 +106,181 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
 
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        imageView1 = (ImageView)
+                rootView.findViewById(R.id.imageView1);
+        Bitmap bm = BitmapFactory.decodeResource(getResources(),R.drawable.def);
 
-        Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
+        roundedImage_def = new RoundImage(bm);
+        imageView1.setImageDrawable(roundedImage_def);
+/* overlay switch buke */
+        imageView = (ImageView)
+                rootView.findViewById(R.id.imageView);
+        Bitmap bm1 = BitmapFactory.decodeResource(getResources(),R.drawable.overlay);
+
+        roundedImage_overlay = new RoundImage(bm1);
+        imageView.setImageDrawable(roundedImage_overlay);
+
+
+
+        button_locate = (ImageView)
+                rootView.findViewById(R.id.button_locate);
+        Bitmap bm_locate = BitmapFactory.decodeResource(getResources(),R.drawable.locate);
+
+        roundedImage_location = new RoundImage(bm_locate);
+        button_locate.setImageDrawable(roundedImage_location);
+
+
+
+
+
+        button_lock  = (ImageView)rootView.findViewById(R.id.button_lock);
+        button_lock.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if(lock == true){
+                    Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.unlock);
+                    roundedImage_lock = new RoundImage(bm_lock);
+                    button_lock.setImageDrawable(roundedImage_lock);
+                    //call unlock function here
+                    lock = false;
+                    MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(a.mBluetoothSocket != null) {
+
+                        try {
+                            a.outStream = a.mBluetoothSocket.getOutputStream();
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Socket Error", Toast.LENGTH_SHORT).show();
+                        }
+
+                        String message = "L0#";
+                        byte[] msgBuffer = message.getBytes();
+
+                        try {
+                            a.outStream.write(msgBuffer);
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Write Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }else{
+                    Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.lock);
+                    roundedImage_lock = new RoundImage(bm_lock);
+                    button_lock.setImageDrawable(roundedImage_lock);
+                    button_lock.setTag(70);
+                    lock = true;
+                    MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(a.mBluetoothSocket != null) {
+
+                        try {
+                            a.outStream = a.mBluetoothSocket.getOutputStream();
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Socket Error", Toast.LENGTH_SHORT).show();
+                        }
+
+                        String message = "L1#";
+                        byte[] msgBuffer = message.getBytes();
+
+                        try {
+                            a.outStream.write(msgBuffer);
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Write Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+
+            }
+        });
+
+        //imageView.compress(Bitmap.CompressFormat.JPEG, 90, out);
+        button_lock = (ImageView)
+                rootView.findViewById(R.id.button_lock);
+        Bitmap bm_lock = BitmapFactory.decodeResource(getResources(),R.drawable.lock);
+
+        roundedImage_lock = new RoundImage(bm_lock);
+        button_lock.setImageDrawable(roundedImage_lock);
+
+
+
+
+
+        button_light = (ImageView)
+                rootView.findViewById(R.id.button_light);
+        Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.no_light);
+
+        roundedImage_light = new RoundImage(bm_light);
+        button_light.setImageDrawable(roundedImage_light);
+
+        button_light.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if(light == true){
+                    Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.no_light);
+                    roundedImage_light = new RoundImage(bm_light);
+                    button_light.setImageDrawable(roundedImage_light);
+                    //call unlock function here
+
+                    light = false;
+                    MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(a.mBluetoothSocket != null) {
+
+                        try {
+                            a.outStream = a.mBluetoothSocket.getOutputStream();
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Socket Error", Toast.LENGTH_SHORT).show();
+                        }
+
+                        String message = "F0#";
+                        byte[] msgBuffer = message.getBytes();
+
+                        try {
+                            a.outStream.write(msgBuffer);
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Write Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+                else{
+                    Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.light);
+                    roundedImage_light = new RoundImage(bm_light);
+                    button_light.setImageDrawable(roundedImage_light);
+                    button_light.setTag(70);
+
+                    light = true;
+                    MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(a.mBluetoothSocket != null) {
+
+                        try {
+                            a.outStream = a.mBluetoothSocket.getOutputStream();
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Socket Error", Toast.LENGTH_SHORT).show();
+                        }
+
+                        String message = "F1#";
+                        byte[] msgBuffer = message.getBytes();
+
+                        try {
+                            a.outStream.write(msgBuffer);
+                        } catch (IOException e) {
+                            Toast.makeText(a.getApplicationContext(), "Write Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+        });
+
+
+        imageView1.setOnClickListener(new OnClickListener(){
+
+            public void onClick(View view) {
+
+
+
+            }});
+
+
+        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
@@ -94,9 +290,13 @@ public class HomeFragment extends Fragment {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
-        });
-        Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
-        buttonAddBike.setOnClickListener(new View.OnClickListener() {
+        });*/
+
+
+        //Button buttonAddBike = (Button) rootView.findViewById(R.id.button_add_bike);
+        //  buttonAddBike.setOnClickListener(new View.OnClickListener() {
+        imageView1.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 final EditText input = (EditText) rootView.findViewById(R.id.bike_name);
@@ -113,9 +313,14 @@ public class HomeFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
 //                                String bikename = bikenameEditText.getText().toString().trim();
                         EditText e = (EditText) v.findViewById(R.id.bike_name);
+                        EditText e2 = (EditText) v.findViewById(R.id.description);
+                        //EditText e3 = (EditText) v.findViewById(R.id.bikeID);
                         String bikename = e.getText().toString();
+                        String description = e2.getText().toString();
+                        //String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
-                        addBikeToParse(bikename);
+
+                        addBikeToParse(bikename, description);
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -128,46 +333,118 @@ public class HomeFragment extends Fragment {
                 builder.show();
 
 
-//                Button add_pic = (Button) rootView.findViewById(R.id.add_pic);
-//                add_pic.setOnClickListener(new View.OnClickListener() {
-//                    public void onClick(View view) {
-//                        // Perform action on click
-//                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        startActivity(intent);
-//                    }
-//                });
+                Button add_pic = (Button) v.findViewById(R.id.add_pic);
+                add_pic.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"),
+                                SELECT_FILE);
+//finish selecting file I guessss
+                        TextView addbike = (TextView)rootView.findViewById(R.id.textView);
+                        addbike.setVisibility(View.INVISIBLE);
+                    }
+                });
 
 
             }
             // Perform action on click
         });
+
+        /*
         Button buttonFindBike = (Button) rootView.findViewById(R.id.button_find_bikes);
         buttonFindBike.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Perform action on click
                 Toast.makeText(getActivity(), "Finding bikes...", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
         return rootView;
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if(requestCode == SELECT_FILE){
+                Uri selectedImage = data.getData();
+                String[] projection = { MediaColumns.DATA };
 
-    public void addBikeToParse(String bike_name) {
-        double bike_id = 32.23; // dummy bike ID value
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                        projection, null, null, null);
+                cursor.moveToFirst();
+                int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+                cursor.moveToFirst();
 
+                String selectedImagePath = cursor.getString(column_index);
+
+                Bitmap bm;
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(selectedImagePath, options);
+                final int REQUIRED_SIZE = 200;
+                int scale = 1;
+                while (options.outWidth / scale / 2 >= REQUIRED_SIZE
+                        && options.outHeight / scale / 2 >= REQUIRED_SIZE)
+                    scale *= 2;
+                options.inSampleSize = scale;
+                options.inJustDecodeBounds = false;
+                bm = BitmapFactory.decodeFile(selectedImagePath, options);
+                roundedImage_def = new RoundImage(bm);
+                imageView1.setScaleType(ScaleType.FIT_XY);
+                imageView1.setImageDrawable(roundedImage_def);
+
+            }
+
+        }
+
+    }
+
+    public void addBikeToParse(String bikename, String description) {
         ParseUser current_user = ParseUser.getCurrentUser();
         // Get the user's old list of bikes
         ArrayList<Double> user_bikes = (ArrayList<Double>) current_user.get("bikes_used");
         // Add the new bike to the list
-        user_bikes.add(bike_id);
         current_user.put("my_groups", user_bikes);
         current_user.saveInBackground();
 
         // Create a new bike object
         ParseObject new_bike = new ParseObject("bike");
-        new_bike.put("bikename", bike_name);
-        new_bike.put("bikeID", bike_id);
+
+        new_bike.put("bike_name", bikename);
+
+
+//        double bikeID = count;
+        double bikeID = Math.random() * 1000000;
+
+
+        Log.d("MYTAG", "bikeID: " + bikeID);
+        new_bike.put("bike_id", bikeID);
+        ArrayList<Double> temp_bikes_owned = new ArrayList<Double>();
+        temp_bikes_owned = (ArrayList<Double>) current_user.get("bikes_owned");
+        temp_bikes_owned.add(bikeID); // random bike ID value
+        current_user.put("bikes_owned", temp_bikes_owned);
+
+     //new_bike.put("bike_id", bikeID);
+        new_bike.put("bike_description", description);
+        new_bike.put("owner_id", current_user.get("user_id"));
+        new_bike.put("current_loc", "");
+        new_bike.put("private_flag", "false");
+        new_bike.put("locked_flag", "false");
+
+        Log.d("MYTAG", "bike_id: " + bikeID);
+//        ArrayList<String> temp_bikes_owned = new ArrayList<String>();
+//        temp_bikes_owned = (ArrayList<String>) current_user.get("bikes_owned");
+//        temp_bikes_owned.add(bikeID); // random bike ID value
+//        current_user.put("bikes_owned", temp_bikes_owned);
+//>>>>>>> 5fb9c98bc030b7d25e139f085e490766d03634cd
+        count = count + 1;
+
+        current_user.saveInBackground();
+
 
         // Save the post and return
         new_bike.saveInBackground(new SaveCallback() {

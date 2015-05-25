@@ -47,6 +47,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
+    <string name="action_bluetooth">Bluetooth</string>
     <string name="title_activity_main_activity2">BikeSmart</string>
     <string name="hello_world">Hello world!</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -54,12 +55,16 @@
     <string name="frag_bike">BIKES</string>
     <string name="add_bike">Adding New Bike</string>
     <string name="bike_description">Description</string>
+    <string name="bikeID">XXXX-XXXX</string>
     <string name="bike_name">Bike Identifier</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
-
-
-
+    <string name="share">Share</string>
+    <string name="delete_or_share">Would you like to share or delete this bike?</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="friend_name">Friend\'s Name</string>
+    <string name="refresh">Refresh</string>
+    <string name="share_bike">Who would you like to share this bike with?</string>
 
 
 </resources>
