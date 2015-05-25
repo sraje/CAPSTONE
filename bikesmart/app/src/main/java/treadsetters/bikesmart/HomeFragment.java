@@ -62,6 +62,7 @@ public class HomeFragment extends Fragment {
     RoundImage roundedImage_lock;
     RoundImage roundedImage_light;
     TextView activeBikeText;
+    TextView changeDefaultBikeText;
     ParseUser current_user;
     double currentDefaultBikeId;
     // TODO: Rename and change types of parameters
@@ -115,6 +116,8 @@ public class HomeFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         current_user = ParseUser.getCurrentUser();
+
+        changeDefaultBikeText = (TextView) rootView.findViewById(R.id.defaultBikeText);
 
         activeBikeText = (TextView) rootView.findViewById(R.id.activebike_name);
         currentDefaultBikeId = (double) current_user.get("default_bike_id");
@@ -298,7 +301,7 @@ public class HomeFragment extends Fragment {
         });
 
 
-        imageView.setOnClickListener(new OnClickListener(){
+        changeDefaultBikeText.setOnClickListener(new OnClickListener(){
 
             public void onClick(View view) {
                 startActivityForResult(new Intent(getActivity(), ChangeBikesActivity.class), CHANGE_BIKE);
