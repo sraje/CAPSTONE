@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment {
     TextView activeBikeText;
     TextView changeDefaultBikeText;
     ParseUser current_user;
-    double currentDefaultBikeId;
+    Double currentDefaultBikeId;
     // TODO: Rename and change types of parameters
     static final int SELECT_FILE = 201;
     private String mParam1;
