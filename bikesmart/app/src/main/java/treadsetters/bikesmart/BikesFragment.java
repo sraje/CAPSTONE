@@ -137,14 +137,6 @@ public class BikesFragment extends Fragment {
                 builder.setNegativeButton(R.string.share, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                      /*  EditText e = (EditText) view.findViewById(R.id.friend_name);
-                        String friendName = e.getText().toString();
-                        shareBike(friendName, bikeName);
-                        Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();*/
-
-
-
-
             }
         });
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
@@ -161,20 +153,11 @@ public class BikesFragment extends Fragment {
                             Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
                             deleteBike(bikesOwned.get(childPosition));
                             Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
-
-                            //do your per-item callback here
-//                    return retVal; //true if we consumed the click, false if not
-//                                    return true;
                             return;
                         } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
                             groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
-                            //do your per-group callback here
-//                    return retVal; //true if we consumed the click, false if not
-//                                    return true;
                             return;
                         } else {
-                            // null item; we don't consume the click
-//                                    return false;
                             return;
                         }
                     }
@@ -192,17 +175,6 @@ public class BikesFragment extends Fragment {
 
 
         return rootView;
-
-
-
-         /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                // Perform action on click
-                Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
-                getMyBikes();
-            }
-        });*/
 
 
     }
@@ -267,7 +239,7 @@ public class BikesFragment extends Fragment {
                 }
             }
         });
-    
+
     }
 
 
@@ -299,29 +271,6 @@ public class BikesFragment extends Fragment {
                 }
             });
         }
-
-        /*for (String bike_id : bikes_used_copy) {
-
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
-            Log.d(MYTAG, "bikeID is!! : " + bike_id);
-            query.whereEqualTo("bike_id", bike_id);
-
-            // run query in foreground
-
-            Log.d(MYTAG, "sending query");
-
-            query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> postList, ParseException e) {
-                    if (e == null) {
-                        bikesUsed.add(postList.get(0).getString("bike_name"));
-                    } else {
-                        Log.d("MYTAG","Post retrieval failed...");
-                    }
-                }
-            });
-
-
-        }*/
 
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
         bikeLists.put(bikeHeaders.get(1), bikesUsed);

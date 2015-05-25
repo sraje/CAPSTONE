@@ -126,7 +126,6 @@
         android:scaleType="centerCrop"
         android:layout_gravity="center|bottom"
         android:src="@drawable/lock"
-        android:text="Click to Add Bike"
         android:cropToPadding="false"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="40dp"/>
@@ -138,7 +137,6 @@
         android:scaleType="centerCrop"
         android:layout_gravity="left|bottom"
         android:src="@drawable/locate"
-        android:text="Click to Add Bike"
         android:cropToPadding="false"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="40dp"
@@ -151,7 +149,6 @@
         android:scaleType="centerCrop"
         android:layout_gravity="right|bottom"
         android:src="@drawable/light"
-        android:text="Click to Add Bike"
         android:cropToPadding="false"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="40dp"
@@ -165,7 +162,6 @@
         android:layout_gravity="center_horizontal|top"
         android:src="@drawable/def"
         android:layout_marginTop="30dp"
-        android:text="Click to Add Bike"
         android:cropToPadding="false" />
 
     <ImageView
@@ -178,7 +174,6 @@
         android:layout_gravity="center_horizontal|top"
         android:src="@drawable/overlay"
         android:layout_marginTop="30dp"
-        android:text="Click to Add Bike"
         android:cropToPadding="false" />
 
     <TextView
