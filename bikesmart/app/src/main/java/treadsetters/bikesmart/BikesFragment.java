@@ -105,6 +105,8 @@ public class BikesFragment extends Fragment {
 
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -253,8 +255,8 @@ public class BikesFragment extends Fragment {
                         Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();*/
 
 
-                    }
-                });
+            }
+        });
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Delete bike
@@ -269,20 +271,11 @@ public class BikesFragment extends Fragment {
                             Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
                             deleteBike(bikesOwned.get(childPosition));
                             Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
-
-                            //do your per-item callback here
-//                    return retVal; //true if we consumed the click, false if not
-//                                    return true;
                             return;
                         } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
                             groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
-                            //do your per-group callback here
-//                    return retVal; //true if we consumed the click, false if not
-//                                    return true;
                             return;
                         } else {
-                            // null item; we don't consume the click
-//                                    return false;
                             return;
                         }
                     }
@@ -312,6 +305,7 @@ public class BikesFragment extends Fragment {
                 getMyBikes();
             }
         });*/
+
 
 
     }
@@ -348,7 +342,7 @@ public class BikesFragment extends Fragment {
 
 
                     } else {
-                        Log.d("MYTAG","Post retrieval failed...");
+                        Log.d("MYTAG", "Post retrieval failed...");
                     }
                 }
             });
@@ -376,7 +370,7 @@ public class BikesFragment extends Fragment {
                 }
             }
         });
-    
+
     }
 
 
@@ -407,9 +401,7 @@ public class BikesFragment extends Fragment {
             });
         }
 
-
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
-        bikeLists.put(bikeHeaders.get(1), bikesUsed);
     }
 
     public void getSharedBikes() {
@@ -462,10 +454,6 @@ public class BikesFragment extends Fragment {
         new_bike.put("locked_flag", "false");
 
         Log.d("MYTAG", "bike_id: " + bikeID);
-//        ArrayList<String> temp_bikes_owned = new ArrayList<String>();
-//        temp_bikes_owned = (ArrayList<String>) current_user.get("bikes_owned");
-//        temp_bikes_owned.add(bikeID); // random bike ID value
-//        current_user.put("bikes_owned", temp_bikes_owned);
 
         current_user.saveInBackground();
 
@@ -475,8 +463,6 @@ public class BikesFragment extends Fragment {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-//                    setResult(RESULT_OK);
-//                    finish();
                     Toast.makeText(getActivity(), "Bike Successfully Added!", Toast.LENGTH_SHORT).show();
 
                 } else {
