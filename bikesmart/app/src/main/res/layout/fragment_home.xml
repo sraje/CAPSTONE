@@ -94,7 +94,7 @@
         android:layout_width="315dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Rachel&apos;s Road Bike"
+        android:text="None"
         android:id="@+id/activebike_name"
         android:layout_gravity="center_horizontal|top"
         android:background="#2F2F2F"

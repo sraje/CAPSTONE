@@ -106,6 +106,8 @@ public class BikesFragment extends Fragment {
 
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -330,7 +332,7 @@ public class BikesFragment extends Fragment {
 
 
                     } else {
-                        Log.d("MYTAG","Post retrieval failed...");
+                        Log.d("MYTAG", "Post retrieval failed...");
                     }
                 }
             });
