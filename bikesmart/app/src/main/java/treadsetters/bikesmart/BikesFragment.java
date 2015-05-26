@@ -222,7 +222,9 @@ public class BikesFragment extends Fragment {
                 fragment.setArguments(args);
 
                 // Switch to the bike details fragment.
-                transaction.replace(R.id.container, fragment);
+
+                transaction.add(R.id.container, fragment);
+                transaction.hide(fragmentManager.findFragmentByTag("bikes"));
                 // Make sure the user can press 'back'
                 transaction.addToBackStack(null);
                 transaction.commit();
