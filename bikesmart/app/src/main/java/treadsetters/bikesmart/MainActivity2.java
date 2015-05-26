@@ -36,6 +36,8 @@ public class MainActivity2 extends ActionBarActivity
     ImageView imageView1;
     RoundImage roundedImage;
 
+    public static String MYTAG = "MainActivity2";
+
     public BluetoothAdapter mBluetoothAdapter;
     public BluetoothSocket mBluetoothSocket;
     public BluetoothDevice mBluetoothDevice;
@@ -80,6 +82,7 @@ public class MainActivity2 extends ActionBarActivity
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new HomeFragment())
+                    .addToBackStack(null)
                     .commit();
         }
 
@@ -432,7 +435,7 @@ public class MainActivity2 extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Log.d("MYTAG", "Hit settings...");
+            Log.d(MYTAG, "Hit settings...");
             return true;
         }
         if(id == R.id.action_logout){
@@ -473,4 +476,16 @@ public class MainActivity2 extends ActionBarActivity
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed() {
+        Log.d(MYTAG, "OnBackPressed");
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            Log.d(MYTAG, "finishing");
+            this.finish();
+        }
+    }
+
 }
