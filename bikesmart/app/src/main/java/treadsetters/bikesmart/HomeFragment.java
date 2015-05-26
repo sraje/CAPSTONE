@@ -484,8 +484,10 @@ public class HomeFragment extends Fragment {
 
             // ParseUser.getCurrentUser().put("default_bike_photo", photoFile);
             ParseFile photoFile = (ParseFile) current_user.get("default_bike_photo");
-            Uri imageUri = Uri.parse(photoFile.getUrl());
-            setDefaultBikePhoto(imageUri);
+            if(photoFile != null) {
+                Uri imageUri = Uri.parse(photoFile.getUrl());
+                setDefaultBikePhoto(imageUri);
+            }
         }
 
 
@@ -641,6 +643,7 @@ public class HomeFragment extends Fragment {
         new_bike.put("current_loc", "");
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
+        new_bike.put("default_bike_photo", null);
 
 
 
