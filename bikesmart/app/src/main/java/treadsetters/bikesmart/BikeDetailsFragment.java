@@ -97,7 +97,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         if(mapFragment == null) { Log.d(TAG, "mapfrag==null"); }
         mapFragment.getMapAsync(this);
 
-        distance_traveled_text_box = (TextView) V.findViewById(R.id.distance_traveled_text_box);
+        distance_traveled_text_box = (TextView) V.findViewById(R.id.distance_traveled_text);
 
         return V;
     }
