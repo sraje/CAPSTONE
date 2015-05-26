@@ -128,7 +128,7 @@ public class HomeFragment extends Fragment {
 
         changeDefaultBikeText = (TextView) rootView.findViewById(R.id.defaultBikeText);
 
-        defaultBikeText = (TextView) rootView.findViewById(R.id.default_bike_name);
+        defaultBikeText = (TextView) rootView.findViewById(R.id.default_bike_name_text_view);
         currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
         if(currentDefaultBikeId != 0){
             ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
@@ -461,7 +461,7 @@ public class HomeFragment extends Fragment {
                     if (e == null && postList.size() > 0) {
                         ParseGeoPoint myloc = (ParseGeoPoint) postList.get(0).get("current_loc");
                         lastLocationTextView.setText(myloc.toString());
-                      
+
 
                     } else {
                         Log.d("MYTAG","Location retrieval failed...");
@@ -476,6 +476,9 @@ public class HomeFragment extends Fragment {
     public void populateDefaultBike() {
         ParseUser current_user = ParseUser.getCurrentUser();
 
+        /*
+        BIKE NAME
+         */
         double default_id = (double) current_user.get("default_bike_id");
         Log.d("MYTAG", "Default bike id is " + default_id);
 
