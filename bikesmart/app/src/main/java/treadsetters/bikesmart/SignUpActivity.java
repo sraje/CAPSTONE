@@ -120,8 +120,7 @@ public class SignUpActivity extends Activity {
         user.put("groups", "");
         user.put("notifications", "");
         user.put("messages", "");
-        double temp_active_id = -1;
-        user.put("active_bike", temp_active_id);
+        user.put("active_bike", -1);
 
         // Call the Parse signup method
         user.signUpInBackground(new SignUpCallback() {
