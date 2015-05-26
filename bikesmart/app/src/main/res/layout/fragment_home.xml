@@ -63,7 +63,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
 
         android:text="Active Bike"
-        android:id="@+id/active_bike_textview"
+        android:id="@+id/default_bike_name_text_view"
         android:layout_gravity="center_horizontal|top"
         android:background="#2F2F2F"
         android:autoText="false"
