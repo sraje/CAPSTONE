@@ -2,23 +2,13 @@ package treadsetters.bikesmart;
 
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.location.Location;
-import android.os.Bundle;
-import android.os.IBinder;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.util.Log;
 import android.util.Property;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,13 +19,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import java.util.ArrayList;
+
 import java.util.List;
 
 /**
@@ -137,9 +126,9 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback
 
 
         MapFragment mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        if(mapFragment == null) { Log.d(TAG, "mapfrag==null"); }
-        mapFragment.getMapAsync(this);
-
+        if(mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
         return V;
     }
 

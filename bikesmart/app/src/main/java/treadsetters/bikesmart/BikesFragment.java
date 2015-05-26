@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -405,6 +403,7 @@ public class BikesFragment extends Fragment {
                         if (o.get("access") != null) {
                             if (o.get("access").toString().contains(username)) {
                                 bikesUsed.add(o.get("bike_name").toString());
+                                ParseUser.getCurrentUser().add("bikes_used", o.get("bike_id"));
                             }
                         }
                     }
