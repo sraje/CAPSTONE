@@ -3,6 +3,8 @@ package treadsetters.bikesmart;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -44,16 +46,16 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
 {
     private static final String TAG = "Bike Details";
 
-    LocationService myService;
-    volatile boolean isBound = false;
+    ParseObject bike;
+
+    protected GoogleMap mMap;
+    protected Marker bikeMarker;
+    protected TextView distance_traveled_text_box;
 
     protected Location mLastLocation;
     protected LatLng mLastLatLng = new LatLng(34.4125, -119.8481);
-    protected TextView distance_traveled_text_box;
     protected float distance_traveled = 0;
-    protected GoogleMap mMap;
-    protected Marker bikeMarker;
-    ParseObject bike;
+
 
     public BikeDetailsFragment() {
         // Required empty public constructor
@@ -63,11 +65,6 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
-
-        Activity currentActivity = getActivity();
-        Intent intent = new Intent(currentActivity, LocationService.class);
-        ComponentName myService = currentActivity.startService(intent);
-        currentActivity.bindService(new Intent(intent), myConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -79,7 +76,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         View V = inflater.inflate(R.layout.fragment_bike_details, container, false);
 
         final TextView bike_name = (TextView) V.findViewById(R.id.bike_name);
-        final Double bike_id = this.getArguments().getDouble("bike");
+        final Double bike_id = this.getArguments().getDouble("bike_id");
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         query.whereEqualTo("bike_id", bike_id);
@@ -102,20 +99,6 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
 
         distance_traveled_text_box = (TextView) V.findViewById(R.id.distance_traveled_text_box);
 
-        final Button start_location_button = (Button) V.findViewById(R.id.start_location_button);
-        start_location_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startLocationUpdates();
-            }
-        });
-
-        final Button get_location_button = (Button) V.findViewById(R.id.get_location_button);
-        get_location_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                onLocationChanged();
-            }
-        });
-
         return V;
     }
 
@@ -133,27 +116,9 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
-    private ServiceConnection myConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            LocationService.LocalBinder binder = (LocationService.LocalBinder) service;
-            myService = binder.getService();
-            isBound = true;
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-            isBound = false;
-        }
-
-    };
-
-    private void startLocationUpdates(){
-        myService.startLocationUpdates();
-    }
-
     public void onLocationChanged() {
-        Location location = myService.getCurrentLocation();
+        // FIX THIS
+        Location location = null;
 
         if (location != null) {
             if (mLastLocation != null) {

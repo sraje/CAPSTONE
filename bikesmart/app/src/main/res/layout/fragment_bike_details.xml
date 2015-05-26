@@ -62,7 +62,6 @@
         android:gravity="center_horizontal"
         tools:layout="@android:layout/activity_list_item"/>
 
-
     <TextView
         android:id="@+id/distance_traveled_text"
         android:text="Distance Traveled (km): 3.5"
