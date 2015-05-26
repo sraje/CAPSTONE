@@ -486,7 +486,8 @@ public class HomeFragment extends Fragment {
             ParseFile photoFile = (ParseFile) current_user.get("default_bike_photo");
             if(photoFile != null) {
                 Uri imageUri = Uri.parse(photoFile.getUrl());
-                setDefaultBikePhoto(imageUri);
+                if(imageUri != null)
+                    setDefaultBikePhoto(imageUri);
             }
         }
 
