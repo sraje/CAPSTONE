@@ -403,6 +403,7 @@ public class BikesFragment extends Fragment {
                         if (o.get("access") != null) {
                             if (o.get("access").toString().contains(username)) {
                                 bikesUsed.add(o.get("bike_name").toString());
+                                ParseUser.getCurrentUser().add("bikes_used", o.get("bike_id"));
                             }
                         }
                     }

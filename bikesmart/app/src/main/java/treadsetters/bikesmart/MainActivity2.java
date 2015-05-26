@@ -169,8 +169,6 @@ public class MainActivity2 extends ActionBarActivity
                         case 2:
                             if(fragmentManager.findFragmentByTag("bikes") != null) {
                                 //if the fragment exists, show it.
-                                Toast.makeText(MainActivity2.this,"already bikes",Toast.LENGTH_SHORT).show();
-
                                 FragmentTransaction t = fragmentManager.beginTransaction();
                                 if(fragmentManager.findFragmentByTag("bike_details") != null) {
                                     t.hide(fragmentManager.findFragmentByTag("bike_details"));
@@ -178,32 +176,22 @@ public class MainActivity2 extends ActionBarActivity
                                 t.show(fragmentManager.findFragmentByTag("bikes"));
                                 t.commit();
                             } else {
-                                Toast.makeText(MainActivity2.this,"begin bikes",Toast.LENGTH_SHORT).show();
-
                                 //if the fragment does not exist, add it to fragment manager.
                                 fragmentManager.beginTransaction().add(R.id.container, new BikesFragment(), "bikes").commit();
                             }
                             if(fragmentManager.findFragmentByTag("home") != null){
-                                Toast.makeText(MainActivity2.this,"hiding home",Toast.LENGTH_SHORT).show();
-
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("Messages") != null){
-                                Toast.makeText(MainActivity2.this,"hiding messages",Toast.LENGTH_SHORT).show();
-
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("Messages")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("friends") != null){
-                                Toast.makeText(MainActivity2.this,"hiding friends",Toast.LENGTH_SHORT).show();
-
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("friends")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("notifications") != null){
-                                Toast.makeText(MainActivity2.this,"hiding notifcatiosn",Toast.LENGTH_SHORT).show();
-
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("notifications")).commit();
                             }
@@ -211,69 +199,53 @@ public class MainActivity2 extends ActionBarActivity
                         case 3:
 
                             if(fragmentManager.findFragmentByTag("friends") != null) {
-                                Toast.makeText(MainActivity2.this,"already friends",Toast.LENGTH_SHORT).show();
-
                                 //if the fragment exists, show it.
                                 fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("friends")).commit();
                             } else {
-                                Toast.makeText(MainActivity2.this,"begin friends",Toast.LENGTH_SHORT).show();
-
                                 //if the fragment does not exist, add it to fragment manager.
                                 fragmentManager.beginTransaction().add(R.id.container, new FriendsFragment(), "friends").commit();
                             }
                             if(fragmentManager.findFragmentByTag("home") != null){
                                 //if the other fragment is visible, hide it.
-                                Toast.makeText(MainActivity2.this,"hiding home",Toast.LENGTH_SHORT).show();
-
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("Messages") != null){
-                                Toast.makeText(MainActivity2.this,"hiding Messages",Toast.LENGTH_SHORT).show();
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("Messages")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("bikes") != null){
                                 //if the other fragment is visible, hide it.
-                                Toast.makeText(MainActivity2.this,"hiding bikes",Toast.LENGTH_SHORT).show();
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("bikes")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("notifications") != null){
                                 //if the other fragment is visible, hide it.
-                                Toast.makeText(MainActivity2.this,"hiding notifcations",Toast.LENGTH_SHORT).show();
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("notifications")).commit();
                             }
-                            //Toast.makeText(MainActivity2.this,"Bikess???",Toast.LENGTH_SHORT).show();
 
                             break;
 
                         case 4:
                             if(fragmentManager.findFragmentByTag("Messages") != null) {
-                                Toast.makeText(MainActivity2.this,"already messages",Toast.LENGTH_SHORT).show();
                                 //if the fragment exists, show it.
                                 fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("Messages")).commit();
                             } else {
-                                Toast.makeText(MainActivity2.this,"begin messages",Toast.LENGTH_SHORT).show();
                                 //if the fragment does not exist, add it to fragment manager.
                                 fragmentManager.beginTransaction().add(R.id.container, new MessagesFragment(), "Messages").commit();
                             }
                             if(fragmentManager.findFragmentByTag("home") != null){
                                 //if the other fragment is visible, hide it.
-                                Toast.makeText(MainActivity2.this,"hiding home",Toast.LENGTH_SHORT).show();
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("friends") != null){
-                                Toast.makeText(MainActivity2.this,"hiding friend",Toast.LENGTH_SHORT).show();
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("friends")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("bikes") != null){
-                                Toast.makeText(MainActivity2.this,"hiding bikes",Toast.LENGTH_SHORT).show();
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("bikes")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("notifications") != null){
                                 //if the other fragment is visible, hide it.
-                                Toast.makeText(MainActivity2.this,"hiding notifications",Toast.LENGTH_SHORT).show();
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("notifications")).commit();
                             }
                             //Toast.makeText(MainActivity2.this,"Bikess???",Toast.LENGTH_SHORT).show();
@@ -282,40 +254,27 @@ public class MainActivity2 extends ActionBarActivity
                         case 5:
                             if(fragmentManager.findFragmentByTag("notifications") != null) {
                             //if the fragment exists, show it.
-                                Toast.makeText(MainActivity2.this,"already notifications",Toast.LENGTH_SHORT).show();
                             fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("notifications")).commit();
                         } else {
-                                Toast.makeText(MainActivity2.this,"begin notifications",Toast.LENGTH_SHORT).show();
-
                                 //if the fragment does not exist, add it to fragment manager.
                             fragmentManager.beginTransaction().add(R.id.container, new NotificationsFragment(), "notifications").commit();
                         }
                             if(fragmentManager.findFragmentByTag("home") != null){
-                                Toast.makeText(MainActivity2.this,"hiding home",Toast.LENGTH_SHORT).show();
-
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("home")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("Messages") != null){
-                                Toast.makeText(MainActivity2.this,"hiding mesages",Toast.LENGTH_SHORT).show();
-
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("Messages")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("bikes") != null){
-                                Toast.makeText(MainActivity2.this,"hiding bikes",Toast.LENGTH_SHORT).show();
-
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("bikes")).commit();
                             }
                             if(fragmentManager.findFragmentByTag("friends") != null){
-                                Toast.makeText(MainActivity2.this,"hiding friends",Toast.LENGTH_SHORT).show();
-
                                 //if the other fragment is visible, hide it.
                                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("friends")).commit();
                             }
-
-                            //Toast.makeText(MainActivity2.this,"Bikess???",Toast.LENGTH_SHORT).show();
 
                             break;
 
