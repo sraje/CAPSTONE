@@ -209,22 +209,24 @@ public class BikesFragment extends Fragment {
                     bikes = (ArrayList<Double>) current_user.get("bikes_used");
                 }
                 Double bike_id = bikes.get(childPosition);
-                Log.d(MYTAG, "childposition, bike_id = " + childPosition);
-                Log.d(MYTAG, bike_id.toString());
-
 
                 FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                Fragment fragment = new BikeDetailsFragment();
-                Bundle args = new Bundle();
-
-                args.putDouble("bike_id", bike_id); // Add the bike object here
-                fragment.setArguments(args);
+                // Hide the bike list fragment.
+                transaction.hide(fragmentManager.findFragmentByTag("bikes"));
 
                 // Switch to the bike details fragment.
+                Fragment fragment = fragmentManager.findFragmentByTag("bike_details");
+                if(fragment == null) {
+                    fragment = new BikeDetailsFragment();
+                    transaction.add(R.id.container, fragment);
+                } else {
+                    transaction.show(fragment);
+                }
+                Bundle args = new Bundle();
+                args.putDouble("bike_id", bike_id);
+                fragment.setArguments(args);
 
-                transaction.add(R.id.container, fragment);
-                transaction.hide(fragmentManager.findFragmentByTag("bikes"));
                 // Make sure the user can press 'back'
                 transaction.addToBackStack(null);
                 transaction.commit();
@@ -269,8 +271,8 @@ public class BikesFragment extends Fragment {
                         if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
                             childPosition = ExpandableListView.getPackedPositionChild(final_id);
                             groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
-                            Log.d("MYTAG", "Positions are " + childPosition + " " + groupPosition);
-                            Log.d("MYTAG", "Bike is: " + bikesOwned.get(childPosition));
+                            Log.d(MYTAG, "Positions are " + childPosition + " " + groupPosition);
+                            Log.d(MYTAG, "Bike is: " + bikesOwned.get(childPosition));
                             deleteBike(bikesOwned.get(childPosition));
                             Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
                             return;
@@ -314,7 +316,7 @@ public class BikesFragment extends Fragment {
     public void deleteBike(String bike) {
 
         final String deleteBikeName = bike;
-        Log.d("MYTAG", "Deleting bikes " + bike);
+        Log.d(MYTAG, "Deleting bikes " + bike);
 
         final ParseUser current_user = ParseUser.getCurrentUser();
         ArrayList<Double> bikes_owned_copy = new ArrayList<Double>();
@@ -332,19 +334,19 @@ public class BikesFragment extends Fragment {
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
                     if (e == null && postList.size() > 0) {
-                        Log.d("MYTAG", "postList size: " + postList.size());
+                        Log.d(MYTAG, "postList size: " + postList.size());
                         if(postList.get(0).getString("bike_name").toString().equals(deleteBikeName)) {
-                            Log.d("MYTAG", "Found " + deleteBikeName + "!!!!");
+                            Log.d(MYTAG, "Found " + deleteBikeName + "!!!!");
 
                             postList.get(0).deleteInBackground();
-                            Log.d("MYTAG", "Finished deleting bike.");
+                            Log.d(MYTAG, "Finished deleting bike.");
                             getMyBikes();
 
                         }
 
 
                     } else {
-                        Log.d("MYTAG", "Post retrieval failed...");
+                        Log.d(MYTAG, "Post retrieval failed...");
                     }
                 }
             });
@@ -367,7 +369,7 @@ public class BikesFragment extends Fragment {
                     sharedBike.saveEventually();
                     shared = true;
                 } else {
-                    Log.d("MYTAG", "Post retrieval failed...");
+                    Log.d(MYTAG, "Post retrieval failed...");
                     shared = false;
                 }
             }
@@ -397,7 +399,7 @@ public class BikesFragment extends Fragment {
                     if (e == null && postList.size() > 0) {
                         bikesOwned.add(postList.get(0).getString("bike_name"));
                     } else {
-                        Log.d("MYTAG","Post retrieval failed...");
+                        Log.d(MYTAG,"Post retrieval failed...");
                     }
                 }
             });
