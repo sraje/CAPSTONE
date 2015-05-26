@@ -520,36 +520,46 @@ public class HomeFragment extends Fragment {
             if(photoFile != null) {
                 Uri imageUri = Uri.parse(photoFile.getUrl());
                 if(imageUri != null)
-                    setDefaultBikePhoto(imageUri);
+                    setDefaultBikePhoto(imageUri, photoFile);
             }
         }
 
     }
 
-    public void setDefaultBikePhoto(Uri image) {
+    public void setDefaultBikePhoto(Uri image, ParseFile photoFile) {
         String[] projection = { MediaColumns.DATA };
 
-        Cursor cursor = getActivity().getContentResolver().query(image,
-                projection, null, null, null);
-        cursor.moveToFirst();
-        int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
-        cursor.moveToFirst();
+//        Cursor cursor = getActivity().getContentResolver().query(image,
+//                projection, null, null, null);
+//        cursor.moveToFirst();
+//        int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+//        cursor.moveToFirst();
+//
+//        String selectedImagePath = cursor.getString(column_index);
+//
+//        Bitmap bm;
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inJustDecodeBounds = true;
+//        BitmapFactory.decodeFile(selectedImagePath, options);
+//        final int REQUIRED_SIZE = 200;
+//        int scale = 1;
+//        while (options.outWidth / scale / 2 >= REQUIRED_SIZE
+//                && options.outHeight / scale / 2 >= REQUIRED_SIZE)
+//            scale *= 2;
+//        options.inSampleSize = scale;
+//        options.inJustDecodeBounds = false;
+//        bm = BitmapFactory.decodeFile(selectedImagePath, options);
 
-        String selectedImagePath = cursor.getString(column_index);
+        byte[] bitmapdata = new byte[0];
+        try {
+            bitmapdata = photoFile.getData();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata.length);
 
-        Bitmap bm;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(selectedImagePath, options);
-        final int REQUIRED_SIZE = 200;
-        int scale = 1;
-        while (options.outWidth / scale / 2 >= REQUIRED_SIZE
-                && options.outHeight / scale / 2 >= REQUIRED_SIZE)
-            scale *= 2;
-        options.inSampleSize = scale;
-        options.inJustDecodeBounds = false;
-        bm = BitmapFactory.decodeFile(selectedImagePath, options);
-        roundedImage_def = new RoundImage(bm);
+//        roundedImage_def = new RoundImage(bm);
+        roundedImage_def = new RoundImage(bitmap);
         imageView1.setScaleType(ScaleType.FIT_XY);
         imageView1.setImageDrawable(roundedImage_def);
     }
@@ -600,7 +610,32 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                setDefaultBikePhoto(selectedImage);
+                String[] projection = { MediaColumns.DATA };
+
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                        projection, null, null, null);
+                cursor.moveToFirst();
+                int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+                cursor.moveToFirst();
+
+                String selectedImagePath = cursor.getString(column_index);
+
+                Bitmap bm;
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(selectedImagePath, options);
+                final int REQUIRED_SIZE = 200;
+                int scale = 1;
+                while (options.outWidth / scale / 2 >= REQUIRED_SIZE
+                        && options.outHeight / scale / 2 >= REQUIRED_SIZE)
+                    scale *= 2;
+                options.inSampleSize = scale;
+                options.inJustDecodeBounds = false;
+                bm = BitmapFactory.decodeFile(selectedImagePath, options);
+
+                roundedImage_def = new RoundImage(bm);
+                imageView1.setScaleType(ScaleType.FIT_XY);
+                imageView1.setImageDrawable(roundedImage_def);
 
             }
             else if(requestCode == CHANGE_BIKE){
