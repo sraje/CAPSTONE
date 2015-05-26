@@ -523,8 +523,6 @@ public class HomeFragment extends Fragment {
             }
         }
 
-
-
     }
 
     public void setDefaultBikePhoto(Uri image) {
@@ -647,7 +645,7 @@ public class HomeFragment extends Fragment {
 
         byte[] scaledData = bos.toByteArray();
 
-        photoFile = new ParseFile("bike_photo.jpg", scaledData);
+        photoFile = new ParseFile("default_bike_photo.jpg", scaledData);
         photoFile.saveInBackground(new SaveCallback() {
 
             public void done(ParseException e) {
@@ -700,7 +698,6 @@ public class HomeFragment extends Fragment {
         new_bike.put("current_loc", new ParseGeoPoint(41.4242, 122.3844));
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
-        new_bike.put("default_bike_photo", null);
 
 
 

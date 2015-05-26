@@ -121,6 +121,7 @@ public class SignUpActivity extends Activity {
         user.put("notifications", "");
         user.put("messages", "");
         user.put("active_bike", -1);
+        user.put("default_bike_photo", null);
 
         // Call the Parse signup method
         user.signUpInBackground(new SignUpCallback() {
