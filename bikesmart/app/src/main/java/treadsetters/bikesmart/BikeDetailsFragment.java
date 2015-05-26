@@ -79,7 +79,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         final TextView description_text = (TextView) V.findViewById(R.id.description);
         final TextView last_used_text = (TextView) V.findViewById(R.id.last_used);
         final TextView owner_text = (TextView) V.findViewById(R.id.owner);
-        final TextView last_seen_text = (TextView) V.findViewById(R.id.last_seen);
+        final TextView current_location_text = (TextView) V.findViewById(R.id.current_location);
         final TextView distance_traveled_text = (TextView) V.findViewById(R.id.distance_traveled);
 
         // Get the bike id from passed arguments
@@ -89,16 +89,19 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         query.whereEqualTo("bike_id", bike_id);
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> postList, ParseException e) {
-                if (e == null && postList.size() > 0) {
+                if (e != null || postList.size()==0) {
+                    Log.d(TAG,"Post retrieval failed...");
+                } else {
                     Log.d(TAG, "bike found");
                     bike = postList.get(0);
                     bike_name_text.setText(bike.getString("bike_name"));
                     description_text.setText("Description: " + bike.getString("bike_description"));
-                    //String last_user = bike.getString("")
+
+                    Double last_user_id = bike.getDouble("last_user");
+                    Double owner_id = bike.getDouble("owner_id");
+                    // Parse query here
                     //last_used_text.setText("Last used by: " + );
-                    //String owner = bike.getString("owner_id")
-                } else {
-                    Log.d(TAG,"Post retrieval failed...");
+
                 }
             }
         });
@@ -108,7 +111,6 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         if(mapFragment == null) { Log.d(TAG, "mapfrag==null"); }
         mapFragment.getMapAsync(this);
 
-
         return V;
     }
 
@@ -117,7 +119,7 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         Log.d(TAG, "onMapReady");
         mMap = map;
 
-
+        //Location current_location = bike.get("current_loc");
         map.moveCamera( CameraUpdateFactory.newLatLngZoom(mLastLatLng, 14.0f) );
 
         bikeMarker = map.addMarker(new MarkerOptions()

@@ -63,8 +63,8 @@
         tools:layout="@android:layout/activity_list_item"/>
 
     <TextView
-        android:id="@+id/last_seen"
-        android:text="Last seen:"
+        android:id="@+id/current_location"
+        android:text="Current Location: Isla Vista"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:layout_width="wrap_content"
