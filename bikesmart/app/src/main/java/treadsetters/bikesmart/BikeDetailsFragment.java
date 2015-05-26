@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -42,18 +43,16 @@ import java.util.List;
  */
 
 
-public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback, CustomReceiver.Listener
+public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback
 {
     private static final String TAG = "Bike Details";
 
-    ParseObject bike;
+    ParseObject bike = null;
 
     protected GoogleMap mMap;
-    protected Marker bikeMarker;
-    protected TextView distance_traveled_text_box;
+    protected Marker bikeMarker = null;
 
-    protected Location mLastLocation;
-    protected LatLng mLastLatLng = new LatLng(34.4125, -119.8481);
+    protected LatLng current_location = new LatLng(34.4125, -119.8481);
     protected float distance_traveled = 0;
 
 
@@ -85,9 +84,9 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         // Get the bike id from passed arguments
         final Double bike_id = this.getArguments().getDouble("bike_id");
         // Get the bike object from parse
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
-        query.whereEqualTo("bike_id", bike_id);
-        query.findInBackground(new FindCallback<ParseObject>() {
+        ParseQuery<ParseObject> bike_query = ParseQuery.getQuery("bike");
+        bike_query.whereEqualTo("bike_id", bike_id);
+        bike_query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> postList, ParseException e) {
                 if (e != null || postList.size()==0) {
                     Log.d(TAG,"Post retrieval failed...");
@@ -97,11 +96,41 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
                     bike_name_text.setText(bike.getString("bike_name"));
                     description_text.setText("Description: " + bike.getString("bike_description"));
 
-                    Double last_user_id = bike.getDouble("last_user");
+                    final Double last_user_id = bike.getDouble("last_user");
                     Double owner_id = bike.getDouble("owner_id");
-                    // Parse query here
-                    //last_used_text.setText("Last used by: " + );
 
+                    // Get the user's name from pase
+                    ParseQuery<ParseUser> user_query = ParseUser.getQuery();
+                    user_query.whereEqualTo("user_id", last_user_id);
+                    user_query.findInBackground(new FindCallback<ParseUser>() {
+                        public void done(List<ParseUser> postList, ParseException e) {
+                            if (e!=null || postList.size()==0) {
+                                Log.d(TAG,"Post retrieval failed...");
+                            } else {
+                                last_used_text.setText("Last used by: " + postList.get(0).getString("username"));
+                            }
+                        }
+                    });
+
+                    ParseQuery<ParseUser> owner_query = ParseUser.getQuery();
+                    owner_query.whereEqualTo("user_id", owner_id);
+                    owner_query.findInBackground(new FindCallback<ParseUser>() {
+                        public void done(List<ParseUser> postList, ParseException e) {
+                            if (e != null || postList.size()==0) {
+                                Log.d(TAG,"Post retrieval failed...");
+                            } else {
+                                owner_text.setText("Owner: " + postList.get(0).getString("username"));
+                            }
+                        }
+                    });
+
+                    if(bikeMarker != null) {
+                        ParseGeoPoint bikeGeoPoint = (ParseGeoPoint) bike.get("current_loc");
+                        current_location = new LatLng(bikeGeoPoint.getLatitude(), bikeGeoPoint.getLongitude());
+
+                        bikeMarker.setPosition(current_location);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_location, 14.0f));
+                    }
                 }
             }
         });
@@ -119,33 +148,18 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         Log.d(TAG, "onMapReady");
         mMap = map;
 
-        //Location current_location = bike.get("current_loc");
-        map.moveCamera( CameraUpdateFactory.newLatLngZoom(mLastLatLng, 14.0f) );
+        if(bike != null) {
+            ParseGeoPoint bikeGeoPoint = (ParseGeoPoint) bike.get("current_loc");
+            current_location = new LatLng(bikeGeoPoint.getLatitude(), bikeGeoPoint.getLongitude());
+        }
 
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(current_location, 14.0f));
         bikeMarker = map.addMarker(new MarkerOptions()
-                .position(mLastLatLng)
+                .position(current_location)
                 .title("Last known bike location"));
 
     }
 
-    public void onLocationChanged() {
-        // FIX THIS
-        Location location = null;
-
-        if (location != null) {
-            if (mLastLocation != null) {
-                distance_traveled += mLastLocation.distanceTo(location);
-            }
-
-            mLastLocation = location;
-            mLastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-            distance_traveled_text_box.setText(Float.toString(distance_traveled / 1000));
-            animateMarker(bikeMarker, mLastLatLng);
-        } else {
-            Log.d(TAG, "Location Not Available");
-        }
-    }
 
     static LatLng interpolate(float fraction, LatLng a, LatLng b) {
         double lat = (b.latitude - a.latitude) * fraction + a.latitude;
