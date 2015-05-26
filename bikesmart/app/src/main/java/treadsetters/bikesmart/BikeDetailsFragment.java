@@ -71,13 +71,20 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-
         // Inflate the layout for this fragment
         View V = inflater.inflate(R.layout.fragment_bike_details, container, false);
 
-        final TextView bike_name = (TextView) V.findViewById(R.id.bike_name);
-        final Double bike_id = this.getArguments().getDouble("bike_id");
+        // Get all the TextView references
+        final TextView bike_name_text = (TextView) V.findViewById(R.id.bike_name);
+        final TextView description_text = (TextView) V.findViewById(R.id.description);
+        final TextView last_used_text = (TextView) V.findViewById(R.id.last_used);
+        final TextView owner_text = (TextView) V.findViewById(R.id.owner);
+        final TextView last_seen_text = (TextView) V.findViewById(R.id.last_seen);
+        final TextView distance_traveled_text = (TextView) V.findViewById(R.id.distance_traveled);
 
+        // Get the bike id from passed arguments
+        final Double bike_id = this.getArguments().getDouble("bike_id");
+        // Get the bike object from parse
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         query.whereEqualTo("bike_id", bike_id);
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -85,7 +92,11 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
                 if (e == null && postList.size() > 0) {
                     Log.d(TAG, "bike found");
                     bike = postList.get(0);
-                    bike_name.setText(bike.getString("bike_name"));
+                    bike_name_text.setText(bike.getString("bike_name"));
+                    description_text.setText("Description: " + bike.getString("bike_description"));
+                    //String last_user = bike.getString("")
+                    //last_used_text.setText("Last used by: " + );
+                    //String owner = bike.getString("owner_id")
                 } else {
                     Log.d(TAG,"Post retrieval failed...");
                 }
@@ -97,7 +108,6 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback,
         if(mapFragment == null) { Log.d(TAG, "mapfrag==null"); }
         mapFragment.getMapAsync(this);
 
-        distance_traveled_text_box = (TextView) V.findViewById(R.id.distance_traveled_text);
 
         return V;
     }

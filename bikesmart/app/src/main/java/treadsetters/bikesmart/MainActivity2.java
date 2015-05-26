@@ -2,6 +2,7 @@ package treadsetters.bikesmart;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -170,7 +171,12 @@ public class MainActivity2 extends ActionBarActivity
                                 //if the fragment exists, show it.
                                 Toast.makeText(MainActivity2.this,"already bikes",Toast.LENGTH_SHORT).show();
 
-                                fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("bikes")).commit();
+                                FragmentTransaction t = fragmentManager.beginTransaction();
+                                if(fragmentManager.findFragmentByTag("bike_details") != null) {
+                                    t.hide(fragmentManager.findFragmentByTag("bike_details"));
+                                }
+                                t.show(fragmentManager.findFragmentByTag("bikes"));
+                                t.commit();
                             } else {
                                 Toast.makeText(MainActivity2.this,"begin bikes",Toast.LENGTH_SHORT).show();
 

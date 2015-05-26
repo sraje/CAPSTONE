@@ -212,8 +212,6 @@ public class BikesFragment extends Fragment {
 
                 FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                // Hide the bike list fragment.
-                transaction.hide(fragmentManager.findFragmentByTag("bikes"));
 
                 // Switch to the bike details fragment.
                 Fragment fragment = fragmentManager.findFragmentByTag("bike_details");
@@ -297,19 +295,6 @@ public class BikesFragment extends Fragment {
 
 
         return rootView;
-
-
-
-
-         /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_refresh);
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                // Perform action on click
-                Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
-                getMyBikes();
-            }
-        });*/
-
 
 
     }

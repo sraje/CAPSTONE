@@ -3,6 +3,8 @@ package treadsetters.bikesmart;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -160,6 +162,30 @@ public class HomeFragment extends Fragment {
         roundedImage_location = new RoundImage(bm_locate);
         button_locate.setImageDrawable(roundedImage_location);
 
+        button_locate.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                Double bike_id = (Double) ParseUser.getCurrentUser().get("default_bike_id");
+
+                FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+                // Switch to the bike details fragment.
+                Fragment fragment = fragmentManager.findFragmentByTag("bike_details");
+                if(fragment == null) {
+                    fragment = new BikeDetailsFragment();
+                    transaction.add(R.id.container, fragment);
+                } else {
+                    transaction.show(fragment);
+                }
+                Bundle args = new Bundle();
+                args.putDouble("bike_id", bike_id);
+                fragment.setArguments(args);
+
+                // Make sure the user can press 'back'
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
 
 
 
