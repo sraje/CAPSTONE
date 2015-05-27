@@ -88,8 +88,10 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback
         bike_query.whereEqualTo("bike_id", bike_id);
         bike_query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> postList, ParseException e) {
-                if (e != null || postList.size()==0) {
-                    Log.d(TAG,"Post retrieval failed...");
+                if (e != null) {
+                    Log.d(TAG, e.toString());
+                } else if(postList.size()==0) {
+                    Log.d(TAG, "No user bikes found.");
                 } else {
                     Log.d(TAG, "bike found");
                     bike = postList.get(0);
@@ -104,8 +106,10 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback
                     user_query.whereEqualTo("user_id", last_user_id);
                     user_query.findInBackground(new FindCallback<ParseUser>() {
                         public void done(List<ParseUser> postList, ParseException e) {
-                            if (e!=null || postList.size()==0) {
-                                Log.d(TAG,"Post retrieval failed...");
+                            if (e != null) {
+                                Log.d(TAG, e.toString());
+                            } else if(postList.size()==0) {
+                                Log.d(TAG, "No user bikes found.");
                             } else {
                                 last_used_text.setText("Last used by: " + postList.get(0).getString("username"));
                             }
@@ -116,8 +120,10 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback
                     owner_query.whereEqualTo("user_id", owner_id);
                     owner_query.findInBackground(new FindCallback<ParseUser>() {
                         public void done(List<ParseUser> postList, ParseException e) {
-                            if (e != null || postList.size()==0) {
-                                Log.d(TAG,"Post retrieval failed...");
+                            if (e != null) {
+                                Log.d(TAG, e.toString());
+                            } else if(postList.size()==0) {
+                                Log.d(TAG, "No user bikes found.");
                             } else {
                                 owner_text.setText("Owner: " + postList.get(0).getString("username"));
                             }
