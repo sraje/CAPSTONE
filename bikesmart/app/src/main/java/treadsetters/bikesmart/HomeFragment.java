@@ -592,7 +592,7 @@ public class HomeFragment extends Fragment {
 
                 roundedImage_def = new RoundImage(bm);
                 imageView1.setScaleType(ScaleType.FIT_XY);
-                imageView1.setImageDrawable(roundedImage_def);
+//                imageView1.setImageDrawable(roundedImage_def);
 
                 Log.d("MYTAG", "newbikename, newbikedesc: " + newBikeName + " " + newBikeDescription);
 
