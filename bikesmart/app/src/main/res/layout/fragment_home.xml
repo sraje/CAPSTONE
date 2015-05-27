@@ -95,7 +95,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="None"
-        android:id="@+id/activebike_name"
+        android:id="@+id/default_bike_desc"
         android:layout_gravity="center_horizontal|top"
         android:background="#2F2F2F"
         android:autoText="false"

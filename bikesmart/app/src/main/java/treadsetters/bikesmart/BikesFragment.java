@@ -517,6 +517,7 @@ public class BikesFragment extends Fragment {
         new_bike.put("current_loc", "");
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
+        new_bike.put("dist_traveled", 0);
 
         Log.d("MYTAG", "bike_id: " + bikeID);
 
