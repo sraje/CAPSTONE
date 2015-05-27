@@ -471,6 +471,8 @@ public class BikesFragment extends Fragment {
 
         });
 
+        // Let's refresh the list when we add people too.
+        listAdapter.notifyDataSetChanged();
 
     }
 
