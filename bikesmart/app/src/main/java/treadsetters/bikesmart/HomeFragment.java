@@ -3,6 +3,8 @@ package treadsetters.bikesmart;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -167,6 +169,30 @@ public class HomeFragment extends Fragment {
         roundedImage_location = new RoundImage(bm_locate);
         button_locate.setImageDrawable(roundedImage_location);
 
+        button_locate.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                Double bike_id = (Double) ParseUser.getCurrentUser().get("default_bike_id");
+
+                FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+                // Switch to the bike details fragment.
+                Fragment fragment = fragmentManager.findFragmentByTag("bike_details");
+                if(fragment == null) {
+                    fragment = new BikeDetailsFragment();
+                    transaction.add(R.id.container, fragment);
+                } else {
+                    transaction.show(fragment);
+                }
+                Bundle args = new Bundle();
+                args.putDouble("bike_id", bike_id);
+                fragment.setArguments(args);
+
+                // Make sure the user can press 'back'
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
 
         /*
         TODO: Set and save default bike
@@ -584,6 +610,19 @@ public class HomeFragment extends Fragment {
                 defaultBikeText.setText(data.getStringExtra("bike_name"));
                 current_user.put("default_bike_id", data.getDoubleExtra("bike_id", 0));
                 current_user.saveInBackground();
+
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+                query.whereEqualTo("bike_id", data.getDoubleExtra("bike_id", 0));
+
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    public void done(List<ParseObject> postList, ParseException e) {
+                        if (e == null && postList.size() > 0) {
+                            postList.get(0).put("last_user",current_user.get("user_id"));
+                        } else {
+                            Log.d("MYTAG", "Post retrieval failed...");
+                        }
+                    }
+                });
             }
 
         }
@@ -674,7 +713,8 @@ public class HomeFragment extends Fragment {
      //new_bike.put("bike_id", bikeID);
         new_bike.put("bike_description", description);
         new_bike.put("owner_id", current_user.get("user_id"));
-        new_bike.put("current_loc", "");
+        new_bike.put("last_user", 0);
+        new_bike.put("current_loc", new ParseGeoPoint(41.4242, 122.3844));
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
 
@@ -686,7 +726,8 @@ public class HomeFragment extends Fragment {
         currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
         if(currentDefaultBikeId == 0){
             current_user.put("default_bike_id", bikeID);
-            defaultBikeText.setText(bikename);
+            new_bike.put("last_user", current_user.get("user_id"));
+            activeBikeText.setText(bikename);
         }
 
         current_user.saveInBackground();
