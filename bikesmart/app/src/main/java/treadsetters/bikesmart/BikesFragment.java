@@ -243,55 +243,59 @@ public class BikesFragment extends Fragment {
 
                 // Grab text from item clicked
                 TextView name = (TextView) v.findViewById(R.id.bike_list_item);
-                final String bikeName = name.getText().toString();
-                // Show add friends alert dialog (same one from addfriends)
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                final View view = inflater.inflate(R.layout.add_friends, null);
-                builder.setView(view);
-                builder.setTitle("Would you like to Share or Delete this Bike?");
-                // Add action buttons
-                builder.setNegativeButton(R.string.share, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                if (name != null) {
+                    final String bikeName = name.getText().toString();
 
-                        EditText e = (EditText) view.findViewById(R.id.friend_name);
-                        String friendName = e.getText().toString();
-                        shareBike(friendName, bikeName);
-                        Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
+                    // Show add friends alert dialog (same one from addfriends)
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    final View view = inflater.inflate(R.layout.add_friends, null);
+                    builder.setView(view);
+                    builder.setTitle("Would you like to Share or Delete this Bike?");
+                    // Add action buttons
+                    builder.setNegativeButton(R.string.share, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            EditText e = (EditText) view.findViewById(R.id.friend_name);
+                            String friendName = e.getText().toString();
+                            shareBike(friendName, bikeName);
+                            Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
 
 
-            }
-        });
-                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Delete bike
-                        int itemType = ExpandableListView.getPackedPositionType(final_id);
-                        int childPosition;
-                        int groupPosition;
-
-                        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                            childPosition = ExpandableListView.getPackedPositionChild(final_id);
-                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
-                            Log.d(MYTAG, "Positions are " + childPosition + " " + groupPosition);
-                            Log.d(MYTAG, "Bike is: " + bikesOwned.get(childPosition));
-                            deleteBike(bikesOwned.get(childPosition));
-                            Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
-                            return;
-                        } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
-                            return;
-                        } else {
-                            return;
                         }
-                    }
+                    });
+                    builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Delete bike
+                            int itemType = ExpandableListView.getPackedPositionType(final_id);
+                            int childPosition;
+                            int groupPosition;
 
-                }).create();
+                            if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                                childPosition = ExpandableListView.getPackedPositionChild(final_id);
+                                groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                                Log.d(MYTAG, "Positions are " + childPosition + " " + groupPosition);
+                                Log.d(MYTAG, "Bike is: " + bikesOwned.get(childPosition));
+                                deleteBike(bikesOwned.get(childPosition));
+                                Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
+                                return;
+                            } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                                groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                                return;
+                            } else {
+                                return;
+                            }
+                        }
+
+                    }).create();
 
 
-                builder.create();
-                builder.show();
+                    builder.create();
+                    builder.show();
 
-                return true;
+                    return true;
+                }
+                return false;
             }
 
         });
@@ -329,7 +333,7 @@ public class BikesFragment extends Fragment {
                             postList.get(0).deleteInBackground();
                             Log.d(MYTAG, "Finished deleting bike.");
                             getMyBikes();
-
+                            listAdapter.notifyDataSetChanged();
                         }
 
 
@@ -339,7 +343,6 @@ public class BikesFragment extends Fragment {
                 }
             });
         }
-
     }
 
     public void shareBike(final String friendName, String bikeName) {
@@ -413,6 +416,7 @@ public class BikesFragment extends Fragment {
                                 bikesUsed.add(o.get("bike_name").toString());
                                 user.add("bikes_used", o.get("bike_id"));
                                 user.saveEventually();
+                                listAdapter.notifyDataSetChanged();
                             }
                         }
                     }
