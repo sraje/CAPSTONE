@@ -203,14 +203,18 @@ public class BikesFragment extends Fragment {
                 ParseUser current_user = ParseUser.getCurrentUser();
                 ArrayList<Double> bikes;
 
+                // Get the list of owned bikes or used bikes
                 if(groupPosition==0) {
                     bikes = (ArrayList<Double>) current_user.get("bikes_owned");
                 } else {
                     bikes = (ArrayList<Double>) current_user.get("bikes_used");
                 }
+                // Use ChildPostion as an index into the bikes list
+                // Should be safe because menu was populated from the same list
                 Double bike_id = bikes.get(childPosition);
 
-                FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+                // Set up to switch fragments
+                FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
 
                 // Switch to the bike details fragment.
@@ -221,12 +225,15 @@ public class BikesFragment extends Fragment {
                 } else {
                     transaction.show(fragment);
                 }
+
+                // Pass the fragment the arguments it needs
                 Bundle args = new Bundle();
                 args.putDouble("bike_id", bike_id);
                 fragment.setArguments(args);
 
                 // Make sure the user can press 'back'
                 transaction.addToBackStack(null);
+                // Activate
                 transaction.commit();
                 return true;
             }

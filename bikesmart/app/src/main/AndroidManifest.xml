@@ -62,7 +62,9 @@
             android:name=".LocationService"
             android:enabled="true" />
 
-        <meta-data
+        <service android:name="com.parse.PushService" />
+
+         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
@@ -80,8 +82,6 @@
             android:label="@string/title_activity_main_activity2"
             android:screenOrientation="portrait" >
         </activity>
-
-        <service android:name="com.parse.PushService" />
 
         <receiver android:name="com.parse.ParseBroadcastReceiver" >
             <intent-filter>
