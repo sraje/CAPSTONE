@@ -203,9 +203,14 @@ public class BikesFragment extends Fragment {
 
                 if(groupPosition==0) {
                     bikes = (ArrayList<Double>) current_user.get("bikes_owned");
+                    Log.d("AYY", "owned " + bikes.toString());
+
                 } else {
                     bikes = (ArrayList<Double>) current_user.get("bikes_used");
+                    Log.d("AYY", "used" + bikes.toString());
+
                 }
+
                 Double bike_id = bikes.get(childPosition);
 
                 FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
@@ -338,8 +343,6 @@ public class BikesFragment extends Fragment {
     }
 
     public void shareBike(final String friendName, String bikeName) {
-        Log.d("AYY", friendName + " " + bikeName);
-
         // Get bike
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         query.whereEqualTo("bike_name", bikeName);
@@ -389,10 +392,12 @@ public class BikesFragment extends Fragment {
         }
 
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
+
     }
 
     public void getSharedBikes() {
-        final String username=ParseUser.getCurrentUser().getUsername();
+        final ParseUser user = ParseUser.getCurrentUser();
+        final String username= user.getUsername();
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -401,9 +406,13 @@ public class BikesFragment extends Fragment {
                     // Get list of usernames and make sure this user actually exists
                     for (ParseObject o : postList) {
                         if (o.get("access") != null) {
-                            if (o.get("access").toString().contains(username)) {
+                            // if we have access and don't already have the bike in our list of used bikes, add.
+                            if (o.get("access").toString().contains(username)
+                                && !bikesUsed.contains(o.get("bike_name").toString())) {
+
                                 bikesUsed.add(o.get("bike_name").toString());
-                                ParseUser.getCurrentUser().add("bikes_used", o.get("bike_id"));
+                                user.add("bikes_used", o.get("bike_id"));
+                                user.saveEventually();
                             }
                         }
                     }
