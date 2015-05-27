@@ -43,6 +43,7 @@ public class LocationService extends Service implements
     private final IBinder myBinder = new LocalBinder();
     private ArrayList<Location> recentLocations = new ArrayList<Location>();
     private ParseObject defaultBike;
+    private int loc_update_count;
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -76,6 +77,7 @@ public class LocationService extends Service implements
         super.onCreate();
         buildGoogleApiClient();
         mGoogleApiClient.connect();
+        loc_update_count = 0;
         ParseUser user = ParseUser.getCurrentUser();
         final Double defaultBikeId = user.getDouble("default_bike_id");
 
@@ -148,12 +150,17 @@ public class LocationService extends Service implements
      */
     @Override
     public void onLocationChanged(Location location) {
+        loc_update_count++;
         mCurrentLocation = location;
         recentLocations.add(location);
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         Toast.makeText(this, "Location Updated",
                 Toast.LENGTH_SHORT).show();
         defaultBike.put("current_loc", new ParseGeoPoint(location.getLatitude(), location.getLongitude()));
+        if (loc_update_count >= 10) {
+            defaultBike.add("location_history", new ParseGeoPoint(location.getLatitude(), location.getLongitude()));
+            loc_update_count = 0;
+        }
         defaultBike.saveInBackground();
     }
 
