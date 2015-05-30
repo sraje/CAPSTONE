@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.ParseObject;
@@ -151,11 +150,16 @@ public class LocationService extends Service implements
     @Override
     public void onLocationChanged(Location location) {
         loc_update_count++;
+        float distance = 0;
+        if(mCurrentLocation != null) {
+            distance = location.distanceTo(mCurrentLocation);
+        }
         mCurrentLocation = location;
         recentLocations.add(location);
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         Toast.makeText(this, "Location Updated",
                 Toast.LENGTH_SHORT).show();
+        defaultBike.put("dist_traveled", defaultBike.getNumber("dist_traveled").floatValue() + distance);
         defaultBike.put("current_loc", new ParseGeoPoint(location.getLatitude(), location.getLongitude()));
         if (loc_update_count >= 10) {
             defaultBike.add("location_history", new ParseGeoPoint(location.getLatitude(), location.getLongitude()));

@@ -21,7 +21,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +51,7 @@ public class MainActivity extends Activity{
     private String mDeviceAddress;
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
+    private ParseObject defaultBike;
 
     LocationService myService;
     volatile boolean isBound = false;
@@ -55,6 +61,7 @@ public class MainActivity extends Activity{
     long lastWheelTime;
     int lastCrankRot;
     int lastCrankTime;
+    int speed_update_count = 0;
 
     private ServiceConnection myConnection = new ServiceConnection() {
 
@@ -94,6 +101,21 @@ public class MainActivity extends Activity{
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+
+        ParseUser user = ParseUser.getCurrentUser();
+        final Double defaultBikeId = user.getDouble("default_bike_id");
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+        query.whereEqualTo("bike_id", defaultBikeId);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> bikeList, ParseException e) {
+                if (e == null && bikeList.size() > 0) {
+                    defaultBike = bikeList.get(0);
+                } else {
+                    Log.d("score", "Error: " + e.getMessage());
+                }
+            }
+        });
 
         final Button start_location_button = (Button) findViewById(R.id.start_location_button);
         start_location_button.setOnClickListener(new View.OnClickListener() {
@@ -136,11 +158,13 @@ public class MainActivity extends Activity{
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 1){
-            mDeviceName = data.getStringExtra(EXTRAS_DEVICE_NAME);
-            mDeviceAddress = data.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+            if(resultCode == RESULT_OK) {
+                mDeviceName = data.getStringExtra(EXTRAS_DEVICE_NAME);
+                mDeviceAddress = data.getStringExtra(EXTRAS_DEVICE_ADDRESS);
 
-            Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-            bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+                Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+                bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+            }
         }
     }
 
@@ -290,6 +314,16 @@ public class MainActivity extends Activity{
                     if(crankTimeDiff != 0) {
                         crankRotPerSec = crankRotDiff*1.0/crankTimeDiff*1024;
                     }
+
+                    defaultBike.put("current_speed", wheelRotPerSec * 26 * Math.PI * 3600 / 63360);
+                    defaultBike.put("current_cadence", crankRotPerSec * 60);
+                    speed_update_count++;
+                    if (speed_update_count >= 10) {
+                        defaultBike.add("speed_history", wheelRotPerSec * 26 * Math.PI * 3600 / 63360);
+                        defaultBike.add("cadence_history", crankRotPerSec * 60);
+                        speed_update_count = 0;
+                    }
+                    defaultBike.saveInBackground();
 
                     TextView view = (TextView) findViewById(R.id.speed_cadence_text);
                     displayData("Wheel: " + Double.toString(wheelRotPerSec) + " Crank: " + Double.toString(crankRotPerSec), view);
