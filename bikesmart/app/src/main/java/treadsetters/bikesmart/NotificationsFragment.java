@@ -4,21 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseInstallation;
-import com.parse.ParseObject;
-import com.parse.ParsePush;
-import com.parse.ParseQuery;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -41,7 +29,7 @@ public class NotificationsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    ArrayList<String> allUsers;
+
 
 
     /**
@@ -80,17 +68,7 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-
-        getUsers();
-        final View rootView = inflater.inflate(R.layout.fragment_notifications, container, false);
-        Button button_add_friend = (Button) rootView.findViewById(R.id.button_send_notification);
-        button_add_friend.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                sendPushNotifications();
-            }
-        });
-        return rootView;
+        return inflater.inflate(R.layout.fragment_notifications, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -115,38 +93,6 @@ public class NotificationsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public void getUsers() {
-        allUsers  = new ArrayList<String>();
-        allUsers.clear();
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> postList, ParseException e) {
-                if (e == null && postList.size() > 0) {
-                    // Get list of usernames and make sure this user actually exists
-                    for (ParseObject o : postList) {
-                        allUsers.add(o.get("username").toString());
-                    }
-                } else {
-                    Log.d("Friends", "Post retrieval failed...");
-                }
-            }
-        });
-    }
-
-    protected void sendPushNotifications() {
-        Log.d("AYY", "Sending Push notification");
-        ParseQuery<ParseInstallation> query = ParseInstallation.getQuery();
-        query.whereContainedIn("username", allUsers);
-
-        //send
-        ParsePush push = new ParsePush();
-        push.setQuery(query);
-        push.setMessage("test notification");
-        push.sendInBackground();
-
-
     }
 
     /**

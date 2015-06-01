@@ -5,8 +5,11 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import java.util.ArrayList;
 
 public class Application extends android.app.Application {
 
@@ -40,8 +43,23 @@ public class Application extends android.app.Application {
 
     public static void updateParseInstallation(ParseUser user) {
         ParseInstallation installation= ParseInstallation.getCurrentInstallation();
-        installation.put("username", user.getObjectId());
+        installation.put("username", user.get("username"));
         installation.saveEventually();
+
+    }
+
+    public static void sendPushNotification(String username, String message) {
+        ArrayList<String> queryList = new ArrayList<String>();
+        ParseQuery<ParseInstallation> query = ParseInstallation.getQuery();
+        queryList.add(username);
+        query.whereContainedIn("username", queryList);
+
+        //send Notification
+        ParsePush push = new ParsePush();
+        push.setQuery(query);
+        push.setMessage(message);
+        push.sendInBackground();
+
 
     }
 
