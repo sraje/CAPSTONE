@@ -1,14 +1,12 @@
 package treadsetters.bikesmart;
-import com.parse.Parse;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
-import com.parse.ParsePush;
-import com.parse.SaveCallback;
+
+import com.parse.Parse;
 import com.parse.ParseException;
-
-
-import com.parse.ParseObject;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 public class Application extends android.app.Application {
 
@@ -39,6 +37,13 @@ public class Application extends android.app.Application {
       });
 
   }
+
+    public static void updateParseInstallation(ParseUser user) {
+        ParseInstallation installation= ParseInstallation.getCurrentInstallation();
+        installation.put("username", user.getObjectId());
+        installation.saveEventually();
+
+    }
 
 
 }
