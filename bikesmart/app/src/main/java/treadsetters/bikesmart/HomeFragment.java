@@ -11,6 +11,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+<<<<<<< HEAD
+=======
+import android.graphics.Matrix;
+import android.location.Address;
+import android.location.Geocoder;
+>>>>>>> setLastSeen() now shows an actual city rather than lat and lon. Homepage refreshes correctly now with a fragment refresh method
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.MediaColumns;
@@ -41,6 +47,7 @@ import com.parse.SaveCallback;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -488,7 +495,7 @@ public class HomeFragment extends Fragment {
                             e1.printStackTrace();
                         }
 
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata , 0, bitmapdata.length);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
 
                         roundedImage_def = new RoundImage(bitmap);
                         imageView1.setScaleType(ScaleType.FIT_XY);
@@ -503,20 +510,48 @@ public class HomeFragment extends Fragment {
 
                     } else {
                         Log.d("MYTAG", "Default bike name/photo retrieval failed...");
-                        if(e != null)
+                        if (e != null)
                             e.printStackTrace();
                     }
                 }
             });
         }
 
+
+
+
+    }
+
+    public void refreshFrag() {
+        // Reload current fragment
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentByTag("home");
+        if(currentFragment != null){
+            //if the other fragment is visible, hide it.
+//            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("notifications")).commit();
+            FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+            fragTransaction.detach(currentFragment);
+            fragTransaction.attach(currentFragment);
+            fragTransaction.commit();
+        }
     }
 
 
     public void setLocationText(ParseGeoPoint loc) {
+
+        Geocoder gcd = new Geocoder(getActivity(), Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (addresses.size() > 0)
+            System.out.println(addresses.get(0).getLocality());
+
         TextView lastLocationTextView = (TextView) getActivity().findViewById(R.id.last_location);
-        Log.d("MYTAG", "Setting location to " + loc.toString());
-        lastLocationTextView.setText(loc.toString());
+        Log.d("MYTAG", "Setting location to " + addresses.get(0).getLocality());
+        lastLocationTextView.setText(addresses.get(0).getLocality());
     }
 
 
@@ -607,6 +642,7 @@ public class HomeFragment extends Fragment {
                 query.whereEqualTo("bike_id", changeBikeID);
                 current_user.put("default_bike_id", changeBikeID);
                 populateDefaultBike();
+                refreshFrag();
 
                 query.findInBackground(new FindCallback<ParseObject>() {
                     public void done(List<ParseObject> postList, ParseException e) {
@@ -696,7 +732,7 @@ public class HomeFragment extends Fragment {
         new_bike.put("bike_description", description);
         new_bike.put("owner_id", current_user.get("user_id"));
         new_bike.put("last_user", 0);
-        new_bike.put("current_loc", new ParseGeoPoint(41.4242, 122.3844));
+        new_bike.put("current_loc", new ParseGeoPoint(34.413329, -119.860972));
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
         new_bike.put("bike_photo", roundBikeImage);
@@ -712,7 +748,7 @@ public class HomeFragment extends Fragment {
             current_user.put("default_bike_id", bikeID);
             new_bike.put("last_user", current_user.get("user_id"));
             defaultBikeText.setText(bikename);
-
+        }
         current_user.saveInBackground();
 
 
@@ -737,7 +773,7 @@ public class HomeFragment extends Fragment {
 
 
         populateDefaultBike();
-
+        refreshFrag();
 
     }
 
