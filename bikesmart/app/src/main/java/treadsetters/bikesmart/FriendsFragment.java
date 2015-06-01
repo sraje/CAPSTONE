@@ -124,7 +124,7 @@ public class FriendsFragment extends Fragment {
                         String friendName = e.getText().toString();
                         addFriendToParse(friendName);
                         Application.sendPushNotification(friendName,
-                                ParseUser.getCurrentUser() + " has added you as a friend!");
+                                ParseUser.getCurrentUser().getUsername() + " has added you as a friend!");
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
