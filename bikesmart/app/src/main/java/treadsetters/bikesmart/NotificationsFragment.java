@@ -29,9 +29,6 @@ public class NotificationsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-
-
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -61,7 +58,6 @@ public class NotificationsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override

@@ -16,15 +16,4 @@
         android:id="@+id/textView5"
         android:layout_gravity="center" />
 
-    <Button
-        android:id="@+id/button_send_notification"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        />
-
-
-    />
-
-
 </FrameLayout>
