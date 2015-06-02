@@ -571,8 +571,8 @@ public class HomeFragment extends Fragment {
     public void setDefaultBikeText(String name, String desc) {
         TextView defaultNameTextView = (TextView) getActivity().findViewById(R.id.add_bike_textview);
         TextView defaultDescTextView = (TextView) getActivity().findViewById(R.id.default_bike_desc);
-        defaultNameTextView.setText(name);
-        defaultDescTextView.setText(desc);
+        defaultNameTextView.setText("Current Bike");
+        defaultDescTextView.setText(name);
     }
 
 
