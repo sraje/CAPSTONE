@@ -42,12 +42,15 @@ public class LocationService extends Service implements
     private final IBinder myBinder = new LocalBinder();
     private ArrayList<Location> recentLocations = new ArrayList<Location>();
     private ParseObject defaultBike;
+    private ParseUser usert;
     private int loc_update_count;
-
+    private boolean notified = false;
+    private int notcount = 0;
+    boolean first;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -72,13 +75,15 @@ public class LocationService extends Service implements
     protected String mLastUpdateTime;
 
     @Override
-    public void onCreate() {
+    public void onCreate(){
         super.onCreate();
         buildGoogleApiClient();
         mGoogleApiClient.connect();
         loc_update_count = 0;
         ParseUser user = ParseUser.getCurrentUser();
         final Double defaultBikeId = user.getDouble("default_bike_id");
+
+        first = true;
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         query.whereEqualTo("bike_id", defaultBikeId);
@@ -135,6 +140,7 @@ public class LocationService extends Service implements
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setSmallestDisplacement(2);
     }
 
     protected void startLocationUpdates() {
@@ -149,6 +155,36 @@ public class LocationService extends Service implements
      */
     @Override
     public void onLocationChanged(Location location) {
+        if(!notified && !first) {
+            ParseUser user = ParseUser.getCurrentUser();
+            final Double defaultBikeId = user.getDouble("default_bike_id");
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            query.whereEqualTo("bike_id", defaultBikeId);
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> bikeList, ParseException e) {
+                    if (e == null && bikeList.size() > 0) {
+                        defaultBike = bikeList.get(0);
+                    } else {
+                        Log.d("score", "Error: " + e.getMessage());
+                    }
+                }
+            });
+            String owner = defaultBike.getString("bike_owner_string");
+            if (defaultBike.get("locked_flag").equals("true")) {
+                Application.sendPushNotification(defaultBike.getString("bike_owner_string"),
+                        "Your bike is moving without your permission.");
+                for(Object s : defaultBike.getList("access")){
+                    Application.sendPushNotification((String) s,
+                            "Your bike is moving without your permission.");
+                }
+                notified = true;
+            }
+        }
+        notcount++;
+        if(notcount > 3){
+            notified = false;
+        }
+
         loc_update_count++;
         float distance = 0;
         if(mCurrentLocation != null) {
@@ -166,6 +202,7 @@ public class LocationService extends Service implements
             loc_update_count = 0;
         }
         defaultBike.saveInBackground();
+        first = false;
     }
 
     public Location getCurrentLocation() {
