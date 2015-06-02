@@ -123,8 +123,6 @@ public class FriendsFragment extends Fragment {
                         EditText e = (EditText) v.findViewById(R.id.friend_name);
                         String friendName = e.getText().toString();
                         addFriendToParse(friendName);
-                        Application.sendPushNotification(friendName,
-                                ParseUser.getCurrentUser().getUsername() + " has added you as a friend!");
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -232,6 +230,8 @@ public class FriendsFragment extends Fragment {
             public void done(ParseException e) {
                 if (e == null) {
                     Toast.makeText(getActivity(), "Friend \"" + friendName + "\" Successfully Added!", Toast.LENGTH_SHORT).show();
+                    Application.sendPushNotification(friendName,
+                            ParseUser.getCurrentUser().getUsername() + " has added you as a friend!");
                 } else {
                     Toast.makeText(getActivity(),
                             "Error saving: " + e.getMessage(), Toast.LENGTH_SHORT).show();
