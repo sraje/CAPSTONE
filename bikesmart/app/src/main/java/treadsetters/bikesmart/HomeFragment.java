@@ -396,6 +396,8 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 //                                String bikename = bikenameEditText.getText().toString().trim();
+                        Log.d("MYTAG", "Clicked add bike");
+
                         EditText e = (EditText) v.findViewById(R.id.bike_name);
                         EditText e2 = (EditText) v.findViewById(R.id.description);
                         //EditText e3 = (EditText) v.findViewById(R.id.bikeID);
@@ -425,6 +427,7 @@ public class HomeFragment extends Fragment {
                 Button add_pic = (Button) v.findViewById(R.id.add_pic);
                 add_pic.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
+                        Log.d("MYTAG", "Clicked add pic");
                         Intent intent = new Intent(
                                 Intent.ACTION_PICK,
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -461,6 +464,7 @@ public class HomeFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode == SELECT_FILE){
+                Log.d("MYTAG", "on add image result");
                 Uri selectedImage = data.getData();
                 try {
                     InputStream iStream = getActivity().getContentResolver().openInputStream(selectedImage);
@@ -504,6 +508,7 @@ public class HomeFragment extends Fragment {
 
             }
             else if(requestCode == CHANGE_BIKE){
+                Log.d("MYTAG", "on change bike result");
                 activeBikeText.setText(data.getStringExtra("bike_name"));
                 current_user.put("default_bike_id", data.getDoubleExtra("bike_id", 0));
                 current_user.saveInBackground();
@@ -531,6 +536,7 @@ public class HomeFragment extends Fragment {
 
 
     public void populateDefaultBike() {
+        Log.d("MYTAG", "in populatedefaultbike");
         ParseUser current_user = ParseUser.getCurrentUser();
 
         /*
@@ -553,6 +559,12 @@ public class HomeFragment extends Fragment {
              */
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
+                    if (e != null) {
+                        Log.d("MYTAG", "e != null");
+                    }
+                    if (!(postList.size() > 0)) {
+                        Log.d("MYTAG", "!postList.size() > 0");
+                    }
                     if (e == null && postList.size() > 0) {
 
                         /*
@@ -615,6 +627,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void refreshFrag() {
+        Log.d("MYTAG", "in refreshFrag");
         // Reload current fragment
         FragmentManager fragmentManager = getFragmentManager();
         Fragment currentFragment = fragmentManager.findFragmentByTag("home");
@@ -713,6 +726,7 @@ public class HomeFragment extends Fragment {
 
 
     public void addBikeToParse(String bikename, String description) {
+        Log.d("MYTAG", "in addBikeToParse");
         ParseUser current_user = ParseUser.getCurrentUser();
         // Get the user's old list of bikes
         ArrayList<Double> user_bikes = (ArrayList<Double>) current_user.get("bikes_used");
@@ -756,9 +770,14 @@ public class HomeFragment extends Fragment {
         currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
 
         if(currentDefaultBikeId == 0){
+            Log.d("MYTAG", "currentDefaultBikeId == 0");
             current_user.put("default_bike_id", bikeID);
             new_bike.put("last_user", current_user.get("user_id"));
             activeBikeText.setText(bikename);
+            setLocationText(new ParseGeoPoint(34.413329, -119.860972));
+            imageView1.setScaleType(ScaleType.FIT_XY);
+            imageView1.setImageDrawable(roundedImage_def);
+
         }
         current_user.saveInBackground();
 
