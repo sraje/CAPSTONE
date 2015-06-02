@@ -780,7 +780,9 @@ public class HomeFragment extends Fragment {
             setLocationText(new ParseGeoPoint(34.413329, -119.860972));
             imageView1.setScaleType(ScaleType.FIT_XY);
             imageView1.setImageDrawable(roundedImage_def);
+            currentDefaultBike = new_bike;
         }
+
         current_user.saveInBackground();
 
 
