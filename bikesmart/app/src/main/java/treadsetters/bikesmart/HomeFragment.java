@@ -767,6 +767,7 @@ public class HomeFragment extends Fragment {
             current_user.put("default_bike_id", bikeID);
             new_bike.put("last_user", current_user.get("user_id"));
             activeBikeText.setText(bikename);
+            populateDefaultBike();
         }
         current_user.saveInBackground();
 
