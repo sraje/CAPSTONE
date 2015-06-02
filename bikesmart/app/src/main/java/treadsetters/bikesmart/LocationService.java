@@ -140,7 +140,7 @@ public class LocationService extends Service implements
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setSmallestDisplacement(2);
+        mLocationRequest.setSmallestDisplacement(1);
     }
 
     protected void startLocationUpdates() {
@@ -173,15 +173,17 @@ public class LocationService extends Service implements
             if (defaultBike.get("locked_flag").equals("true")) {
                 Application.sendPushNotification(defaultBike.getString("bike_owner_string"),
                         "Your bike is moving without your permission.");
-                for(Object s : defaultBike.getList("access")){
-                    Application.sendPushNotification((String) s,
-                            "Your bike is moving without your permission.");
+                if(defaultBike.getList("access") != null){
+                    for (Object s : defaultBike.getList("access")) {
+                        Application.sendPushNotification((String) s,
+                                "Your bike is moving without your permission.");
+                    }
                 }
                 notified = true;
             }
         }
         notcount++;
-        if(notcount > 3){
+        if(notcount > 10){
             notified = false;
         }
 
