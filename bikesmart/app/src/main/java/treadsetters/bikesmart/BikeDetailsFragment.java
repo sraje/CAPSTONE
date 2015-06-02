@@ -3,8 +3,6 @@ package treadsetters.bikesmart;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -28,6 +26,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -204,12 +203,12 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback
         animator.start();
     }
 
-    public void onDestroyView() {
-        super.onDestroyView();
-        FragmentManager fm = getActivity().getFragmentManager();
-        Fragment fragment = (fm.findFragmentById(R.id.map));
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.remove(fragment);
-        ft.commit();
-    }
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        FragmentManager fm = getActivity().getFragmentManager();
+//        Fragment fragment = (fm.findFragmentById(R.id.map));
+//        FragmentTransaction ft = fm.beginTransaction();
+//        ft.remove(fragment);
+//        ft.commit();
+//    }
 }
