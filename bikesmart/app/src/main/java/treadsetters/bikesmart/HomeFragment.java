@@ -495,11 +495,35 @@ public class HomeFragment extends Fragment {
                             e1.printStackTrace();
                         }
 
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
 
-                        roundedImage_def = new RoundImage(bitmap);
+                        Bitmap bm;
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = true;
+                        BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+                        final int REQUIRED_SIZE = 200;
+                        int scale = 1;
+                        while (options.outWidth / scale / 2 >= REQUIRED_SIZE
+                                && options.outHeight / scale / 2 >= REQUIRED_SIZE)
+                            scale *= 2;
+                        options.inSampleSize = scale;
+                        options.inJustDecodeBounds = false;
+                        bm = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+
+                        roundedImage_def = new RoundImage(bm);
                         imageView1.setScaleType(ScaleType.FIT_XY);
                         imageView1.setImageDrawable(roundedImage_def);
+
+                        ///////////////////////
+
+//                        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+//
+//                        roundedImage_def = new RoundImage(bitmap);
+//                        Drawable image = new BitmapDrawable(bitmap);
+//                        RoundImage roundedImage = new RoundImage(bitmap);
+////                        imageView1.setScaleType(ScaleType.FIT_XY);
+//                        imageView1.setImageDrawable(image);
+////                        imageView1.setScaleType(ScaleType.FIT_XY);
+////                        imageView1.setImageDrawable(roundedImage);
 
 
                         /*

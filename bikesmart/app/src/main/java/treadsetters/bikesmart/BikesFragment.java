@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -514,7 +515,7 @@ public class BikesFragment extends Fragment {
         //new_bike.put("bike_id", bikeID);
         new_bike.put("bike_description", description);
         new_bike.put("owner_id", current_user.get("user_id"));
-        new_bike.put("current_loc", "");
+        new_bike.put("current_loc", new ParseGeoPoint(34.413329, -119.860972));
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
         new_bike.put("dist_traveled", 0);
