@@ -77,6 +77,7 @@ public class HomeFragment extends Fragment {
     TextView changeDefaultBikeText;
     ParseUser current_user;
     Double currentDefaultBikeId;
+    ParseObject currentDefaultBike;
     String      newBikeName;
     String      newBikeDescription;
 
@@ -145,6 +146,7 @@ public class HomeFragment extends Fragment {
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
                     if (e == null && postList.size() > 0) {
+                        currentDefaultBike = postList.get(0);
                         activeBikeText.setText(postList.get(0).getString("bike_name"));
                     } else {
                         Log.d("MYTAG","Post retrieval failed...");
@@ -220,6 +222,11 @@ public class HomeFragment extends Fragment {
                     lock = false;
                     MainActivity2 a = (MainActivity2)getActivity();
 
+                    if(currentDefaultBike != null) {
+                        currentDefaultBike.put("locked_flag", "false");
+                        currentDefaultBike.saveInBackground();
+                    }
+
                     if(a.mBluetoothSocket != null) {
 
                         try {
@@ -245,6 +252,11 @@ public class HomeFragment extends Fragment {
                     button_lock.setTag(70);
                     lock = true;
                     MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(currentDefaultBike != null) {
+                        currentDefaultBike.put("locked_flag", "true");
+                        currentDefaultBike.saveInBackground();
+                    }
 
                     if(a.mBluetoothSocket != null) {
 
@@ -746,10 +758,11 @@ public class HomeFragment extends Fragment {
         new_bike.put("bike_id", bikeID);
         new_bike.put("bike_description", description);
         new_bike.put("owner_id", current_user.get("user_id"));
+        new_bike.put("bike_owner_string", current_user.get("username"));
         new_bike.put("last_user", 0);
         new_bike.put("current_loc", new ParseGeoPoint(34.413329, -119.860972));
         new_bike.put("private_flag", "false");
-        new_bike.put("locked_flag", "false");
+        new_bike.put("locked_flag", "true");
         new_bike.put("bike_photo", roundBikeImage);
         new_bike.put("dist_traveled", 0);
 
