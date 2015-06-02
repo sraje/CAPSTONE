@@ -11,6 +11,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.MediaColumns;
@@ -28,15 +31,20 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,6 +62,7 @@ public class HomeFragment extends Fragment {
     private static final int CHANGE_BIKE = 5;
     boolean lock = true;
     boolean light = false;
+    private ParseFile photoFile;
     ImageView imageView1;
     ImageView button_locate;
     ImageView button_lock;
@@ -68,6 +77,10 @@ public class HomeFragment extends Fragment {
     TextView changeDefaultBikeText;
     ParseUser current_user;
     Double currentDefaultBikeId;
+    ParseObject currentDefaultBike;
+    String      newBikeName;
+    String      newBikeDescription;
+
     // TODO: Rename and change types of parameters
     static final int SELECT_FILE = 201;
     private String mParam1;
@@ -111,6 +124,8 @@ public class HomeFragment extends Fragment {
 
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -122,7 +137,7 @@ public class HomeFragment extends Fragment {
 
         changeDefaultBikeText = (TextView) rootView.findViewById(R.id.defaultBikeText);
 
-        activeBikeText = (TextView) rootView.findViewById(R.id.activebike_name);
+        activeBikeText = (TextView) rootView.findViewById(R.id.active_bike_name);
         currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
         if(currentDefaultBikeId != 0){
             ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
@@ -131,6 +146,7 @@ public class HomeFragment extends Fragment {
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
                     if (e == null && postList.size() > 0) {
+                        currentDefaultBike = postList.get(0);
                         activeBikeText.setText(postList.get(0).getString("bike_name"));
                     } else {
                         Log.d("MYTAG","Post retrieval failed...");
@@ -171,7 +187,7 @@ public class HomeFragment extends Fragment {
 
                 // Switch to the bike details fragment.
                 Fragment fragment = fragmentManager.findFragmentByTag("bike_details");
-                if(fragment == null) {
+                if (fragment == null) {
                     fragment = new BikeDetailsFragment();
                     transaction.add(R.id.container, fragment);
                 } else {
@@ -187,6 +203,11 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        /*
+        Set and save default bike
+         */
+        populateDefaultBike();
+
 
 
 
@@ -200,6 +221,11 @@ public class HomeFragment extends Fragment {
                     //call unlock function here
                     lock = false;
                     MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(currentDefaultBike != null) {
+                        currentDefaultBike.put("locked_flag", "false");
+                        currentDefaultBike.saveInBackground();
+                    }
 
                     if(a.mBluetoothSocket != null) {
 
@@ -226,6 +252,11 @@ public class HomeFragment extends Fragment {
                     button_lock.setTag(70);
                     lock = true;
                     MainActivity2 a = (MainActivity2)getActivity();
+
+                    if(currentDefaultBike != null) {
+                        currentDefaultBike.put("locked_flag", "true");
+                        currentDefaultBike.saveInBackground();
+                    }
 
                     if(a.mBluetoothSocket != null) {
 
@@ -328,12 +359,36 @@ public class HomeFragment extends Fragment {
         });
 
 
+        imageView1.setOnClickListener(new OnClickListener(){
+
+            public void onClick(View view) {
+
+                Log.d("MYTAG", "ImageView1 onClick 1");
+
+            }});
+
         changeDefaultBikeText.setOnClickListener(new OnClickListener(){
 
             public void onClick(View view) {
                 startActivityForResult(new Intent(getActivity(), ChangeBikesActivity.class), CHANGE_BIKE);
+
+                Log.d("MYTAG", "ImageView1 onClick 1");
+
+            }});
+
+
+        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // Perform action on click
+                Toast.makeText(getActivity(), "Logging out...", Toast.LENGTH_SHORT).show();
+                ParseUser.getCurrentUser().logOut();
+                Intent intent = new Intent(getActivity(), DispatchActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
+        */
 
         imageView1.setOnClickListener(new View.OnClickListener() {
 
@@ -341,6 +396,7 @@ public class HomeFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 final EditText input = (EditText) rootView.findViewById(R.id.bike_name);
 
+                Log.d("MYTAG", "ImageView1 onClick 2");
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 final EditText bikenameEditText = new EditText(getActivity());
                 final View v = inflater.inflate(R.layout.add_bike, null);
@@ -360,7 +416,12 @@ public class HomeFragment extends Fragment {
                         //String bikeID = e3.getText().toString();
                         Toast.makeText(getActivity(), "Bikename: " + bikename, Toast.LENGTH_SHORT).show();
 
+                        newBikeName = bikename;
+                        newBikeDescription = description;
+                        Log.d("MYTAG", "newbikename1, newbikedesc1: " + newBikeName + " " + newBikeDescription);
                         addBikeToParse(bikename, description);
+                        populateDefaultBike();
+                        refreshFrag();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -384,8 +445,8 @@ public class HomeFragment extends Fragment {
                                 Intent.createChooser(intent, "Select File"),
                                 SELECT_FILE);
 //finish selecting file I guessss
-                        TextView addbike = (TextView)rootView.findViewById(R.id.textView);
-                        addbike.setVisibility(View.INVISIBLE);
+//                        TextView addbike = (TextView)rootView.findViewById(R.id.textView);
+//                        addbike.setVisibility(View.INVISIBLE);
                     }
                 });
 
@@ -405,12 +466,22 @@ public class HomeFragment extends Fragment {
 
         return rootView;
     }
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode == SELECT_FILE){
                 Uri selectedImage = data.getData();
+                try {
+                    InputStream iStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                    byte[] bikePhotoData = getBytes(iStream);
+                } catch (IOException e) {
+                    Log.d("MYTAG", "Failed to save photo.");
+                    e.printStackTrace();
+                }
+
                 String[] projection = { MediaColumns.DATA };
 
                 Cursor cursor = getActivity().getContentResolver().query(selectedImage,
@@ -433,9 +504,13 @@ public class HomeFragment extends Fragment {
                 options.inSampleSize = scale;
                 options.inJustDecodeBounds = false;
                 bm = BitmapFactory.decodeFile(selectedImagePath, options);
+
                 roundedImage_def = new RoundImage(bm);
                 imageView1.setScaleType(ScaleType.FIT_XY);
-                imageView1.setImageDrawable(roundedImage_def);
+//                imageView1.setImageDrawable(roundedImage_def);
+//                imageView1.setImageDrawable(roundedImage_def);
+
+                Log.d("MYTAG", "newbikename, newbikedesc: " + newBikeName + " " + newBikeDescription);
 
             }
             else if(requestCode == CHANGE_BIKE){
@@ -444,7 +519,11 @@ public class HomeFragment extends Fragment {
                 current_user.saveInBackground();
 
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
-                query.whereEqualTo("bike_id", data.getDoubleExtra("bike_id", 0));
+                double changeBikeID = data.getDoubleExtra("bike_id", 0);
+                query.whereEqualTo("bike_id", changeBikeID);
+                current_user.put("default_bike_id", changeBikeID);
+                populateDefaultBike();
+                refreshFrag();
 
                 query.findInBackground(new FindCallback<ParseObject>() {
                     public void done(List<ParseObject> postList, ParseException e) {
@@ -458,8 +537,196 @@ public class HomeFragment extends Fragment {
             }
 
         }
+    }
+
+
+    public void populateDefaultBike() {
+        ParseUser current_user = ParseUser.getCurrentUser();
+
+        /*
+        BIKE NAME
+         */
+        currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
+        double default_id = currentDefaultBikeId;
+        Log.d("MYTAG", "Default bike id is " + default_id);
+
+
+        if(default_id > -1) {
+            // Default bike has been set and a photo has been uploaded.
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
+            Log.d("MYTAG", "Setting default bike to " + default_id);
+            query.whereEqualTo("bike_id", default_id);
+
+            /*
+            Query to find this user's default bike id.
+             */
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> postList, ParseException e) {
+                    if (e != null) {
+                        Log.d("MYTAG", "e != null");
+                    }
+                    if (!(postList.size() > 0)) {
+                        Log.d("MYTAG", "!postList.size() > 0");
+                    }
+                    if (e == null && postList.size() > 0) {
+
+                        /*
+                        Set default bike text.
+                         */
+                        String default_name = postList.get(0).getString("bike_name").toString();
+                        String default_desc = postList.get(0).getString("bike_description").toString();
+                        Log.d("MYTAG", "Setting default bikename to " + default_name);
+                        setDefaultBikeText(default_name, default_desc);
+
+                        /*
+                        Set default bike pic.
+                         */
+                        Log.d("MYTAG", "Getting default bike photo in populateDefaultBike");
+                        ParseFile pic = (ParseFile) postList.get(0).get("bike_photo");
+                        byte[] bitmapdata = new byte[0];
+                        try {
+                            bitmapdata = pic.getData();
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+
+
+                        Bitmap bm;
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = true;
+                        BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+                        final int REQUIRED_SIZE = 200;
+                        int scale = 1;
+                        while (options.outWidth / scale / 2 >= REQUIRED_SIZE
+                                && options.outHeight / scale / 2 >= REQUIRED_SIZE)
+                            scale *= 2;
+                        options.inSampleSize = scale;
+                        options.inJustDecodeBounds = false;
+                        bm = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+
+                        roundedImage_def = new RoundImage(bm);
+                        imageView1.setScaleType(ScaleType.FIT_XY);
+                        imageView1.setImageDrawable(roundedImage_def);
+
+
+                        /*
+                        Set default bike location.
+                         */
+                        ParseGeoPoint myloc = (ParseGeoPoint) postList.get(0).get("current_loc");
+                        setLocationText(myloc);
+
+                    } else {
+                        Log.d("MYTAG", "Default bike name/photo retrieval failed...");
+                        if (e != null)
+                            e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+
+
 
     }
+
+    public void refreshFrag() {
+        // Reload current fragment
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentByTag("home");
+        if(currentFragment != null){
+            //if the other fragment is visible, hide it.
+//            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("notifications")).commit();
+            FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+            fragTransaction.detach(currentFragment);
+            fragTransaction.attach(currentFragment);
+            fragTransaction.commit();
+        }
+    }
+
+
+    public void setLocationText(ParseGeoPoint loc) {
+
+        Geocoder gcd = new Geocoder(getActivity(), Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (addresses.size() > 0)
+            System.out.println(addresses.get(0).getLocality());
+
+        TextView lastLocationTextView = (TextView) getActivity().findViewById(R.id.last_location);
+        Log.d("MYTAG", "Setting location to " + addresses.get(0).getLocality());
+        lastLocationTextView.setText(addresses.get(0).getLocality());
+    }
+
+
+    public void setDefaultBikeText(String name, String desc) {
+        activeBikeText.setText(name);
+    }
+
+
+
+
+
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+
+    public void saveDefaultBikePhoto(byte[] data) {
+
+        // Resize photo from camera byte array
+        Bitmap bikeImage = BitmapFactory.decodeByteArray(data, 0, data.length);
+        Bitmap bikeImageScaled = Bitmap.createScaledBitmap(bikeImage, 200, 200
+                * bikeImage.getHeight() / bikeImage.getWidth(), false);
+
+        // Override Android default landscape orientation and save portrait
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap rotatedScaledMealImage = Bitmap.createBitmap(bikeImageScaled, 0,
+                0, bikeImageScaled.getWidth(), bikeImageScaled.getHeight(),
+                matrix, true);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        rotatedScaledMealImage.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+
+        byte[] scaledData = bos.toByteArray();
+
+        photoFile = new ParseFile("default_bike_photo.jpg", scaledData);
+        photoFile.saveInBackground(new SaveCallback() {
+
+            public void done(ParseException e) {
+                if (e != null) {
+                    Toast.makeText(getActivity(),
+                            "Error saving: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    ParseUser.getCurrentUser().put("default_bike_photo", photoFile);
+                }
+            }
+        });
+    }
+
+
+    public void setDefaultBike(double bike_id) {
+
+        ParseUser current_user = ParseUser.getCurrentUser();
+        current_user.put("default_bike_id", bike_id);
+
+    }
+
 
     public void addBikeToParse(String bikename, String description) {
         ParseUser current_user = ParseUser.getCurrentUser();
@@ -472,43 +739,48 @@ public class HomeFragment extends Fragment {
         // Create a new bike object
         ParseObject new_bike = new ParseObject("bike");
 
-        new_bike.put("bike_name", bikename);
-
-
-//        double bikeID = count;
         double bikeID = Math.random() * 1000000;
 
 
         Log.d("MYTAG", "bikeID: " + bikeID);
-        new_bike.put("bike_id", bikeID);
         ArrayList<Double> temp_bikes_owned = new ArrayList<Double>();
         temp_bikes_owned = (ArrayList<Double>) current_user.get("bikes_owned");
         temp_bikes_owned.add(bikeID); // random bike ID value
         current_user.put("bikes_owned", temp_bikes_owned);
 
-     //new_bike.put("bike_id", bikeID);
+        Bitmap bmp = roundedImage_def.getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        ParseFile roundBikeImage = new ParseFile("roundBikeImage.jpg", byteArray);
+
+        new_bike.put("bike_name", bikename);
+        new_bike.put("bike_id", bikeID);
         new_bike.put("bike_description", description);
         new_bike.put("owner_id", current_user.get("user_id"));
+        new_bike.put("bike_owner_string", current_user.get("username"));
         new_bike.put("last_user", 0);
-        new_bike.put("current_loc", new ParseGeoPoint(41.4242, 122.3844));
+        new_bike.put("current_loc", new ParseGeoPoint(34.413329, -119.860972));
         new_bike.put("private_flag", "false");
-        new_bike.put("locked_flag", "false");
+        new_bike.put("locked_flag", "true");
+        new_bike.put("bike_photo", roundBikeImage);
+        new_bike.put("dist_traveled", 0);
+
+
 
         Log.d("MYTAG", "bike_id: " + bikeID);
-//        ArrayList<String> temp_bikes_owned = new ArrayList<String>();
-//        temp_bikes_owned = (ArrayList<String>) current_user.get("bikes_owned");
-//        temp_bikes_owned.add(bikeID); // random bike ID value
-//        current_user.put("bikes_owned", temp_bikes_owned);
-//>>>>>>> 5fb9c98bc030b7d25e139f085e490766d03634cd
-        count = count + 1;
 
         currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
+
         if(currentDefaultBikeId == 0){
+            Log.d("MYTAG", "currentDefaultBikeId == 0");
             current_user.put("default_bike_id", bikeID);
             new_bike.put("last_user", current_user.get("user_id"));
             activeBikeText.setText(bikename);
+            setLocationText(new ParseGeoPoint(34.413329, -119.860972));
+            imageView1.setScaleType(ScaleType.FIT_XY);
+            imageView1.setImageDrawable(roundedImage_def);
         }
-
         current_user.saveInBackground();
 
 
@@ -531,6 +803,9 @@ public class HomeFragment extends Fragment {
 
         });
 
+
+        populateDefaultBike();
+        refreshFrag();
 
     }
 

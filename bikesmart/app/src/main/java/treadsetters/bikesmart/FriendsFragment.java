@@ -4,15 +4,17 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -44,7 +46,6 @@ public class FriendsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private Button button_add_friend;
 
     public ExpandableListAdapter listAdapter;
     public ExpandableListView expListView;
@@ -54,6 +55,9 @@ public class FriendsFragment extends Fragment {
     boolean friendNameExists;
     boolean nameFound;
     ArrayList<String> allUsers;
+
+    ImageView button_plus;
+    RoundImage roundedImage_plus;
 
     private OnFragmentInteractionListener mListener;
 
@@ -95,8 +99,14 @@ public class FriendsFragment extends Fragment {
         // Inflate the layout for this fragment
         // Add Friend Button and dialog
         final View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
-        Button button_add_friend = (Button) rootView.findViewById(R.id.button_add_friend);
-        button_add_friend.setOnClickListener(new View.OnClickListener() {
+        button_plus = (ImageView) rootView.findViewById(R.id.button_plus);
+        Bitmap bm_locate = BitmapFactory.decodeResource(getResources(), R.drawable.plus);
+
+        roundedImage_plus = new RoundImage(bm_locate);
+        button_plus.setImageDrawable(roundedImage_plus);
+
+
+        button_plus.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 final EditText input = (EditText) rootView.findViewById(R.id.friend_name);
@@ -220,6 +230,8 @@ public class FriendsFragment extends Fragment {
             public void done(ParseException e) {
                 if (e == null) {
                     Toast.makeText(getActivity(), "Friend \"" + friendName + "\" Successfully Added!", Toast.LENGTH_SHORT).show();
+                    Application.sendPushNotification(friendName,
+                            ParseUser.getCurrentUser().getUsername() + " has added you as a friend!");
                 } else {
                     Toast.makeText(getActivity(),
                             "Error saving: " + e.getMessage(), Toast.LENGTH_SHORT).show();

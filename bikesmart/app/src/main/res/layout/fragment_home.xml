@@ -12,35 +12,35 @@
 
         android:background="@color/hint_foreground_material_light"></LinearLayout>
 
-<!--    <Button
-        android:layout_width="120dp"
-        android:layout_height="77dp"
-        android:backgroundTint="@color/hint_foreground_material_light"
-        android:textColor="@android:color/white"
-        android:text="Logout"
-        android:textStyle="bold"
-        android:id="@+id/button_logout"
-        android:layout_gravity="right|bottom" />
+    <!--    <Button
+            android:layout_width="120dp"
+            android:layout_height="77dp"
+            android:backgroundTint="@color/hint_foreground_material_light"
+            android:textColor="@android:color/white"
+            android:text="Logout"
+            android:textStyle="bold"
+            android:id="@+id/button_logout"
+            android:layout_gravity="right|bottom" />
 
-    <Button
-        android:layout_width="120dp"
-        android:layout_height="77dp"
-        android:backgroundTint="@color/hint_foreground_material_light"
-        android:textColor="@android:color/white"
-        android:text="Add Bike"
-        android:textStyle="bold"
-        android:id="@+id/button_add_bike"
-        android:layout_gravity="center_horizontal|bottom" />
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="77dp"
+            android:backgroundTint="@color/hint_foreground_material_light"
+            android:textColor="@android:color/white"
+            android:text="Add Bike"
+            android:textStyle="bold"
+            android:id="@+id/button_add_bike"
+            android:layout_gravity="center_horizontal|bottom" />
 
-    <Button
-        android:layout_width="120dp"
-        android:layout_height="77dp"
-        android:backgroundTint="@color/hint_foreground_material_light"
-        android:textColor="@android:color/white"
-        android:text="Find Bikes"
-        android:textStyle="bold"
-        android:id="@+id/button_find_bikes"
-        android:layout_gravity="left|bottom" />-->
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="77dp"
+            android:backgroundTint="@color/hint_foreground_material_light"
+            android:textColor="@android:color/white"
+            android:text="Find Bikes"
+            android:textStyle="bold"
+            android:id="@+id/button_find_bikes"
+            android:layout_gravity="left|bottom" />-->
 
 
 
@@ -95,7 +95,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="None"
-        android:id="@+id/activebike_name"
+        android:id="@+id/active_bike_name"
         android:layout_gravity="center_horizontal|top"
         android:background="#2F2F2F"
         android:autoText="false"
@@ -185,14 +185,14 @@
         android:layout_gravity="center_horizontal|top"
         android:layout_marginTop="190dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="ADD BIKE"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_marginTop="120dp" />
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+        <!--android:text="ADD BIKE"-->
+        <!--android:id="@+id/textView"-->
+        <!--android:layout_gravity="center_horizontal|top"-->
+        <!--android:layout_marginTop="120dp" />-->
 
 
 </FrameLayout>

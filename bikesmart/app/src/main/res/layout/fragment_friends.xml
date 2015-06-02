@@ -18,14 +18,28 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp" />
 
-    <Button
-        android:layout_width="120dp"
-        android:layout_height="77dp"
-        android:backgroundTint="@color/hint_foreground_material_light"
-        android:textColor="@android:color/white"
-        android:text="Add Friend"
-        android:textStyle="bold"
-        android:id="@+id/button_add_friend"
-        android:layout_gravity="center_horizontal|bottom" />
+    <ImageView
+        android:id="@+id/button_plus"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="right|bottom"
+        android:src="@drawable/plus"
+        android:text="Click to Add Bike"
+        android:cropToPadding="false"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp" />
+
+    <TextView
+        android:layout_width="64dp"
+        android:layout_height="82dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF"
+        android:text="+"
+        android:id="@+id/textView3"
+        android:layout_gravity="right|bottom"
+        android:layout_marginLeft="-60dp"
+        android:textSize="50dp" />
 
 </FrameLayout>
