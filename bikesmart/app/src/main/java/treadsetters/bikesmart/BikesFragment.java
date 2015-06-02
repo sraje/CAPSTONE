@@ -261,18 +261,20 @@ public class BikesFragment extends Fragment {
                     builder.setView(view);
                     builder.setTitle("Would you like to Share or Delete this Bike?");
                     // Add action buttons
-                    builder.setNegativeButton(R.string.share, new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(R.string.share, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
                             EditText e = (EditText) view.findViewById(R.id.friend_name);
                             String friendName = e.getText().toString();
                             shareBike(friendName, bikeName);
                             Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
-
+                            Application.sendPushNotification(friendName,
+                                    ParseUser.getCurrentUser().getUsername() + " has shared " +
+                                    bikeName + " with you!");
 
                         }
                     });
-                    builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Delete bike
                             int itemType = ExpandableListView.getPackedPositionType(final_id);

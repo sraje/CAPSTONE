@@ -99,6 +99,8 @@ public class LoginActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
+                Application.updateParseInstallation(user);
+
                 Log.d("MYTAG", "Starting main app.");
             }
 
