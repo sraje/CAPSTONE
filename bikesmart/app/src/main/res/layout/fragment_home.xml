@@ -1,9 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="treadsetters.bikesmart.HomeFragment" >
-    <!--android:id="@+id/home_frag" >-->
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="treadsetters.bikesmart.HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView android:layout_width="match_parent" android:layout_height="612dp"
@@ -12,37 +9,38 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:background="@color/hint_foreground_material_light"></LinearLayout>
 
-<!--    <Button
-        android:layout_width="120dp"
-        android:layout_height="77dp"
-        android:backgroundTint="@color/hint_foreground_material_light"
-        android:textColor="@android:color/white"
-        android:text="Logout"
-        android:textStyle="bold"
-        android:id="@+id/button_logout"
-        android:layout_gravity="right|bottom" />
+    <!--    <Button
+            android:layout_width="120dp"
+            android:layout_height="77dp"
+            android:backgroundTint="@color/hint_foreground_material_light"
+            android:textColor="@android:color/white"
+            android:text="Logout"
+            android:textStyle="bold"
+            android:id="@+id/button_logout"
+            android:layout_gravity="right|bottom" />
 
-    <Button
-        android:layout_width="120dp"
-        android:layout_height="77dp"
-        android:backgroundTint="@color/hint_foreground_material_light"
-        android:textColor="@android:color/white"
-        android:text="Add Bike"
-        android:textStyle="bold"
-        android:id="@+id/button_add_bike"
-        android:layout_gravity="center_horizontal|bottom" />
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="77dp"
+            android:backgroundTint="@color/hint_foreground_material_light"
+            android:textColor="@android:color/white"
+            android:text="Add Bike"
+            android:textStyle="bold"
+            android:id="@+id/button_add_bike"
+            android:layout_gravity="center_horizontal|bottom" />
 
-    <Button
-        android:layout_width="120dp"
-        android:layout_height="77dp"
-        android:backgroundTint="@color/hint_foreground_material_light"
-        android:textColor="@android:color/white"
-        android:text="Find Bikes"
-        android:textStyle="bold"
-        android:id="@+id/button_find_bikes"
-        android:layout_gravity="left|bottom" />-->
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="77dp"
+            android:backgroundTint="@color/hint_foreground_material_light"
+            android:textColor="@android:color/white"
+            android:text="Find Bikes"
+            android:textStyle="bold"
+            android:id="@+id/button_find_bikes"
+            android:layout_gravity="left|bottom" />-->
 
 
 
@@ -65,7 +63,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
 
         android:text="Active Bike"
-        android:id="@+id/default_bike_name_text_view"
+        android:id="@+id/active_bike_textview"
         android:layout_gravity="center_horizontal|top"
         android:background="#2F2F2F"
         android:autoText="false"
@@ -97,7 +95,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="None"
-        android:id="@+id/default_bike_desc"
+        android:id="@+id/active_bike_name"
         android:layout_gravity="center_horizontal|top"
         android:background="#2F2F2F"
         android:autoText="false"
@@ -192,7 +190,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="ADD BIKE"
-        android:id="@+id/add_bike_textview"
+        android:id="@+id/textView"
         android:layout_gravity="center_horizontal|top"
         android:layout_marginTop="120dp" />
 

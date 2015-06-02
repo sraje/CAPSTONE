@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -202,14 +203,22 @@ public class BikesFragment extends Fragment {
                 ParseUser current_user = ParseUser.getCurrentUser();
                 ArrayList<Double> bikes;
 
+                // Get the list of owned bikes or used bikes
                 if(groupPosition==0) {
                     bikes = (ArrayList<Double>) current_user.get("bikes_owned");
+                    Log.d("AYY", "owned " + bikes.toString());
+
                 } else {
                     bikes = (ArrayList<Double>) current_user.get("bikes_used");
+                    Log.d("AYY", "used" + bikes.toString());
+
                 }
+                // Use ChildPostion as an index into the bikes list
+                // Should be safe because menu was populated from the same list
                 Double bike_id = bikes.get(childPosition);
 
-                FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
+                // Set up to switch fragments
+                FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
 
                 // Switch to the bike details fragment.
@@ -220,12 +229,15 @@ public class BikesFragment extends Fragment {
                 } else {
                     transaction.show(fragment);
                 }
+
+                // Pass the fragment the arguments it needs
                 Bundle args = new Bundle();
                 args.putDouble("bike_id", bike_id);
                 fragment.setArguments(args);
 
                 // Make sure the user can press 'back'
                 transaction.addToBackStack(null);
+                // Activate
                 transaction.commit();
                 return true;
             }
@@ -239,55 +251,59 @@ public class BikesFragment extends Fragment {
 
                 // Grab text from item clicked
                 TextView name = (TextView) v.findViewById(R.id.bike_list_item);
-                final String bikeName = name.getText().toString();
-                // Show add friends alert dialog (same one from addfriends)
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                final View view = inflater.inflate(R.layout.add_friends, null);
-                builder.setView(view);
-                builder.setTitle("Would you like to Share or Delete this Bike?");
-                // Add action buttons
-                builder.setNegativeButton(R.string.share, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                if (name != null) {
+                    final String bikeName = name.getText().toString();
 
-                        EditText e = (EditText) view.findViewById(R.id.friend_name);
-                        String friendName = e.getText().toString();
-                        shareBike(friendName, bikeName);
-                        Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
+                    // Show add friends alert dialog (same one from addfriends)
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    final View view = inflater.inflate(R.layout.add_friends, null);
+                    builder.setView(view);
+                    builder.setTitle("Would you like to Share or Delete this Bike?");
+                    // Add action buttons
+                    builder.setNegativeButton(R.string.share, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            EditText e = (EditText) view.findViewById(R.id.friend_name);
+                            String friendName = e.getText().toString();
+                            shareBike(friendName, bikeName);
+                            Toast.makeText(getActivity(), "Bike Successfully shared with " + friendName + "!", Toast.LENGTH_SHORT).show();
 
 
-                    }
-                });
-                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Delete bike
-                        int itemType = ExpandableListView.getPackedPositionType(final_id);
-                        int childPosition;
-                        int groupPosition;
-
-                        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                            childPosition = ExpandableListView.getPackedPositionChild(final_id);
-                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
-                            Log.d(MYTAG, "Positions are " + childPosition + " " + groupPosition);
-                            Log.d(MYTAG, "Bike is: " + bikesOwned.get(childPosition));
-                            deleteBike(bikesOwned.get(childPosition));
-                            Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
-                            return;
-                        } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-                            groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
-                            return;
-                        } else {
-                            return;
                         }
-                    }
+                    });
+                    builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Delete bike
+                            int itemType = ExpandableListView.getPackedPositionType(final_id);
+                            int childPosition;
+                            int groupPosition;
 
-                }).create();
+                            if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                                childPosition = ExpandableListView.getPackedPositionChild(final_id);
+                                groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                                Log.d(MYTAG, "Positions are " + childPosition + " " + groupPosition);
+                                Log.d(MYTAG, "Bike is: " + bikesOwned.get(childPosition));
+                                deleteBike(bikesOwned.get(childPosition));
+                                Toast.makeText(getActivity(), bikeName + " successfully deleted!", Toast.LENGTH_SHORT).show();
+                                return;
+                            } else if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                                groupPosition = ExpandableListView.getPackedPositionGroup(final_id);
+                                return;
+                            } else {
+                                return;
+                            }
+                        }
+
+                    }).create();
 
 
-                builder.create();
-                builder.show();
+                    builder.create();
+                    builder.show();
 
-                return true;
+                    return true;
+                }
+                return false;
             }
 
         });
@@ -295,8 +311,10 @@ public class BikesFragment extends Fragment {
 
         return rootView;
 
-
     }
+
+
+
     public void deleteBike(String bike) {
 
         final String deleteBikeName = bike;
@@ -318,7 +336,6 @@ public class BikesFragment extends Fragment {
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
                     if (e == null && postList.size() > 0) {
-                        Log.d(MYTAG, "postList size: " + postList.size());
                         if(postList.get(0).getString("bike_name").toString().equals(deleteBikeName)) {
                             Log.d(MYTAG, "Found " + deleteBikeName + "!!!!");
 
@@ -330,7 +347,7 @@ public class BikesFragment extends Fragment {
 
 
                     } else {
-                        Log.d(MYTAG, "Post retrieval failed...");
+                        Log.d(MYTAG, "Delete bike failed...");
                     }
                 }
             });
@@ -383,7 +400,7 @@ public class BikesFragment extends Fragment {
                     if (e == null && postList.size() > 0) {
                         bikesOwned.add(postList.get(0).getString("bike_name"));
                     } else {
-                        Log.d(MYTAG,"Post retrieval failed...");
+                        Log.d(MYTAG,"Get bikes failed...");
                     }
                 }
             });
@@ -392,8 +409,10 @@ public class BikesFragment extends Fragment {
         bikeLists.put(bikeHeaders.get(0), bikesOwned);
     }
 
+
     public void getSharedBikes() {
-        final String username=ParseUser.getCurrentUser().getUsername();
+        final ParseUser user = ParseUser.getCurrentUser();
+        final String username= user.getUsername();
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("bike");
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -402,9 +421,14 @@ public class BikesFragment extends Fragment {
                     // Get list of usernames and make sure this user actually exists
                     for (ParseObject o : postList) {
                         if (o.get("access") != null) {
-                            if (o.get("access").toString().contains(username)) {
+                            // if we have access and don't already have the bike in our list of used bikes, add.
+                            if (o.get("access").toString().contains(username)
+                                    && !bikesUsed.contains(o.get("bike_name").toString())) {
+
                                 bikesUsed.add(o.get("bike_name").toString());
-                                ParseUser.getCurrentUser().add("bikes_used", o.get("bike_id"));
+                                user.add("bikes_used", o.get("bike_id"));
+                                user.saveEventually();
+                                listAdapter.notifyDataSetChanged();
                             }
                         }
                     }
@@ -420,32 +444,54 @@ public class BikesFragment extends Fragment {
 
     public void addBikeToParse(String bikename, String description) {
         ParseUser current_user = ParseUser.getCurrentUser();
+        // Get the user's old list of bikes
+        ArrayList<Double> user_bikes = (ArrayList<Double>) current_user.get("bikes_used");
+        // Add the new bike to the list
+        current_user.put("my_groups", user_bikes);
+        current_user.saveInBackground();
+
+        // Create a new bike object
         ParseObject new_bike = new ParseObject("bike");
-        new_bike.put("bike_name", bikename);
 
-
-//        double bikeID = count;
         double bikeID = Math.random() * 1000000;
 
 
         Log.d("MYTAG", "bikeID: " + bikeID);
-        new_bike.put("bike_id", bikeID);
         ArrayList<Double> temp_bikes_owned = new ArrayList<Double>();
         temp_bikes_owned = (ArrayList<Double>) current_user.get("bikes_owned");
         temp_bikes_owned.add(bikeID); // random bike ID value
         current_user.put("bikes_owned", temp_bikes_owned);
 
-        //new_bike.put("bike_id", bikeID);
+//        Bitmap bmp = roundedImage_def.getBitmap();
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//        byte[] byteArray = stream.toByteArray();
+        byte[] byteArray = new byte[5]; // bullshit filler, fix
+        ParseFile roundBikeImage = new ParseFile("roundBikeImage.jpg", byteArray);
+
+        new_bike.put("bike_name", bikename);
+        new_bike.put("bike_id", bikeID);
         new_bike.put("bike_description", description);
         new_bike.put("owner_id", current_user.get("user_id"));
+        new_bike.put("last_user", 0);
         new_bike.put("current_loc", new ParseGeoPoint(34.413329, -119.860972));
         new_bike.put("private_flag", "false");
         new_bike.put("locked_flag", "false");
+        new_bike.put("bike_photo", roundBikeImage);
         new_bike.put("dist_traveled", 0);
+
+
 
         Log.d("MYTAG", "bike_id: " + bikeID);
 
+        Double currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
+
+        if(currentDefaultBikeId == 0){
+            current_user.put("default_bike_id", bikeID);
+            new_bike.put("last_user", current_user.get("user_id"));
+        }
         current_user.saveInBackground();
+
 
         // Save the post and return
         new_bike.saveInBackground(new SaveCallback() {
@@ -453,6 +499,8 @@ public class BikesFragment extends Fragment {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
+//                    setResult(RESULT_OK);
+//                    finish();
                     Toast.makeText(getActivity(), "Bike Successfully Added!", Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -464,9 +512,23 @@ public class BikesFragment extends Fragment {
 
         });
 
-        // Let's refresh the list when we add people too.
+        refreshFrag();
         listAdapter.notifyDataSetChanged();
 
+    }
+
+    public void refreshFrag() {
+        // Reload current fragment
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentByTag("home");
+        if(currentFragment != null){
+            //if the other fragment is visible, hide it.
+//            fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("notifications")).commit();
+            FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+            fragTransaction.detach(currentFragment);
+            fragTransaction.attach(currentFragment);
+            fragTransaction.commit();
+        }
     }
 
 
