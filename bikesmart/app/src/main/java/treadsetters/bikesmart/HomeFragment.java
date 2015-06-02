@@ -408,6 +408,8 @@ public class HomeFragment extends Fragment {
                         newBikeDescription = description;
                         Log.d("MYTAG", "newbikename1, newbikedesc1: " + newBikeName + " " + newBikeDescription);
                         addBikeToParse(bikename, description);
+                        populateDefaultBike();
+                        refreshFrag();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -494,8 +496,7 @@ public class HomeFragment extends Fragment {
                 roundedImage_def = new RoundImage(bm);
                 imageView1.setScaleType(ScaleType.FIT_XY);
 
-                populateDefaultBike();
-                refreshFrag();
+
 //                imageView1.setImageDrawable(roundedImage_def);
 //                imageView1.setImageDrawable(roundedImage_def);
 
