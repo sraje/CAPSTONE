@@ -202,13 +202,13 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback
         animator.setDuration(3000);
         animator.start();
     }
-
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        FragmentManager fm = getActivity().getFragmentManager();
-//        Fragment fragment = (fm.findFragmentById(R.id.map));
-//        FragmentTransaction ft = fm.beginTransaction();
-//        ft.remove(fragment);
-//        ft.commit();
-//    }
+// Appears to cause a null pointer exception. What does this do?
+/*    public void onDestroyView() {
+        super.onDestroyView();
+        FragmentManager fm = getActivity().getFragmentManager();
+        Fragment fragment = (fm.findFragmentById(R.id.map));
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.remove(fragment);
+        ft.commit();
+    }*/
 }

@@ -34,8 +34,6 @@ import java.util.UUID;
 
 public class MainActivity2 extends ActionBarActivity
         implements BlankFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, BikesFragment.OnFragmentInteractionListener, FriendsFragment.OnFragmentInteractionListener, MessagesFragment.OnFragmentInteractionListener, NotificationsFragment.OnFragmentInteractionListener{
-    ImageView imageView1;
-    RoundImage roundedImage;
 
     public static String MYTAG = "MainActivity2";
 
