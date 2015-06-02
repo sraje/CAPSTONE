@@ -408,6 +408,8 @@ public class HomeFragment extends Fragment {
                         newBikeDescription = description;
                         Log.d("MYTAG", "newbikename1, newbikedesc1: " + newBikeName + " " + newBikeDescription);
                         addBikeToParse(bikename, description);
+                        populateDefaultBike();
+                        refreshFrag();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -549,6 +551,12 @@ public class HomeFragment extends Fragment {
              */
             query.findInBackground(new FindCallback<ParseObject>() {
                 public void done(List<ParseObject> postList, ParseException e) {
+                    if (e != null) {
+                        Log.d("MYTAG", "e != null");
+                    }
+                    if (!(postList.size() > 0)) {
+                        Log.d("MYTAG", "!postList.size() > 0");
+                    }
                     if (e == null && postList.size() > 0) {
 
                         /*
@@ -588,18 +596,6 @@ public class HomeFragment extends Fragment {
                         roundedImage_def = new RoundImage(bm);
                         imageView1.setScaleType(ScaleType.FIT_XY);
                         imageView1.setImageDrawable(roundedImage_def);
-
-                        ///////////////////////
-
-//                        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-//
-//                        roundedImage_def = new RoundImage(bitmap);
-//                        Drawable image = new BitmapDrawable(bitmap);
-//                        RoundImage roundedImage = new RoundImage(bitmap);
-////                        imageView1.setScaleType(ScaleType.FIT_XY);
-//                        imageView1.setImageDrawable(image);
-////                        imageView1.setScaleType(ScaleType.FIT_XY);
-////                        imageView1.setImageDrawable(roundedImage);
 
 
                         /*
@@ -764,10 +760,13 @@ public class HomeFragment extends Fragment {
         currentDefaultBikeId = current_user.getNumber("default_bike_id").doubleValue();
 
         if(currentDefaultBikeId == 0){
+            Log.d("MYTAG", "currentDefaultBikeId == 0");
             current_user.put("default_bike_id", bikeID);
             new_bike.put("last_user", current_user.get("user_id"));
             activeBikeText.setText(bikename);
-            populateDefaultBike();
+            setLocationText(new ParseGeoPoint(34.413329, -119.860972));
+            imageView1.setScaleType(ScaleType.FIT_XY);
+            imageView1.setImageDrawable(roundedImage_def);
         }
         current_user.saveInBackground();
 
