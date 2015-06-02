@@ -11,12 +11,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-<<<<<<< HEAD
-=======
 import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
->>>>>>> setLastSeen() now shows an actual city rather than lat and lon. Homepage refreshes correctly now with a fragment refresh method
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.MediaColumns;
@@ -34,20 +31,20 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
-<<<<<<< HEAD
-=======
 import com.parse.ParseFile;
->>>>>>> Added geopoint shit for last seen location. Just have geopoint.toString() right now..doubt it will transform to a city. Also changed all activeBike names to defaultBike names to match what Joel did for active/current/default bike stuff
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,6 +62,7 @@ public class HomeFragment extends Fragment {
     private static final int CHANGE_BIKE = 5;
     boolean lock = true;
     boolean light = false;
+    private ParseFile photoFile;
     ImageView imageView1;
     ImageView button_locate;
     ImageView button_lock;
@@ -348,6 +346,14 @@ public class HomeFragment extends Fragment {
         });
 
 
+        imageView1.setOnClickListener(new OnClickListener(){
+
+            public void onClick(View view) {
+
+                Log.d("MYTAG", "ImageView1 onClick 1");
+
+            }});
+
         changeDefaultBikeText.setOnClickListener(new OnClickListener(){
 
             public void onClick(View view) {
@@ -593,31 +599,6 @@ public class HomeFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode == SELECT_FILE){
                 Uri selectedImage = data.getData();
-                String[] projection = { MediaColumns.DATA };
-
-                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-                        projection, null, null, null);
-                cursor.moveToFirst();
-                int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
-                cursor.moveToFirst();
-
-                String selectedImagePath = cursor.getString(column_index);
-
-                Bitmap bm;
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(selectedImagePath, options);
-                final int REQUIRED_SIZE = 200;
-                int scale = 1;
-                while (options.outWidth / scale / 2 >= REQUIRED_SIZE
-                        && options.outHeight / scale / 2 >= REQUIRED_SIZE)
-                    scale *= 2;
-                options.inSampleSize = scale;
-                options.inJustDecodeBounds = false;
-                bm = BitmapFactory.decodeFile(selectedImagePath, options);
-                roundedImage_def = new RoundImage(bm);
-                imageView1.setScaleType(ScaleType.FIT_XY);
-                imageView1.setImageDrawable(roundedImage_def);
                 try {
                     InputStream iStream = getActivity().getContentResolver().openInputStream(selectedImage);
                     byte[] bikePhotoData = getBytes(iStream);
@@ -651,6 +632,7 @@ public class HomeFragment extends Fragment {
 
                 roundedImage_def = new RoundImage(bm);
                 imageView1.setScaleType(ScaleType.FIT_XY);
+                imageView1.setImageDrawable(roundedImage_def);
 //                imageView1.setImageDrawable(roundedImage_def);
 
                 Log.d("MYTAG", "newbikename, newbikedesc: " + newBikeName + " " + newBikeDescription);
@@ -679,6 +661,19 @@ public class HomeFragment extends Fragment {
                 });
             }
 
+        }
+    }
+
+
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
         }
         return byteBuffer.toByteArray();
     }
@@ -718,11 +713,14 @@ public class HomeFragment extends Fragment {
         });
     }
 
+
     public void setDefaultBike(double bike_id) {
+
         ParseUser current_user = ParseUser.getCurrentUser();
         current_user.put("default_bike_id", bike_id);
 
     }
+
 
     public void addBikeToParse(String bikename, String description) {
         ParseUser current_user = ParseUser.getCurrentUser();
@@ -747,7 +745,6 @@ public class HomeFragment extends Fragment {
         Bitmap bmp = roundedImage_def.getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-
         byte[] byteArray = stream.toByteArray();
         ParseFile roundBikeImage = new ParseFile("roundBikeImage.jpg", byteArray);
 
