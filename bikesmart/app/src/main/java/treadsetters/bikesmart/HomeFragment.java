@@ -493,6 +493,9 @@ public class HomeFragment extends Fragment {
 
                 roundedImage_def = new RoundImage(bm);
                 imageView1.setScaleType(ScaleType.FIT_XY);
+
+                populateDefaultBike();
+                refreshFrag();
 //                imageView1.setImageDrawable(roundedImage_def);
 //                imageView1.setImageDrawable(roundedImage_def);
 
@@ -588,18 +591,6 @@ public class HomeFragment extends Fragment {
                         roundedImage_def = new RoundImage(bm);
                         imageView1.setScaleType(ScaleType.FIT_XY);
                         imageView1.setImageDrawable(roundedImage_def);
-
-                        ///////////////////////
-
-//                        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-//
-//                        roundedImage_def = new RoundImage(bitmap);
-//                        Drawable image = new BitmapDrawable(bitmap);
-//                        RoundImage roundedImage = new RoundImage(bitmap);
-////                        imageView1.setScaleType(ScaleType.FIT_XY);
-//                        imageView1.setImageDrawable(image);
-////                        imageView1.setScaleType(ScaleType.FIT_XY);
-////                        imageView1.setImageDrawable(roundedImage);
 
 
                         /*
