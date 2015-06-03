@@ -117,6 +117,22 @@ public class MainActivity extends Activity{
             }
         });
 
+        final Button share_not_button = (Button) findViewById(R.id.share_not_button);
+        share_not_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String username = "";
+                Application.sendPushNotification(username, "A new bike has been shared with you!");
+            }
+        });
+
+        final Button move_not_button = (Button) findViewById(R.id.mov_not_button);
+        move_not_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String username = "";
+                Application.sendPushNotification(username, "A new bike has been shared with you!");
+            }
+        });
+
         final Button start_location_button = (Button) findViewById(R.id.start_location_button);
         start_location_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

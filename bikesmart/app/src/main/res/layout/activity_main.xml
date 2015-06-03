@@ -31,6 +31,20 @@
         android:orientation="vertical" >
 
         <Button
+            android:text="Sharing Notification"
+            android:id="@+id/share_not_button"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center"/>
+
+        <Button
+            android:text="Moving Notification"
+            android:id="@+id/mov_not_button"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center"/>
+
+        <Button
             android:text="@string/get_location_button"
             android:id="@+id/location_button"
             android:layout_width="145dp"
