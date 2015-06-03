@@ -516,6 +516,7 @@ public class BikesFragment extends Fragment {
         });
 
         refreshFrag();
+        getMyBikes();
         listAdapter.notifyDataSetChanged();
 
     }

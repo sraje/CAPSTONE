@@ -3,6 +3,7 @@ package treadsetters.bikesmart;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.app.Fragment;
+import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -139,19 +140,24 @@ public class BikeDetailsFragment extends Fragment implements OnMapReadyCallback
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_location, 14.0f));
                     }
 
-                    // Get an address string from current_location
-                    Geocoder geocoder = new Geocoder(getActivity());
-                    try {
-                         List <Address> addresses = geocoder.getFromLocation(
-                                                              current_location.latitude,
-                                                              current_location.longitude,
-                                                              1); //Ask for only 1 address
-                         if(addresses != null) {
-                             current_location_text.setText("Current Location: " +
-                                                           addresses.get(0).getAddressLine(0) );
-                         }
-                    } catch (Exception x) {
-                        Log.d(TAG, x.toString());
+                    Context context = getActivity();
+                    if (context != null) {
+
+                        // Get an address string from current_location
+                        Geocoder geocoder = new Geocoder(context);
+                        try {
+                            List<Address> addresses = geocoder.getFromLocation(
+                                    current_location.latitude,
+                                    current_location.longitude,
+                                    1); //Ask for only 1 address
+                            if (addresses != null) {
+                                current_location_text.setText("Current Location: " +
+                                        addresses.get(0).getAddressLine(0));
+                            }
+                        } catch (Exception x) {
+                            Log.d(TAG, x.toString());
+                        }
+
                     }
 
                 }

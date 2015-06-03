@@ -180,7 +180,7 @@ public class HomeFragment extends Fragment {
 
         button_locate.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                Double bike_id = (Double) ParseUser.getCurrentUser().get("default_bike_id");
+                Double bike_id = ParseUser.getCurrentUser().getDouble("default_bike_id");
 
                 FragmentManager fragmentManager = getFragmentManager(); // For AppCompat use getSupportFragmentManager
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -604,11 +604,11 @@ public class HomeFragment extends Fragment {
                         options.inSampleSize = scale;
                         options.inJustDecodeBounds = false;
                         bm = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-
-                        roundedImage_def = new RoundImage(bm);
-                        imageView1.setScaleType(ScaleType.FIT_XY);
-                        imageView1.setImageDrawable(roundedImage_def);
-
+                        if (bm != null) {
+                            roundedImage_def = new RoundImage(bm);
+                            imageView1.setScaleType(ScaleType.FIT_XY);
+                            imageView1.setImageDrawable(roundedImage_def);
+                        }
 
                         /*
                         Set default bike location.
