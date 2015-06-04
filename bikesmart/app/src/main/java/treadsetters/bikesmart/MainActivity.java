@@ -130,8 +130,8 @@ public class MainActivity extends Activity{
             public void onClick(View v) {
                 String username1 = "saili";
                 String username2 = "duncan";
-                Application.sendPushNotification(username1, "Your bike is moving without your permission!");
-                Application.sendPushNotification(username2, "Your bike is moving without your permission!");
+                Application.sendPushNotification(username1, "Duncan's Mountain Bike is moving without your permission!");
+                Application.sendPushNotification(username2, "Duncan's Mountain Bike is moving without your permission!");
             }
         });
 
