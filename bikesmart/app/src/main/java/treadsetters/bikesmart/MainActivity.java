@@ -120,7 +120,7 @@ public class MainActivity extends Activity{
         final Button share_not_button = (Button) findViewById(R.id.share_not_button);
         share_not_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String username = "";
+                String username = "saili";
                 Application.sendPushNotification(username, "A new bike has been shared with you!");
             }
         });
@@ -128,8 +128,10 @@ public class MainActivity extends Activity{
         final Button move_not_button = (Button) findViewById(R.id.mov_not_button);
         move_not_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String username = "";
-                Application.sendPushNotification(username, "A new bike has been shared with you!");
+                String username1 = "saili";
+                String username2 = "duncan";
+                Application.sendPushNotification(username1, "Your bike is moving without your permission!");
+                Application.sendPushNotification(username2, "Your bike is moving without your permission!");
             }
         });
 
