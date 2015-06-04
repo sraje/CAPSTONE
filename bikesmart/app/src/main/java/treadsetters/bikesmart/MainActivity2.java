@@ -50,8 +50,8 @@ public class MainActivity2 extends ActionBarActivity
     //First We Declare Titles And Icons For Our Navigation Drawer List View
     //The Icons and Titles are held in an Array
 
-    String TITLES[] = {"Home","Bikes","Friends","Messages","Notifications"};
-    int ICONS[] = {R.drawable.ic_home,R.drawable.ic_bikes,R.drawable.ic_friends,R.drawable.ic_messages,R.drawable.ic_notifications};
+    String TITLES[] = {"Home","Bikes","Friends","Notifications"};
+    int ICONS[] = {R.drawable.ic_home,R.drawable.ic_bikes,R.drawable.ic_friends,R.drawable.ic_notifications};
 
     //Similarly we Create a String Resource for the name and email in the header view
     //And we also create a int resource for profile picture in the header view
