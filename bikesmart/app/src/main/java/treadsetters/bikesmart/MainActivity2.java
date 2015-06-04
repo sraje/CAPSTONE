@@ -419,7 +419,7 @@ public class MainActivity2 extends ActionBarActivity
                 Set<BluetoothDevice> paired = mBluetoothAdapter.getBondedDevices();
                 if (paired.size() > 0) {
                     for (BluetoothDevice d : paired) {
-                        if (d.getName().equals("ExampleRobot")) {
+                        if (d.getName().equals("HC-06")) {
                             mBluetoothDevice = d;
                             break;
                         }
