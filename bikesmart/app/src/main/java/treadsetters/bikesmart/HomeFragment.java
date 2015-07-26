@@ -290,8 +290,6 @@ public class HomeFragment extends Fragment {
 
 
 
-
-
         button_light = (ImageView)
                 rootView.findViewById(R.id.button_light);
         Bitmap bm_light = BitmapFactory.decodeResource(getResources(),R.drawable.no_light);
@@ -359,13 +357,6 @@ public class HomeFragment extends Fragment {
         });
 
 
-        imageView1.setOnClickListener(new OnClickListener(){
-
-            public void onClick(View view) {
-
-                Log.d("MYTAG", "ImageView1 onClick 1");
-
-            }});
 
         changeDefaultBikeText.setOnClickListener(new OnClickListener(){
 
@@ -377,18 +368,6 @@ public class HomeFragment extends Fragment {
             }});
 
 
-        /*Button buttonLogout = (Button) rootView.findViewById(R.id.button_logout);
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                // Perform action on click
-                Toast.makeText(getActivity(), "Logging out...", Toast.LENGTH_SHORT).show();
-                ParseUser.getCurrentUser().logOut();
-                Intent intent = new Intent(getActivity(), DispatchActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
-        */
 
         imageView1.setOnClickListener(new View.OnClickListener() {
 
@@ -455,14 +434,6 @@ public class HomeFragment extends Fragment {
             // Perform action on click
         });
 
-        /*
-        Button buttonFindBike = (Button) rootView.findViewById(R.id.button_find_bikes);
-        buttonFindBike.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                // Perform action on click
-                Toast.makeText(getActivity(), "Finding bikes...", Toast.LENGTH_SHORT).show();
-            }
-        });*/
 
         return rootView;
     }
